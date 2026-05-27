@@ -433,10 +433,10 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
     - **Standard Auto-Close**: Tor offen → nach x Sekunden Close-Befehl
     - **Notfall Auto-Close bei unbekanntem Status**: Wenn DI1=0 UND DI2=0 für länger als Schwelle (z.B. 90s), Close-Befehl. Verhindert dass Tor in Zwischenposition hängenbleibt. Default-Schwelle > typische Bewegungszeit + Puffer.
   - **Countdown-Sensor** als `sensor` (Restzeit in Sekunden) für **HA-Dashboard-Anzeige** (im ESP-Web nicht zwingend)
-  - **Multi-HA-Zugriff (KORRIGIERT):** Trotz ESPHome Multi-Client-Fähigkeit ab 2023.X hat User Erfahrung mit Reboot-Schleifen bei 2 parallelen API-Verbindungen (Garagentor-ESPs). → **Empfohlene Lösung: Master-Slave mit remote_homeassistant**
-    - HA #1 (DG-HA, Master): bindet ESP direkt via ESPHome-Integration
-    - HA #2 (zweite Instanz, Slave): nutzt **remote_homeassistant** (HACS, lukas-hetzenecker) → spiegelt Entitäten aus HA #1
-    - Filter: nur `cover.hoftor*`, `switch.hoftor*`, `sensor.hoftor*`, `number.hoftor*`
+  - **Multi-HA-Zugriff:** User hat **3 HA-Instanzen mit bestehender remote_homeassistant-Konfiguration** auf allen 3.
+    - **Master:** DG-HA (192.168.210.11) — bindet ESP direkt via ESPHome-Integration (gleiches Netzsegment wie PoE-Switch)
+    - **Slaves:** HA #2 + HA #3 — spiegeln Entitäten automatisch über bestehendes remote_homeassistant
+    - Nur Filter in Slaves erweitern: `cover.hoftor*`, `switch.hoftor*`, `sensor.hoftor*`, `number.hoftor*`, `binary_sensor.hoftor*`
     - Nur 1 stabile API-Verbindung zum ESP → keine Restart-Storms
   - **ESPHome Stabilitäts-Settings:**
     - `api: reboot_timeout: 0s` (wichtig! verhindert Reboots bei HA-Disconnect)
