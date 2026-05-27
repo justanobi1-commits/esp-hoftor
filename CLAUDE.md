@@ -36,8 +36,8 @@ Dieses ESP-Projekt hat (geplante) HA-Berührungspunkte. Sobald in Betrieb, **auc
 
 ```
 KLEMMEN:
-   5× Phoenix 3209510   PT 2,5             (grau, 4 für Block C LED+Taster + 1 Reserve oder L-Durchschleif)
-   2× Phoenix 3209523   PT 2,5 BU          (blau, N für 230V Block B — 1 Eingang + 1 Ausgang/Reserve)
+   5× Phoenix 3209510   PT 2,5             (grau, 4 für Block C LED+Taster + 1 für Block B L)
+   1× Phoenix 3209523   PT 2,5 BU          (blau, N für 230V Block B)
    1× Phoenix 3209536   PT 2,5-PE          (grün-gelb, PE für 230V Block B)
 
 ENDTEILE:
