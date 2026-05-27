@@ -58,7 +58,7 @@ FBS-BRÜCKER FÜR RIF-0:
 Gesamt: 9 Positionen, 19 Stück, ~25-30 € + Versand
 
 Hinweise:
-- Block B 230V: 3 Einzelklemmen (1× grau L + 2× blau N (1 Reserve oder N-Durchschleif) + 1× grün-gelb PE) — Lösung mit klaren Aderfarben pro Funktion, Norm-konform
+- Block B 230V: 3 Einzelklemmen (1× grau L + 1× blau N + 1× grün-gelb PE). PE endet ausschließlich in der Klemme — DEWIN PSU ist Schutzklasse II, kein PE-Anschluss am Gerät nötig. FIBOX MCE65 36M ist Kunststoffgehäuse (keine Erdung erforderlich).
 - Bestand-Klemmen (2× grau aus Original-Bestellung): wandern in Block C
 - 2. D-ST 2,5 aus Bestand: wandert als Endplatte zu Block C
 - Im Notfall können FBS-Brücker mit Seitenschneider gekürzt werden
