@@ -1,8 +1,8 @@
 # Aderfarben-Belegung Hoftor — Template
 
-**Version:** 1.0
-**Stand:** 26-05-2026
-**Status:** Template — bei Eintreffen des Anhängerkabels mit tatsächlichen Farben füllen
+**Version:** 1.1
+**Stand:** 27-05-2026
+**Status:** Template — bei Eintreffen des ETUKER Anhängerkabels (Freitag 29-05-2026) mit tatsächlichen Farben füllen
 
 ## Konzept
 
@@ -10,18 +10,18 @@
 
 ## Zuordnungstabelle (zu vervollständigen)
 
-| WAGO# | BFT-Klemme | Aderfarbe | Funktion | Geht im Verteiler zu |
+| PT-Klemme# | BFT-Klemme | Aderfarbe | Funktion | Geht im Verteiler zu |
 |---|---|---|---|---|
-| 1 (TWIN) | 60 | ___________ | COM Hauptplatine | F2 + F6 (Kontakt 14, via TWIN-Klemme) |
-| 2 | 61 | ___________ | Open (Dauerauf) | F6 Kontakt 11 |
-| 3 | 62 | ___________ | Close | F2 Kontakt 11 |
-| 4 (TWIN) | 63 | ___________ | COM EBD | F1 + F5 (Kontakt 14, via TWIN-Klemme) |
-| 5 | 64 | ___________ | Start E (Schritt) | F5 Kontakt 11 |
-| 6 | 65 | ___________ | Open (Impuls) | F1 Kontakt 11 |
-| 7 | 24 | ___________ | Status Tor offen — Signal | F3 Spule A2 |
-| 8 | 26 | ___________ | Status Tor zu — Signal | F4 Spule A2 |
-| 9 | 25 | ___________ | Status Tor offen — GND | PTFIX blau (via FBS-2-5 zu Klemme 10) |
-| 10 | 27 | ___________ | Status Tor zu — GND | PTFIX blau (via FBS-2-5 zu Klemme 9) |
+| 1 (TWIN) | 60 | ___________ | COM Hauptplatine | F2-K14 + F6-K14 (via TWIN-Klemme) |
+| 2 | 61 | ___________ | Open (Dauerauf) | F6-K11 |
+| 3 | 62 | ___________ | Close | F2-K11 |
+| 4 (TWIN) | 63 | ___________ | COM EBD | F1-K14 + F5-K14 (via TWIN-Klemme) |
+| 5 | 64 | ___________ | Start E (Schritt) | F5-K11 |
+| 6 | 65 | ___________ | Open (Impuls) | F1-K11 |
+| 7 | 24 | ___________ | Status Tor offen — Signal | F3-A1 |
+| 8 | 26 | ___________ | Status Tor zu — Signal | F4-A1 |
+| 9 | 25 | ___________ | Status offen — Rückleiter (**+24V**) | PTFIX rot (via FBS 2-5 rot zu Klemme 10) |
+| 10 | 27 | ___________ | Status zu — Rückleiter (**+24V**) | PTFIX rot (via FBS 2-5 rot zu Klemme 9) |
 | 11–13 | – | (Reserve) | – | – |
 
 ## Bei Wareneingang ausfüllen

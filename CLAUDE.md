@@ -1,8 +1,8 @@
 # Hoftor-Steuerung — Umbau Shelly → ESP
 
-**Version:** 1.2
+**Version:** 2.0
 **Stand:** 27-05-2026
-**Status:** Hardware-Auswahl & BOM final, Hauptbestellungen versendet, Layout fix, PDF-Schaltplan v2 erstellt. Cross-References (v1.2) ergänzt.
+**Status:** ESP + automation24-Lieferung angekommen. Topologie final mit FBS-Brücker-Konzept. Aufbau ab Freitag möglich (Anhängerkabel + TWIN-Klemmen).
 
 ## Cross-References (HA-Doku)
 
@@ -14,17 +14,61 @@ Dieses ESP-Projekt hat (geplante) HA-Berührungspunkte. Sobald in Betrieb, **auc
 - `homeassistant/dachgeschoss/dashboards_uebersicht.md` — ggf. Steuer-Karte
 - Memory `project_hoftor_esp.md` — Pointer-Datei
 
-## Bestellstatus (26-05-2026)
+## Bestellstatus (27-05-2026)
 
 | Bestellung | Inhalt | Status |
 |---|---|---|
-| **automation24 #2026-3047210** | Alles Phoenix (Klemmen, PTFIX, RIF-0, Adapter) + FIBOX MCE65 36M Verteiler | **versendet 26-05-2026** ✅ |
-| **Amazon (priz24)** | 2× Phoenix PT 2,5-TWIN (Art. **3209549**, je 9,06 €) | **versendet 26-05-2026** ✅ |
-| **Waveshare ESP32-S3-POE-ETH-8DI-8RO** | 1× Steuerung | Eintreffen 27-05-2026 ✅ |
-| **ETUKER Anhängerkabel 13×0,5** (5 m, 24,46 €) | Tor-↔-Verteiler-Strecke + Innenverdrahtung mit durchgehender Farbe | bestellt, Eintreffen Freitag 29-05-2026 ✅ |
+| **automation24 #2026-3047210** | Phoenix-Klemmen + PTFIX + RIF-0 + Adapter + FBS 2-5 + FIBOX MCE65 36M | **angekommen 27-05-2026** ✅ |
+| **Waveshare ESP32-S3-POE-ETH-8DI-8RO** | 1× Steuerung | **angekommen 27-05-2026** ✅ |
+| **Amazon (priz24)** | 2× Phoenix PT 2,5-TWIN (Art. **3209549**, je 9,06 €) | unterwegs, Eintreffen 27.-28.5. ⏳ |
+| **ETUKER Anhängerkabel 13×0,5** (5 m, 24,46 €) | Tor-↔-Verteiler + Innenverdrahtung mit durchgehender Farbe | bestellt, Eintreffen **Freitag 29-05-2026** ⏳ |
+| **FBS-Brücker für RIF-0** | A2-Sammelschiene GND + K11-Sammelschiene +24V + Reserve grau | **noch zu bestellen** ⏳ |
 | **Glassicherung 2 A T 5×20** | 2–3 Stk | im Bestand vorhanden |
 | **Aderendhülsen 0,5 mm²** | bei Bedarf | im Bestand vorhanden |
 | **H07V-K 0,5 mm²** | rot/blau/schwarz/grau/grün/gelb je 15 m | im Bestand vorhanden |
+
+### Nachbestellung bei automation24 (finale Liste, abzgl. Bestand)
+
+**Bestand aus Original-Bestellung #2026-3047210 (angekommen 27-05-2026):**
+- 10× PT 2,5 grau, 2× D-ST 2,5, **1× CLIPFIX 35 (aktuell als ESP-Endhalter im Einsatz)**, 1× FBS 2-5 rot, 1× ZB 5 1-10
+- 1× PTFIX rot + 1× PTFIX blau + 2× PTFIX-NS35, 8× RIF-0
+- (CLIPFIX wird nicht für Klemmen-Blöcke gerechnet, da am ESP gebraucht)
+
+```
+KLEMMEN (5 grau + 1 blau + 1 PE):
+   5× Phoenix 3209510   PT 2,5             (grau, normal — 4 für LED+Taster + 1 für 230V-L)
+   1× Phoenix 3209523   PT 2,5 BU          (blau, für N im 230V-Block)
+   1× Phoenix 3209536   PT 2,5-PE          (grün-gelb, für PE im 230V-Block)
+
+ENDTEILE (Auffüllung bestehender Bestand):
+   1× Phoenix 3030417   D-ST 2,5           (Endplatte, ergänzt 2 → 3)
+   6× Phoenix 3022218   CLIPFIX 35         (Endhalter, 1 ist am ESP, 6 neue für 3 Klemmen-Blöcke = 7 total)
+
+PT 2,5 STECKBRÜCKE (LED-Block GND):
+   1× Phoenix 3036877   FBS 2-5 BU         (blau, GND-Brücke LED-Kathoden #3 ↔ #4)
+
+BESCHRIFTUNG (leer, für L/N/PE/LED/Taster):
+   1× Phoenix 1051003   ZB 5 UNBEDRUCKT
+
+FBS-BRÜCKER FÜR RIF-0 (Pflicht):
+   1× Phoenix 3032198   FBS 10-6 BU        (blau, A2-GND-Sammelschiene aller 8 RIF-0)
+   1× Phoenix 3030255   FBS 4-6            (rot, K11-+24V-Sammelschiene F7+F8+F3+F4)
+
+Gesamt: 8 Positionen, 20 Stück, ~25-30 € + Versand
+
+Hinweis: Im Notfall lassen sich Phoenix FBS-Brücker mit Seitenschneider kürzen
+(z.B. FBS 10-6 BU → FBS 5-6 BU), falls eine kleinere Polzahl gebraucht wird.
+```
+
+**Nicht zu bestellen** — bereits im Bestand:
+- 2× LED 24V (blau + rot) — aus laufender Shelly-Anlage übernommen
+- 1× Taster — aus laufender Shelly-Anlage
+- 8× Finder 34.51 — werden durch RIF-0 ersetzt (alte zu Reserve/Ausbau)
+
+**Nicht zu bestellen** — bereits im Bestand:
+- 2× LED 24V (blau + rot) — aus laufender Shelly-Anlage übernommen
+- 1× Taster — aus laufender Shelly-Anlage
+- 8× Finder 34.51 — werden durch RIF-0 ersetzt (alte zu Reserve/Ausbau)
 
 ---
 
@@ -138,9 +182,9 @@ Gründe für Umbau:
 
 ## 5. Klemmenbelegung (FINAL)
 
-### J-Y(St)Y / Ölflex Tor ↔ Verteiler — 10 Adern
+### ETUKER Anhängerkabel Tor ↔ Verteiler — 10 Adern (von 13)
 
-| Ader / WAGO# | BFT-Klemme | Funktion |
+| Ader / PT-Klemme# | BFT-Klemme | Funktion |
 |---|---|---|
 | 1 | 60 | COM Hauptplatine |
 | 2 | 61 | Open (Dauerauf-Eingang) |
@@ -150,89 +194,175 @@ Gründe für Umbau:
 | 6 | 65 | Open (Impuls) |
 | 7 | 24 | Status Tor offen — Signal |
 | 8 | 26 | Status Tor zu — Signal |
-| 9 | 25 | Status Tor offen — GND |
-| 10 | 27 | Status Tor zu — GND |
+| 9 | 25 | Status Tor offen — Rückleiter (**+24V** mit neuer Topologie) |
+| 10 | 27 | Status Tor zu — Rückleiter (**+24V** mit neuer Topologie) |
 
-**Hinweis:** Klemmen 8 und 9 wurden **umsortiert** gegenüber natürlicher BFT-Reihenfolge, damit GNDs (9 und 10) adjacent sind → FBS 2-5 Brücker funktioniert.
+**Hinweis:** Klemmen 8 und 9 wurden **umsortiert** gegenüber natürlicher BFT-Reihenfolge, damit die beiden Rückleiter (9 und 10) adjacent sind → FBS 2-5 Brücker funktioniert.
+
+**Topologie-Konvention (neu mit FBS-Brücker):**
+- A2 aller RIF-0 = **GND** (via FBS 10-6 BU)
+- A1 aller RIF-0 = **+24V wenn Spule aktiv** (geschaltet durch ESP-Relais oder BFT-Status-Kontakt)
+- Status-Pärchen #9/#10 sind beide auf **+24V** (über FBS 2-5 rot gebrückt) — wenn BFT-Status-Kontakt schließt, kommt +24V von der Rückleiter-Klemme über den Schalter zur Signal-Klemme und damit zu F3-A1 bzw. F4-A1
 
 ### Phoenix Reihenklemmen-Anordnung (10 Stück)
 
 ```
 [CF] [1-TWIN] [2-PT] [3-PT] [4-TWIN] [5-PT] [6-PT] [7-PT] [8-PT] [9-PT] [10-PT] [D]
        ↑                       ↑                                    └─FBS 2-5─┘
-       BFT 60                  BFT 63                               GND-Brücke
-       → F2-14 + F6-14         → F1-14 + F5-14
+       BFT 60                  BFT 63                               (rot, +24V)
+       → F2-11 + F6-11         → F1-11 + F5-11
+       (über TWIN)             (über TWIN)
 ```
 
 - TWIN-Klemmen an Position #1 und #4 (jeweils 1 Eingang + 2 Ausgänge)
 - Normale PT 2,5 an Positionen #2, 3, 5, 6, 7, 8, 9, 10
 - D-ST 2,5 Endplatte rechts; CLIPFIX 35 (CF) links + rechts als Endhalter
-- FBS 2-5 zwischen 9 und 10 (GND-Brücke)
+- FBS 2-5 rot zwischen 9 und 10 (gemeinsamer +24V-Rückleiter)
 - ZB 5 Beschriftung mit Nummern 1-10
+
+### Phoenix RIF-0 Anordnung (8 Stück) mit FBS-Brücker
+
+```
+Position:    1   2   3   4   5   6   7   8
+            ┌──┬──┬──┬──┬──┬──┬──┬──┐
+RIF-0:      │F1│F5│F2│F6│F7│F8│F3│F4│
+            └──┴──┴──┴──┴──┴──┴──┴──┘
+              ESP-Befehle      Lasten + Status
+
+K11-Brücker: nicht durchgehend! (verschiedene Pegel pro Gruppe)
+  - F7+F8+F3+F4: K11 = +24V (gemeinsam) → FBS 4-6 rot zwischen Pos. 5-8
+  - F1+F5 K11 individuell zu unterschiedlichen BFT-Klemmen, kein Brücker
+  - F2+F6 K11 individuell, kein Brücker
+  (Wegen TWIN-Klemmen-Konzept reicht das Sammeln auf PT-Klemmen #1 + #4 aus)
+
+A2-Brücker: durchgehend über alle 8 → FBS 10-6 BU blau (GND-Sammelschiene)
+
+Die K11-Anschlüsse von F1/F5/F2/F6 gehen JEWEILS einzeln zu einer PT-Klemme:
+  F1-K11 → PT-Klemme #6 (BFT 65 Open)
+  F5-K11 → PT-Klemme #5 (BFT 64 Start E)
+  F2-K11 → PT-Klemme #3 (BFT 62 Close)
+  F6-K11 → PT-Klemme #2 (BFT 61 Open/Dauerauf)
+
+K14 zu den COMs der BFT (über TWIN-Klemmen):
+  F1-K14 → PT-Klemme #4 TWIN (BFT 63 COM EBD, gemeinsam mit F5-K14)
+  F5-K14 → PT-Klemme #4 TWIN
+  F2-K14 → PT-Klemme #1 TWIN (BFT 60 COM Hauptplatine, gemeinsam mit F6-K14)
+  F6-K14 → PT-Klemme #1 TWIN
+
+F7-K14 → LED blau Anode (mit 1kΩ Vorwiderstand → GND)
+F8-K14 → LED rot Anode
+F3-K14 → ESP DI1 (Status Tor offen)
+F4-K14 → ESP DI2 (Status Tor zu)
+```
 
 ### ESP-Pin → Phoenix RIF-0 → Tor-Funktion
 
 | ESP-Pin | Relais | Funktion | Schaltet Kontakt zwischen (Phoenix-Anschluss) |
 |---|---|---|---|
-| Relais R1 | **F1** | Befehl öffnen (Impuls) | Klemme 6 (BFT 65) ↔ Klemme 4 (BFT 63 COM-EBD) — über RIF-0 11→14 |
-| Relais R2 | **F2** | Befehl schließen (Impuls) | Klemme 3 (BFT 62) ↔ Klemme 1 (BFT 60 COM-Haupt) |
-| Relais R3 | **F5** | Befehl Schritt (Impuls) | Klemme 5 (BFT 64) ↔ Klemme 4 (BFT 63 COM-EBD) |
-| Relais R4 | **F6** | Befehl Dauerauf (dauerhaft) | Klemme 2 (BFT 61) ↔ Klemme 1 (BFT 60 COM-Haupt) |
-| Relais R5 | **F7** | LED blau ein (Tor offen) | +24V ↔ LED blau (Anode); Kathode → GND mit 1kΩ Vorwiderstand |
-| Relais R6 | **F8** | LED rot ein (Dauerauf aktiv) | +24V ↔ LED rot (Anode); Kathode → GND mit 1kΩ Vorwiderstand |
-| Eingang DI1 | **F3** | Status Tor offen lesen | F3 Kontakt 11(GND)→14(DI1) wenn BFT 24-25 schließt |
-| Eingang DI2 | **F4** | Status Tor geschlossen lesen | F4 Kontakt 11(GND)→14(DI2) wenn BFT 26-27 schließt |
+| Relais R1 | **F1** | Befehl öffnen (Impuls) | K11=PT#6 (BFT 65), K14=PT#4 TWIN (BFT 63 COM-EBD) |
+| Relais R2 | **F2** | Befehl schließen (Impuls) | K11=PT#3 (BFT 62), K14=PT#1 TWIN (BFT 60 COM-Haupt) |
+| Relais R3 | **F5** | Befehl Schritt (Impuls) | K11=PT#5 (BFT 64), K14=PT#4 TWIN (BFT 63 COM-EBD) |
+| Relais R4 | **F6** | Befehl Dauerauf (dauerhaft) | K11=PT#2 (BFT 61), K14=PT#1 TWIN (BFT 60 COM-Haupt) |
+| Relais R5 | **F7** | LED blau ein (Tor offen) | K11=+24V (FBS 4-6), K14=LED blau Anode (mit 1kΩ Vorwiderstand → GND) |
+| Relais R6 | **F8** | LED rot ein (Dauerauf aktiv) | K11=+24V (FBS 4-6), K14=LED rot Anode (mit 1kΩ Vorwiderstand → GND) |
+| Eingang DI1 | **F3** | Status Tor offen lesen | F3 schaltet: K11=+24V (FBS 4-6) → K14=ESP DI1 wenn BFT 24-25 schließt |
+| Eingang DI2 | **F4** | Status Tor geschlossen lesen | F4 schaltet: K11=+24V (FBS 4-6) → K14=ESP DI2 wenn BFT 26-27 schließt |
 | Eingang DI3 | – | Taster Dauerauf-Auslöser | externer Taster gegen +24V |
 | R7, R8 | – | Reserve |
 | DI4–DI8 | – | Reserve |
 
-### Phoenix RIF-0 Anschluss-Übersicht (alle 8)
+### Phoenix RIF-0 Anschluss-Übersicht (alle 8) — NEUE Topologie mit FBS-Brücker
+
+**Gemeinsam für alle 8 RIF-0:**
+- **A2 → GND** (via FBS 10-6 BU Sammelschiene, 1 Ader vom PTFIX blau zur ersten A2)
 
 **Befehls-Relais F1, F2, F5, F6** (ESP-getrieben, schalten Tor-Befehl):
-- A1 → PTFIX +24V (alle gemeinsam)
-- A2 → ESP-Relais R1/R2/R3/R4 (individuell)
-- 11/14 → bridges zur BFT-Befehlsklemme + COM (siehe Tabelle oben)
+- A1 → ESP-Relais R1/R2/R3/R4 (schaltet +24V vom PTFIX rot)
+- A2 → **GND** (via FBS-Brücker)
+- K11 → individuell zur jeweiligen BFT-Befehlsklemme (#2/#3/#5/#6)
+- K14 → über TWIN-Klemme zur BFT-COM (#1 oder #4)
 
 **LED-Relais F7, F8** (ESP-getrieben, schalten LED-Strom):
-- A1 → PTFIX +24V
-- A2 → ESP-Relais R5/R6
-- 11 → PTFIX +24V (zum Schalten)
-- 14 → LED-Anode (mit 1kΩ Vorwiderstand zu GND)
+- A1 → ESP-Relais R5/R6 (schaltet +24V)
+- A2 → **GND** (via FBS-Brücker)
+- K11 → **+24V** (via FBS 4-6 rot Sammelschiene, 1 Ader zum ersten K11=F7)
+- K14 → LED-Anode (24V-Komplett-LED ohne externen Vorwiderstand)
 
 **Status-Relais F3, F4** (BFT-getrieben, melden Status an ESP):
-- A1 → PTFIX +24V
-- A2 → Reihenklemme 7 bzw. 8 (BFT-Statussignal)
-- 11 → PTFIX GND
-- 14 → ESP DI1 bzw. DI2
+- A1 → Reihenklemme #7 bzw. #8 (BFT-Statussignal, wird +24V wenn BFT-Kontakt schließt)
+- A2 → **GND** (via FBS-Brücker)
+- K11 → **+24V** (via FBS 4-6 rot Sammelschiene, gemeinsam mit F7+F8)
+- K14 → ESP DI1 bzw. DI2
 
-## 6. Layout im Verteiler (3×12 TE FIBOX MCE65 36M)
+**Verdrahtungs-Ersparnis durch FBS-Brücker:**
+- A2-GND-Sammlung: **1 Ader** statt 8 individueller Adern zum PTFIX blau
+- K11-+24V-Sammlung (F7+F8+F3+F4): **1 Ader** statt 4 individueller Adern zum PTFIX rot
+
+### Zusätzliche Pflicht-Verbindung — DI-COM des ESP
+
+Die Waveshare DIs sind opto-isolierte Industrieeingänge mit einem **DI-COM-Sammelpin**. Damit die DIs +24V als Aktiv-Pegel erkennen, muss der DI-COM auf **GND** liegen:
 
 ```
-Reihe 1 — Stromversorgung (8 TE belegt, 4 TE Reserve)
-┌─────┬─────────┬─────┬───────────┬───────────┬─────────────────────┐
-│ ABB │  DEWIN  │ Si. │ PTFIX rot │ PTFIX blau│      Reserve        │
-│ Aus │  PSU    │ 2A  │   +24 V   │    GND    │                     │
-│ 1TE │  2 TE   │ 1TE │   2 TE    │    2 TE   │       4 TE          │
-└─────┴─────────┴─────┴───────────┴───────────┴─────────────────────┘
+PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
+```
 
-Reihe 2 — Schaltlogik (6 TE belegt, 6 TE Reserve)
-┌──────────────┬──────────────┬─────────────────────────────────────┐
-│  8× RIF-0    │ 10× PT 2,5   │              Reserve                │
-│ Koppelrelais │ Reihenklem.  │                                     │
-│    3 TE      │     3 TE     │              6 TE                   │
-└──────────────┴──────────────┴─────────────────────────────────────┘
+→ **1 separate Ader** vom PTFIX blau zum ESP DI-COM (nicht über Block C). Ohne diese Verbindung erkennt der ESP keine DI-Signale.
+
+## 6. Layout im Verteiler (3×12 TE FIBOX MCE65 36M) — 3 Klemmen-Blöcke
+
+```
+Reihe 1 — 230V + Versorgung (10 TE belegt, 2 TE Reserve)
+┌────────┬─────┬─────────┬─────┬───────────┬───────────┬─────┐
+│Block B │ ABB │  DEWIN  │ Si. │ PTFIX rot │ PTFIX blau│ Res │
+│ 230V   │ Aus │  PSU    │ 2A  │   +24 V   │    GND    │     │
+│ 3 Kl.  │     │ 24V/1,5A│  T  │           │           │     │
+│ ~2 TE  │ 1TE │  2 TE   │ 1TE │   2 TE    │   2 TE    │ 2TE │
+└────────┴─────┴─────────┴─────┴───────────┴───────────┴─────┘
+  L+N+PE
+
+Reihe 2 — Schaltlogik + 2 Klemmen-Blöcke (8 TE belegt, 4 TE Reserve)
+┌──────────────┬──────────────┬────────────┬──────────────────┐
+│  8× RIF-0    │ Block A      │ Block C    │      Reserve     │
+│ Koppelrelais │ Tor 10 Kl.   │ LED+Taster │                  │
+│              │ (8 PT+2 TWIN)│ 6 Klemmen  │                  │
+│    3 TE      │     3 TE     │   2 TE     │       4 TE       │
+└──────────────┴──────────────┴────────────┴──────────────────┘
 
 Reihe 3 — ESP-Steuerung (10 TE belegt, 2 TE Reserve)
 ┌──────────────────────────────────────────────────────┬───────────┐
 │        Waveshare ESP32-S3-POE-ETH-8DI-8RO            │  Reserve  │
 │              10 TE                                   │    2 TE   │
 └──────────────────────────────────────────────────────┴───────────┘
+
+Gesamt belegt: 28 TE | Reserve: 8 TE
 ```
 
+### Drei Klemmen-Blöcke im Detail
+
+**Block A — Tor-Anbindung (Reihe 2, links der Mitte)**
+- 10 Klemmen: 8× PT 2,5 grau + 2× PT 2,5-TWIN (an Position #1 und #4)
+- FBS 2-5 rot zwischen #9 und #10 (+24V Rückleiter-Brücke)
+- 1× D-ST 2,5 + 2× CLIPFIX 35
+- Externes Kabel: ETUKER Anhängerkabel 13×0,5 vom Tor (10 Adern genutzt, 3 Reserve)
+
+**Block B — 230V-Eingang (Reihe 1, ganz links)**
+- 3 Klemmen: PT 2,5 grau (L) + PT 2,5 BU (N) + PT 2,5-PE (PE)
+- 1× D-ST 2,5 + 2× CLIPFIX 35
+- Externes Kabel: 230V Hauszuleitung (NYM 3×1,5)
+
+**Block C — LED + Taster (Reihe 2, rechts neben Block A)**
+- 6 Klemmen alle grau:
+  - #1 LED blau (+), #2 LED rot (+) ← geschaltete Anoden von F7/F8-K14
+  - #3 LED blau (−), #4 LED rot (−) ← FBS 2-5 BU brückt zu GND
+  - #5 Taster +24V, #6 Taster Signal → ESP DI3
+- 1× D-ST 2,5 + 2× CLIPFIX 35
+- Externe Kabel: 2× zu LEDs (24V Industrie-Signalleuchten), 1× zum Taster
+
 **Anordnung-Logik:**
-- **230 V** ganz oben (Reihe 1) — klare Trennung Hoch-/Niederspannung
-- **24 V Schaltlogik** in der Mitte (Reihe 2)
+- **230 V** ganz links oben (Reihe 1, Block B) — räumlich getrennt von SELV
+- **24 V Schaltlogik** in der Mitte (Reihe 2) — Block A + RIF-0 + Block C
 - **ESP-Steuerung** unten (Reihe 3) — bei Wartung gut erreichbar
+- Kabel-Einführung von unten ins Gehäuse
 - Tor-Kabel-Einführung von unten, kommt nahe Klemmenleiste in Reihe 2 rein
 - PoE-Cat-Kabel zum ESP RJ45 in Reihe 3
 
@@ -257,10 +387,11 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
 ## 8. Open Points / Nächste Schritte
 
 ### Bestellungen
-- [x] **automation24 #2026-3047210** — versendet 26-05-2026 (Phoenix-Komplettpaket + Verteiler)
-- [x] **Amazon 2× PT 2,5-TWIN** — versendet 26-05-2026
-- [x] **Waveshare ESP32-S3-POE-ETH-8DI-8RO** — Eintreffen 27-05-2026 ✅
-- [x] **ETUKER Anhängerkabel 13×0,5** (5 m, 24,46 €) — Eintreffen Freitag 29-05-2026 ✅
+- [x] **automation24 #2026-3047210** — **angekommen 27-05-2026** (Phoenix-Komplettpaket + Verteiler)
+- [x] **Waveshare ESP32-S3-POE-ETH-8DI-8RO** — **angekommen 27-05-2026**
+- [ ] **Amazon 2× PT 2,5-TWIN** — unterwegs, Eintreffen 27.-28.5.
+- [ ] **ETUKER Anhängerkabel 13×0,5** (5 m, 24,46 €) — Eintreffen Freitag 29-05-2026
+- [ ] **FBS-Brücker für RIF-0** (FBS 10-6 BU + FBS 4-6 rot + 5× grau Reserve) — noch zu bestellen bei automation24
 
 ### Aufbau (nach Wareneingang)
 - [ ] Hardware im FIBOX MCE65 36M nach Layout montieren
@@ -373,7 +504,23 @@ Noch zu bestellen:
 
 ---
 
-**Bei nächster Session:** Diese Datei lesen für vollen Kontext.
+## Normen-Hinweis (Aderfarben N vs DC-GND)
+
+In dieser Anlage existieren **N (230V Neutralleiter)** und **DC-GND (24V SELV-Masse)** parallel — beide werden umgangssprachlich "blau" genannt.
+
+**Pragmatische Lösung gewählt** (für private Anlage ausreichend):
+- Räumliche Trennung: **230V komplett in Reihe 3**, **24V SELV in Reihe 2** + ESP in Reihe 1
+- **Beschriftung an den Hutschienen**:
+  - Reihe 3: Aufkleber/Schild **"230 V AC"**
+  - Reihe 2: Aufkleber/Schild **"24 V DC SELV"**
+- ZB 5 Klemmen-Beschriftung: "L", "N", "PE" für 230V; "+24V", "0V/GND" für DC
+- Auf Verteiler-Innentür: Hinweis "230V und 24V im selben Gehäuse — siehe Beschriftung"
+
+Norm-strikte Alternative (nicht umgesetzt): DC-GND-Adern + Klemmen in dunkelblau oder weiß/schwarz statt hellblau. Bei Bedarf nachrüstbar.
+
+## Bei nächster Session
+
+Diese Datei lesen für vollen Kontext.
 
 **Nächste konkrete Schritte (Priorität):**
 1. **Waveshare ESP32-S3-POE-ETH-8DI-8RO bestellen** (Waveshare-Shop, AliExpress oder Amazon)

@@ -134,14 +134,14 @@ pr_x = sic_x + (gw-20) + gap
 box(pr_x, r1cy - gh/2, gw, gh, fill=HexColor("#FFEBEE"), stroke=COL_24V, sw=1.5)
 text("Verteiler", pr_x + gw/2, r1cy + 18, size=10, bold=True)
 text("+24 V", pr_x + gw/2, r1cy + 4, size=12, bold=True, color=COL_24V)
-text("WAGO 2009-305", pr_x + gw/2, r1cy - 14, size=7, color=grey)
+text("PTFIX 6/12X2,5", pr_x + gw/2, r1cy - 14, size=7, color=grey)
 
 # PTFIX blau GND
 pb_x = pr_x + gw + gap
 box(pb_x, r1cy - gh/2, gw, gh, fill=HexColor("#E3F2FD"), stroke=COL_GND, sw=1.5)
 text("Verteiler", pb_x + gw/2, r1cy + 18, size=10, bold=True)
 text("GND (0 V)", pb_x + gw/2, r1cy + 4, size=12, bold=True, color=COL_GND)
-text("WAGO 2009-305", pb_x + gw/2, r1cy - 14, size=7, color=grey)
+text("PTFIX 6/12X2,5", pb_x + gw/2, r1cy - 14, size=7, color=grey)
 
 # Verbindungen Reihe 1
 # 230V von links oben in ABB
@@ -228,7 +228,7 @@ kbx = finder_pos["F4"][1] + 30
 kbw = 180
 kbh = fh
 box(kbx, r2cy - kbh/2, kbw, kbh, fill=HexColor("#F1F8E9"), stroke=COL_EXT, sw=1.5)
-text("10 × WAGO 2001-1671", kbx + kbw/2, r2cy + kbh/2 - 14, size=9, bold=True)
+text("10 × Phoenix PT 2,5", kbx + kbw/2, r2cy + kbh/2 - 14, size=9, bold=True)
 text("Trennklemmen", kbx + kbw/2, r2cy + kbh/2 - 26, size=8)
 # Klemmen darstellen
 for k in range(10):
