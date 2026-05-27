@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Build outputs
+*.aux
+*.log
+*.out
+
+# ESPHome (later)
+.esphome/
+secrets.yaml
