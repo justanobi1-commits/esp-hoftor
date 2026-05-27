@@ -411,10 +411,20 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
 - [ ] Migration: Bestand abklemmen, neues System einklemmen
 
 ### Software
+
+**Plattform-Entscheidung:** **ESPHome** (vs Arduino SDK)
+- Begründung: Alle bestehenden ESPs (Polar-Gateway, S400-Waage, LED-Matrix) laufen mit ESPHome → konsistenter Stack
+- HA-Integration nativ (Discovery + API, Cover-Entity Standard-Component)
+- Web-Interface via `web_server` Component
+- OTA-Updates eingebaut
+- Arduino SDK wäre nur sinnvoll bei sehr custom Hardware-Logik (Hochgeschwindigkeits-Timing, Bare-Metal) — hier nicht nötig
+
+**Anforderungen Software:**
 - [ ] **ESPHome YAML** für Waveshare schreiben
   - 6 switch (Relais R1-R6)
   - 3 binary_sensor (DI1-DI3)
   - HA-Integration (cover.gate, sensor.gate_open, sensor.gate_closed, button.dauerauf)
+  - **Web-Interface (web_server Component)** — für lokale Steuerung am Tor ohne HA-Abhängigkeit
 - [ ] **Home Assistant Automationen**
   - Dauerauf-Logik: Taster gedrückt + Tor offen → R4 dauerhaft halten bis erneut gedrückt oder Tor schließen-Befehl
   - LED-Blink-Logik: Wenn Dauerauf-Taster gedrückt aber Tor nicht offen → R6 (LED rot) 5× blinken
