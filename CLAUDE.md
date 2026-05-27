@@ -425,6 +425,14 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
   - 3 binary_sensor (DI1-DI3)
   - HA-Integration (cover.gate, sensor.gate_open, sensor.gate_closed, button.dauerauf)
   - **Web-Interface (web_server Component)** — für lokale Steuerung am Tor ohne HA-Abhängigkeit
+  - **Einstellbare Parameter via `number` Component:**
+    - Auto-Close-Zeit (Tor offen → schließen nach x Sekunden)
+    - Close-bei-Unbekannt-Zeit (Tor hängt → Sicherheits-Close, Default 90s)
+    - ggf. Impuls-Dauer, LED-Blink-Anzahl, etc.
+  - **Auto-Close-Logik:**
+    - **Standard Auto-Close**: Tor offen → nach x Sekunden Close-Befehl
+    - **Notfall Auto-Close bei unbekanntem Status**: Wenn DI1=0 UND DI2=0 für länger als Schwelle (z.B. 90s), Close-Befehl. Verhindert dass Tor in Zwischenposition hängenbleibt. Default-Schwelle > typische Bewegungszeit + Puffer.
+  - **Countdown-Sensor** als `sensor` (Restzeit in Sekunden) für **HA-Dashboard-Anzeige** (im ESP-Web nicht zwingend)
 - [ ] **Home Assistant Automationen**
   - Dauerauf-Logik: Taster gedrückt + Tor offen → R4 dauerhaft halten bis erneut gedrückt oder Tor schließen-Befehl
   - LED-Blink-Logik: Wenn Dauerauf-Taster gedrückt aber Tor nicht offen → R6 (LED rot) 5× blinken
