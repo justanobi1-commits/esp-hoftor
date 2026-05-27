@@ -35,29 +35,32 @@ Dieses ESP-Projekt hat (geplante) HA-Berührungspunkte. Sobald in Betrieb, **auc
 - (CLIPFIX wird nicht für Klemmen-Blöcke gerechnet, da am ESP gebraucht)
 
 ```
-KLEMMEN (5 grau + 1 blau + 1 PE):
-   5× Phoenix 3209510   PT 2,5             (grau, normal — 4 für LED+Taster + 1 für 230V-L)
-   1× Phoenix 3209523   PT 2,5 BU          (blau, für N im 230V-Block)
-   1× Phoenix 3209536   PT 2,5-PE          (grün-gelb, für PE im 230V-Block)
+KLEMMEN:
+   4× Phoenix 3209510   PT 2,5             (grau, für Block C LED+Taster)
+   1× Phoenix 3210538   PT 2,5-PE/L/N      (3-Etagen-Klemme PE+L+N, für Block B 230V)
 
-ENDTEILE (Auffüllung bestehender Bestand):
-   1× Phoenix 3030417   D-ST 2,5           (Endplatte, ergänzt 2 → 3)
-   6× Phoenix 3022218   CLIPFIX 35         (Endhalter, 1 ist am ESP, 6 neue für 3 Klemmen-Blöcke = 7 total)
+ENDTEILE:
+   1× Phoenix 3211647   D-PT 2,5-3L        (Endplatte für die 3-Etagen-Klemme)
+   9× Phoenix 3022218   CLIPFIX 35         (Endhalter)
 
 PT 2,5 STECKBRÜCKE (LED-Block GND):
-   1× Phoenix 3036877   FBS 2-5 BU         (blau, GND-Brücke LED-Kathoden #3 ↔ #4)
+   1× Phoenix 3036877   FBS 2-5 BU         (blau, GND-Brücke LED-Kathoden)
 
-BESCHRIFTUNG (leer, für L/N/PE/LED/Taster):
-   1× Phoenix 1051003   ZB 5 UNBEDRUCKT
+BESCHRIFTUNG:
+   1× Phoenix 1051003   ZB 5 UNBEDRUCKT    (für PT-Klemmen Block C, leer zum Selbstbeschriften)
+   1× Phoenix          ZB 6 UNBEDRUCKT    (für RIF-0 F1-F8 Beschriftung)
 
-FBS-BRÜCKER FÜR RIF-0 (Pflicht):
+FBS-BRÜCKER FÜR RIF-0:
    1× Phoenix 3032198   FBS 10-6 BU        (blau, A2-GND-Sammelschiene aller 8 RIF-0)
    1× Phoenix 3030255   FBS 4-6            (rot, K11-+24V-Sammelschiene F7+F8+F3+F4)
 
-Gesamt: 8 Positionen, 20 Stück, ~25-30 € + Versand
+Gesamt: 9 Positionen, 19 Stück, ~25-30 € + Versand
 
-Hinweis: Im Notfall lassen sich Phoenix FBS-Brücker mit Seitenschneider kürzen
-(z.B. FBS 10-6 BU → FBS 5-6 BU), falls eine kleinere Polzahl gebraucht wird.
+Hinweise:
+- Block B 230V: 3-Etagen-Klemme PT 2,5-PE/L/N statt 3 Einzelklemmen (spart Platz, Norm-konform: PE intern grün-gelb markiert)
+- Bestand-Klemmen (2× grau aus Original-Bestellung): wandern in Block C
+- 2. D-ST 2,5 aus Bestand: wandert als Endplatte zu Block C
+- Im Notfall können FBS-Brücker mit Seitenschneider gekürzt werden
 ```
 
 **Nicht zu bestellen** — bereits im Bestand:
