@@ -433,6 +433,7 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
     - **Standard Auto-Close**: Tor offen → nach x Sekunden Close-Befehl
     - **Notfall Auto-Close bei unbekanntem Status**: Wenn DI1=0 UND DI2=0 für länger als Schwelle (z.B. 90s), Close-Befehl. Verhindert dass Tor in Zwischenposition hängenbleibt. Default-Schwelle > typische Bewegungszeit + Puffer.
   - **Countdown-Sensor** als `sensor` (Restzeit in Sekunden) für **HA-Dashboard-Anzeige** (im ESP-Web nicht zwingend)
+  - **Multi-HA-Zugriff**: ESP wird in BEIDE HA-Instanzen (DG-HA + zweite HA-Instanz) als ESPHome-Device direkt eingebunden. ESPHome-API ist multi-client-fähig (ab 2023.X) → beide HAs sehen gleiche Entitäten, Latenz minimal, gleichberechtigt. Encryption Key aus `secrets.yaml` in beiden HA-Konfigs eintragen.
 - [ ] **Home Assistant Automationen**
   - Dauerauf-Logik: Taster gedrückt + Tor offen → R4 dauerhaft halten bis erneut gedrückt oder Tor schließen-Befehl
   - LED-Blink-Logik: Wenn Dauerauf-Taster gedrückt aber Tor nicht offen → R6 (LED rot) 5× blinken
