@@ -433,7 +433,16 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
     - **Standard Auto-Close**: Tor offen → nach x Sekunden Close-Befehl
     - **Notfall Auto-Close bei unbekanntem Status**: Wenn DI1=0 UND DI2=0 für länger als Schwelle (z.B. 90s), Close-Befehl. Verhindert dass Tor in Zwischenposition hängenbleibt. Default-Schwelle > typische Bewegungszeit + Puffer.
   - **Countdown-Sensor** als `sensor` (Restzeit in Sekunden) für **HA-Dashboard-Anzeige** (im ESP-Web nicht zwingend)
-  - **Multi-HA-Zugriff**: ESP wird in BEIDE HA-Instanzen (DG-HA + zweite HA-Instanz) als ESPHome-Device direkt eingebunden. ESPHome-API ist multi-client-fähig (ab 2023.X) → beide HAs sehen gleiche Entitäten, Latenz minimal, gleichberechtigt. Encryption Key aus `secrets.yaml` in beiden HA-Konfigs eintragen.
+  - **Multi-HA-Zugriff (KORRIGIERT):** Trotz ESPHome Multi-Client-Fähigkeit ab 2023.X hat User Erfahrung mit Reboot-Schleifen bei 2 parallelen API-Verbindungen (Garagentor-ESPs). → **Empfohlene Lösung: Master-Slave mit remote_homeassistant**
+    - HA #1 (DG-HA, Master): bindet ESP direkt via ESPHome-Integration
+    - HA #2 (zweite Instanz, Slave): nutzt **remote_homeassistant** (HACS, lukas-hetzenecker) → spiegelt Entitäten aus HA #1
+    - Filter: nur `cover.hoftor*`, `switch.hoftor*`, `sensor.hoftor*`, `number.hoftor*`
+    - Nur 1 stabile API-Verbindung zum ESP → keine Restart-Storms
+  - **ESPHome Stabilitäts-Settings:**
+    - `api: reboot_timeout: 0s` (wichtig! verhindert Reboots bei HA-Disconnect)
+    - `wifi/ethernet: reboot_timeout: 0s`
+    - `logger: level: INFO`, api.connection auf WARN
+    - encryption mit pre-shared key
 - [ ] **Home Assistant Automationen**
   - Dauerauf-Logik: Taster gedrückt + Tor offen → R4 dauerhaft halten bis erneut gedrückt oder Tor schließen-Befehl
   - LED-Blink-Logik: Wenn Dauerauf-Taster gedrückt aber Tor nicht offen → R6 (LED rot) 5× blinken
