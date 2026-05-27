@@ -36,11 +36,12 @@ Dieses ESP-Projekt hat (geplante) HA-Berührungspunkte. Sobald in Betrieb, **auc
 
 ```
 KLEMMEN:
-   4× Phoenix 3209510   PT 2,5             (grau, für Block C LED+Taster)
-   1× Phoenix 3213946   PTI 2,5-PE/L/NT    (Installations-3-Etagen-Klemme mit N-Trennfunktion, für Block B 230V)
+   5× Phoenix 3209510   PT 2,5             (grau, 4 für Block C LED+Taster + 1 Reserve oder L-Durchschleif)
+   2× Phoenix 3209523   PT 2,5 BU          (blau, N für 230V Block B — 1 Eingang + 1 Ausgang/Reserve)
+   1× Phoenix 3209536   PT 2,5-PE          (grün-gelb, PE für 230V Block B)
 
 ENDTEILE:
-   1× Phoenix 1016672   D-PTI 2,5          (Endplatte für PTI-Serie)
+   1× Phoenix 3030417   D-PT 2,5-MT        (Endplatte für Block C; Block B nutzt 2. D-ST 2,5 aus Restbestand)
    9× Phoenix 3022218   CLIPFIX 35         (Endhalter)
 
 PT 2,5 STECKBRÜCKE (LED-Block GND):
@@ -57,7 +58,7 @@ FBS-BRÜCKER FÜR RIF-0:
 Gesamt: 9 Positionen, 19 Stück, ~25-30 € + Versand
 
 Hinweise:
-- Block B 230V: **Installations-3-Etagen-Klemme PTI 2,5-PE/L/NT mit N-Trennfunktion** (3213946) statt 3 Einzelklemmen. Vorteile: spart Platz, Norm-konform (PE intern grün-gelb markiert), **N-Trenner für sichere Wartung**
+- Block B 230V: 3 Einzelklemmen (1× grau L + 2× blau N (1 Reserve oder N-Durchschleif) + 1× grün-gelb PE) — Lösung mit klaren Aderfarben pro Funktion, Norm-konform
 - Bestand-Klemmen (2× grau aus Original-Bestellung): wandern in Block C
 - 2. D-ST 2,5 aus Bestand: wandert als Endplatte zu Block C
 - Im Notfall können FBS-Brücker mit Seitenschneider gekürzt werden
