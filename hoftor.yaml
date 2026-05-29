@@ -1,4 +1,7 @@
 # ── Versionen ────────────────────────────────────────────────────
+# v0.15 |  2026-05-28        |  Fix Block-Revert: bei gesperrtem Halten sprang der Schalter im
+#         Web-UI nicht zurück (publish(false) war No-op bei schon-false Zustand → kein Update).
+#         Jetzt im Block-Fall true→false publishen → erzwingt State-Update → Schalter springt zurück.
 # v0.14 |  2026-05-28        |  **1-s-Puffer + Block-Logik + Info-Text je Bedienelement.**
 #         - Dauerauf/Fußgänger-Dauerauf AUS → Halte-Relais aus, dann nach 1 s Close
 #           (gemeinsames restart-Script `hold_close`; Wieder-EIN eines Haltens stoppt es).
@@ -193,6 +196,8 @@ switch:
             - logger.log:
                 level: INFO
                 format: "Dauerauf gesperrt — erst Fußgänger Dauerauf ausschalten"
+            # true→false erzwingt ein State-Update, sonst springt der Web-Schalter nicht zurück
+            - switch.template.publish: { id: dauerauf, state: true }
             - switch.template.publish: { id: dauerauf, state: false }
           else:
             - script.stop: hold_close
@@ -227,6 +232,8 @@ switch:
             - logger.log:
                 level: INFO
                 format: "Fußgänger Dauerauf gesperrt — erst Dauerauf ausschalten"
+            # true→false erzwingt ein State-Update, sonst springt der Web-Schalter nicht zurück
+            - switch.template.publish: { id: ped_halten, state: true }
             - switch.template.publish: { id: ped_halten, state: false }
           else:
             - script.stop: hold_close
