@@ -1,4 +1,6 @@
 # ── Versionen ────────────────────────────────────────────────────
+# v0.13 |  2026-05-28        |  Fix: Info-text_sensors hatten alle denselben Namen „ℹ️ Info"
+#         (ESPHome: Namen je Plattform müssen eindeutig sein) → jetzt „ℹ️ Info ChX/Diagnose".
 # v0.12 |  2026-05-28        |  Erklärungs-/Hilfetexte je Gruppe (text_sensor „ℹ️ Info",
 #         beim Boot einmalig gesetzt → kein Poll). Unten in jeder Kanal-/Diagnose-Karte.
 # v0.11 |  2026-05-28        |  Diagnose erweitert: Chip-Temperatur (internal_temperature, 60s),
@@ -442,31 +444,31 @@ text_sensor:
 
   # ── Erklärungs-/Hilfetexte je Gruppe (beim Boot gesetzt) ───────
   - platform: template
-    name: "ℹ️ Info"
+    name: "ℹ️ Info Ch1"
     id: st_info_ch1
     web_server:
       sorting_group_id: grp_ch1
       sorting_weight: 9
   - platform: template
-    name: "ℹ️ Info"
+    name: "ℹ️ Info Ch2"
     id: st_info_ch2
     web_server:
       sorting_group_id: grp_ch2
       sorting_weight: 9
   - platform: template
-    name: "ℹ️ Info"
+    name: "ℹ️ Info Ch3"
     id: st_info_ch3
     web_server:
       sorting_group_id: grp_ch3
       sorting_weight: 9
   - platform: template
-    name: "ℹ️ Info"
+    name: "ℹ️ Info Ch4"
     id: st_info_ch4
     web_server:
       sorting_group_id: grp_ch4
       sorting_weight: 9
   - platform: template
-    name: "ℹ️ Info"
+    name: "ℹ️ Info Diagnose"
     id: st_info_diag
     web_server:
       sorting_group_id: grp_diag
