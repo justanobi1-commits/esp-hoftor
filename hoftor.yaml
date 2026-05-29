@@ -1,27 +1,23 @@
 # ── Versionen ────────────────────────────────────────────────────
-# v0.13 |  2026-05-28        |  Fix: Info-text_sensors hatten alle denselben Namen „ℹ️ Info"
-#         (ESPHome: Namen je Plattform müssen eindeutig sein) → jetzt „ℹ️ Info ChX/Diagnose".
-# v0.12 |  2026-05-28        |  Erklärungs-/Hilfetexte je Gruppe (text_sensor „ℹ️ Info",
-#         beim Boot einmalig gesetzt → kein Poll). Unten in jeder Kanal-/Diagnose-Karte.
-# v0.11 |  2026-05-28        |  Diagnose erweitert: Chip-Temperatur (internal_temperature, 60s),
-#         ESPHome-Version (text_sensor version), Verbindungsstatus (binary_sensor status).
-# v0.10 |  2026-05-28        |  **Fix Log-Spam:** Status-Punkt nicht mehr per 250-ms-Poll,
-#         sondern EVENT-getrieben — r1-r4 publishen 🟢/🔴 nur bei tatsächlichem Schalten
-#         (on_turn_on/on_turn_off). Init via on_boot (alle 🔴 aus). Kein dauerndes Re-Publish.
-# v0.9  |  2026-05-28        |  Status-Anzeige je Kanal (Emoji 🟢/🔴) — ABER 250-ms-Poll = Spam (→ v0.10).
-# v0.8  |  2026-05-28        |  Button-Sperren bei aktivem Halten + Rename Ch4.
-# v0.7  |  2026-05-28        |  Buttons (fix 1 s Impuls) + Dauerauf/Ped-halten + Auto-Schließen.
-# v0.6  |  2026-05-28        |  LCARS-Farben via css_include (hoftor_lcars.css).
-# v0.5  |  2026-05-28        |  Icons je Kanal.
-# v0.4  |  2026-05-28        |  web_server v3 + Gruppen pro Kanal.
-# v0.3  |  2026-05-28        |  Lesbarer Bedien-Log (INFO).
-# v0.2  |  2026-05-28        |  4 Kanäle (R1-R4 via PCA9554@0x20).
-# v0.1  |  2026-05-28        |  Grundgerüst: Ethernet (W5500), API, OTA, web_server.
+# v0.14 |  2026-05-28        |  **1-s-Puffer + Block-Logik + Info-Text je Bedienelement.**
+#         - Dauerauf/Fußgänger-Dauerauf AUS → Halte-Relais aus, dann nach 1 s Close
+#           (gemeinsames restart-Script `hold_close`; Wieder-EIN eines Haltens stoppt es).
+#         - Halte-Verriegelung = BLOCKIEREN statt Umschalten: ist ein Dauerauf aktiv, lässt
+#           sich der andere nicht einschalten (Versuch → abgelehnt + Log, Schalter springt zurück).
+#           Holds sind jetzt optimistic:false + explizites publish; g_switching entfernt.
+#         - Je Bedienelement ein eigener „ℹ️"-Info-text_sensor direkt darunter (sorting_weight
+#           = Control gerade / Info ungerade). Texte beim Boot gesetzt. Diagnose = 1 Sammeltext.
+# v0.13 |  2026-05-28        |  Fix: eindeutige Namen für Info-text_sensors.
+# v0.12 |  2026-05-28        |  Erklärungs-/Hilfetexte je Gruppe.
+# v0.11 |  2026-05-28        |  Diagnose: Chip-Temp, ESPHome-Version, Verbindungsstatus.
+# v0.10 |  2026-05-28        |  Fix Log-Spam: Status event-getrieben.
+# v0.7-0.9 |  2026-05-28     |  Buttons (1 s Impuls), Dauerauf/Ped-halten, Auto-Schließen, Sperren, LCARS v3, Status-Punkte.
+# v0.1-0.6 |  2026-05-28     |  Grundgerüst Ethernet/API/OTA, 4 Kanäle, web_server v3, Icons, LCARS.
 # ─────────────────────────────────────────────────────────────────
 #
 #  Hoftor-Steuerung — Waveshare ESP32-S3-POE-ETH-8DI-8RO
 #  BFT Thalia BT A80/A160 + EBD.  Doku: esp/hoftor/CLAUDE.md
-#  Relais-Mapping: r1=Open(BFT65) r2=Close(BFT62) r3=Schritt(BFT64) r4=Ped(BFT61, IC=6 Timer Ped)
+#  Relais: r1=Open(BFT65) r2=Close(BFT62) r3=Schritt(BFT64) r4=Ped(BFT61, IC=6 Timer Ped)
 #  TCA aus → ESP schließt aktiv.  ⚠️ Erst-Flash USB-C, danach OTA.  Ethernet XOR WiFi.
 
 esphome:
@@ -30,25 +26,54 @@ esphome:
   on_boot:
     priority: -100
     then:
+      # Status-Punkte initialisieren
       - text_sensor.template.publish: { id: st_r1, state: "🔴 aus" }
       - text_sensor.template.publish: { id: st_r2, state: "🔴 aus" }
       - text_sensor.template.publish: { id: st_r3, state: "🔴 aus" }
       - text_sensor.template.publish: { id: st_r4, state: "🔴 aus" }
+      # Halte-Schalter (optimistic:false) auf AUS setzen
+      - switch.template.publish: { id: dauerauf, state: false }
+      - switch.template.publish: { id: ped_halten, state: false }
+      # Info-Texte je Bedienelement
       - text_sensor.template.publish:
-          id: st_info_ch1
-          state: "Öffnen: 1-s-Impuls (Tor auf). Dauerauf: hält offen, AUS schließt aktiv. Auto-Schließ-Zeit: 0=aus, sonst Close nach X s. Punkt: 🟢=an / 🔴=aus."
+          id: i_r1
+          state: "Grünes Symbol: aktiv · rotes Symbol: Ruhezustand."
       - text_sensor.template.publish:
-          id: st_info_ch2
-          state: "Schließen: 1-s-Impuls (Tor zu)."
+          id: i_open
+          state: "Öffnet beide Torflügel."
       - text_sensor.template.publish:
-          id: st_info_ch3
-          state: "1-s-Impuls, Schritt — jeder Druck: auf → stopp → zu."
+          id: i_dauer
+          state: "Öffnet beide Torflügel und hält diese offen, bis deaktiviert."
       - text_sensor.template.publish:
-          id: st_info_ch4
-          state: "Fußgänger: öffnet nur EINEN Flügel. Fußgänger Dauerauf: hält diesen offen. „Öffnen“ (Ch1-Button od. Funk) öffnet dabei das GANZE Tor (beide Flügel, Auto kann durch) → danach autom. zurück auf Fußgänger. Auto-Schließ-Zeit: 0=aus."
+          id: i_ac1
+          state: "Tor schließt automatisch nach der eingestellten Zeit (0 = aus)."
       - text_sensor.template.publish:
-          id: st_info_diag
-          state: "Verbindung zu HA, Laufzeit, Chip-Temp, IP/MAC, Firmware."
+          id: i_r2
+          state: "Grünes Symbol: aktiv · rotes Symbol: Ruhezustand."
+      - text_sensor.template.publish:
+          id: i_close
+          state: "Schließt beide Torflügel."
+      - text_sensor.template.publish:
+          id: i_r3
+          state: "Grünes Symbol: aktiv · rotes Symbol: Ruhezustand."
+      - text_sensor.template.publish:
+          id: i_step
+          state: "Jeder Druck wechselt: öffnen → stoppen → schließen."
+      - text_sensor.template.publish:
+          id: i_r4
+          state: "Grünes Symbol: aktiv · rotes Symbol: Ruhezustand."
+      - text_sensor.template.publish:
+          id: i_ped
+          state: "Öffnet nur einen Torflügel."
+      - text_sensor.template.publish:
+          id: i_pedhold
+          state: "Öffnet einen Torflügel und hält ihn offen, bis deaktiviert. „Öffnen“ bleibt möglich — das Tor fährt danach wieder in die Fußgänger-Position zurück."
+      - text_sensor.template.publish:
+          id: i_ac4
+          state: "Tor schließt automatisch nach der eingestellten Zeit (0 = aus)."
+      - text_sensor.template.publish:
+          id: i_diag
+          state: "Geräte-Status und Netzwerk-Infos."
 
 esp32:
   board: esp32-s3-devkitc-1
@@ -108,12 +133,6 @@ pca9554:
   - id: relay_hub
     address: 0x20
 
-globals:
-  - id: g_switching
-    type: bool
-    restore_value: no
-    initial_value: 'false'
-
 # ── Interne Relais (PCA9554 Pin 0-3) — publishen Status bei Schaltvorgang ─
 switch:
   - platform: gpio
@@ -157,63 +176,73 @@ switch:
     on_turn_off:
       - text_sensor.template.publish: { id: st_r4, state: "🔴 aus" }
 
-  # ── Dauerauf (hält r1 = Open) ──────────────────────────────────
+  # ── Dauerauf (hält r1) — blockiert wenn Fußgänger Dauerauf aktiv ─
   - platform: template
     name: "Ch1 — Dauerauf"
     id: dauerauf
     icon: "mdi:gate-open"
-    optimistic: true
+    optimistic: false
     web_server:
       sorting_group_id: grp_ch1
-      sorting_weight: 2
+      sorting_weight: 4
     turn_on_action:
-      - lambda: 'id(g_switching) = true;'
-      - switch.turn_off: ped_halten
-      - lambda: 'id(g_switching) = false;'
-      - script.stop: autoclose_open
-      - logger.log:
-          level: INFO
-          format: "Dauerauf EIN → Tor offen halten (r1 dauerhaft)"
-      - switch.turn_on: r1
-    turn_off_action:
-      - switch.turn_off: r1
       - if:
           condition:
-            lambda: 'return !id(g_switching);'
+            switch.is_on: ped_halten
           then:
             - logger.log:
                 level: INFO
-                format: "Dauerauf AUS → aktiv schließen (Close-Impuls)"
-            - script.execute: pulse_close
+                format: "Dauerauf gesperrt — erst Fußgänger Dauerauf ausschalten"
+            - switch.template.publish: { id: dauerauf, state: false }
+          else:
+            - script.stop: hold_close
+            - script.stop: autoclose_open
+            - logger.log:
+                level: INFO
+                format: "Dauerauf EIN → Tor offen halten (r1 dauerhaft)"
+            - switch.turn_on: r1
+            - switch.template.publish: { id: dauerauf, state: true }
+    turn_off_action:
+      - switch.turn_off: r1
+      - switch.template.publish: { id: dauerauf, state: false }
+      - logger.log:
+          level: INFO
+          format: "Dauerauf AUS → Close in 1 s"
+      - script.execute: hold_close
 
-  # ── Fußgänger Dauerauf (hält r4 = Ped) — BFT-Klemme 61 = IC=6 Timer Ped ─
+  # ── Fußgänger Dauerauf (hält r4) — blockiert wenn Dauerauf aktiv ─
   - platform: template
     name: "Ch4 — Fußgänger Dauerauf"
     id: ped_halten
     icon: "mdi:walk"
-    optimistic: true
+    optimistic: false
     web_server:
       sorting_group_id: grp_ch4
-      sorting_weight: 2
+      sorting_weight: 4
     turn_on_action:
-      - lambda: 'id(g_switching) = true;'
-      - switch.turn_off: dauerauf
-      - lambda: 'id(g_switching) = false;'
-      - script.stop: autoclose_ped
-      - logger.log:
-          level: INFO
-          format: "Fußgänger Dauerauf EIN → ein Flügel offen halten (r4 dauerhaft)"
-      - switch.turn_on: r4
-    turn_off_action:
-      - switch.turn_off: r4
       - if:
           condition:
-            lambda: 'return !id(g_switching);'
+            switch.is_on: dauerauf
           then:
             - logger.log:
                 level: INFO
-                format: "Fußgänger Dauerauf AUS → aktiv schließen (Close-Impuls)"
-            - script.execute: pulse_close
+                format: "Fußgänger Dauerauf gesperrt — erst Dauerauf ausschalten"
+            - switch.template.publish: { id: ped_halten, state: false }
+          else:
+            - script.stop: hold_close
+            - script.stop: autoclose_ped
+            - logger.log:
+                level: INFO
+                format: "Fußgänger Dauerauf EIN → ein Flügel offen halten (r4 dauerhaft)"
+            - switch.turn_on: r4
+            - switch.template.publish: { id: ped_halten, state: true }
+    turn_off_action:
+      - switch.turn_off: r4
+      - switch.template.publish: { id: ped_halten, state: false }
+      - logger.log:
+          level: INFO
+          format: "Fußgänger Dauerauf AUS → Close in 1 s"
+      - script.execute: hold_close
 
 # ── Auto-Schließ-Zeiten (0 = aus) ────────────────────────────────
 number:
@@ -231,7 +260,7 @@ number:
     mode: box
     web_server:
       sorting_group_id: grp_ch1
-      sorting_weight: 3
+      sorting_weight: 6
   - platform: template
     name: "Ch4 — Auto-Schließ-Zeit"
     id: t_autoclose_ped
@@ -246,7 +275,7 @@ number:
     mode: box
     web_server:
       sorting_group_id: grp_ch4
-      sorting_weight: 3
+      sorting_weight: 6
 
 # ── Befehls-Buttons (fix 1 s Impuls) ─────────────────────────────
 button:
@@ -255,7 +284,7 @@ button:
     icon: "mdi:gate-open"
     web_server:
       sorting_group_id: grp_ch1
-      sorting_weight: 1
+      sorting_weight: 2
     on_press:
       - if:
           condition:
@@ -280,7 +309,7 @@ button:
     icon: "mdi:gate"
     web_server:
       sorting_group_id: grp_ch2
-      sorting_weight: 1
+      sorting_weight: 2
     on_press:
       - if:
           condition:
@@ -304,7 +333,7 @@ button:
     icon: "mdi:gate-arrow-right"
     web_server:
       sorting_group_id: grp_ch3
-      sorting_weight: 1
+      sorting_weight: 2
     on_press:
       - if:
           condition:
@@ -328,7 +357,7 @@ button:
     icon: "mdi:walk"
     web_server:
       sorting_group_id: grp_ch4
-      sorting_weight: 1
+      sorting_weight: 2
     on_press:
       - if:
           condition:
@@ -350,7 +379,7 @@ button:
                 level: INFO
                 format: "Ch4: Fußgänger gesperrt (Halten aktiv)"
 
-# ── Scripts: feste 1 s Impulse + Auto-Schließen ──────────────────
+# ── Scripts: feste 1 s Impulse + Auto-Schließen + Halten-Puffer ──
 script:
   - id: pulse_open
     mode: restart
@@ -377,6 +406,17 @@ script:
       - delay: 1s
       - switch.turn_off: r4
 
+  # 1-s-Puffer nach Dauerauf/Fußgänger-Dauerauf AUS → dann Close.
+  # restart: wird ein Halten innerhalb der 1 s wieder aktiviert, stoppt es den Puffer.
+  - id: hold_close
+    mode: restart
+    then:
+      - delay: 1s
+      - logger.log:
+          level: INFO
+          format: "Halten-Puffer (1 s) abgelaufen → Close"
+      - script.execute: pulse_close
+
   - id: autoclose_open
     mode: restart
     then:
@@ -400,105 +440,112 @@ binary_sensor:
     name: "Verbindung (API)"
     web_server:
       sorting_group_id: grp_diag
-      sorting_weight: 6
+      sorting_weight: 1
 
 sensor:
   - platform: uptime
     name: "Uptime"
     web_server:
       sorting_group_id: grp_diag
-      sorting_weight: 1
+      sorting_weight: 2
   - platform: internal_temperature
     name: "Chip-Temperatur"
     update_interval: 60s
     web_server:
       sorting_group_id: grp_diag
-      sorting_weight: 4
+      sorting_weight: 3
 
 text_sensor:
-  # ── Status-Punkt je Kanal (event-getrieben, kein Poll) ─────────
+  # ── Status-Punkte je Kanal (w0) + Info-Texte (w ungerade, direkt darunter) ──
   - platform: template
     name: "Ch1 — Relais"
     id: st_r1
-    web_server:
-      sorting_group_id: grp_ch1
-      sorting_weight: 0
+    web_server: { sorting_group_id: grp_ch1, sorting_weight: 0 }
+  - platform: template
+    name: "ℹ️ Relais Ch1"
+    id: i_r1
+    web_server: { sorting_group_id: grp_ch1, sorting_weight: 1 }
+  - platform: template
+    name: "ℹ️ Öffnen"
+    id: i_open
+    web_server: { sorting_group_id: grp_ch1, sorting_weight: 3 }
+  - platform: template
+    name: "ℹ️ Dauerauf"
+    id: i_dauer
+    web_server: { sorting_group_id: grp_ch1, sorting_weight: 5 }
+  - platform: template
+    name: "ℹ️ Auto-Schließ-Zeit Ch1"
+    id: i_ac1
+    web_server: { sorting_group_id: grp_ch1, sorting_weight: 7 }
+
   - platform: template
     name: "Ch2 — Relais"
     id: st_r2
-    web_server:
-      sorting_group_id: grp_ch2
-      sorting_weight: 0
+    web_server: { sorting_group_id: grp_ch2, sorting_weight: 0 }
+  - platform: template
+    name: "ℹ️ Relais Ch2"
+    id: i_r2
+    web_server: { sorting_group_id: grp_ch2, sorting_weight: 1 }
+  - platform: template
+    name: "ℹ️ Schließen"
+    id: i_close
+    web_server: { sorting_group_id: grp_ch2, sorting_weight: 3 }
+
   - platform: template
     name: "Ch3 — Relais"
     id: st_r3
-    web_server:
-      sorting_group_id: grp_ch3
-      sorting_weight: 0
+    web_server: { sorting_group_id: grp_ch3, sorting_weight: 0 }
+  - platform: template
+    name: "ℹ️ Relais Ch3"
+    id: i_r3
+    web_server: { sorting_group_id: grp_ch3, sorting_weight: 1 }
+  - platform: template
+    name: "ℹ️ auf-stopp-zu"
+    id: i_step
+    web_server: { sorting_group_id: grp_ch3, sorting_weight: 3 }
+
   - platform: template
     name: "Ch4 — Relais"
     id: st_r4
-    web_server:
-      sorting_group_id: grp_ch4
-      sorting_weight: 0
+    web_server: { sorting_group_id: grp_ch4, sorting_weight: 0 }
+  - platform: template
+    name: "ℹ️ Relais Ch4"
+    id: i_r4
+    web_server: { sorting_group_id: grp_ch4, sorting_weight: 1 }
+  - platform: template
+    name: "ℹ️ Fußgänger"
+    id: i_ped
+    web_server: { sorting_group_id: grp_ch4, sorting_weight: 3 }
+  - platform: template
+    name: "ℹ️ Fußgänger Dauerauf"
+    id: i_pedhold
+    web_server: { sorting_group_id: grp_ch4, sorting_weight: 5 }
+  - platform: template
+    name: "ℹ️ Auto-Schließ-Zeit Ch4"
+    id: i_ac4
+    web_server: { sorting_group_id: grp_ch4, sorting_weight: 7 }
 
-  # ── Erklärungs-/Hilfetexte je Gruppe (beim Boot gesetzt) ───────
+  # ── Diagnose ───────────────────────────────────────────────────
   - platform: template
-    name: "ℹ️ Info Ch1"
-    id: st_info_ch1
-    web_server:
-      sorting_group_id: grp_ch1
-      sorting_weight: 9
-  - platform: template
-    name: "ℹ️ Info Ch2"
-    id: st_info_ch2
-    web_server:
-      sorting_group_id: grp_ch2
-      sorting_weight: 9
-  - platform: template
-    name: "ℹ️ Info Ch3"
-    id: st_info_ch3
-    web_server:
-      sorting_group_id: grp_ch3
-      sorting_weight: 9
-  - platform: template
-    name: "ℹ️ Info Ch4"
-    id: st_info_ch4
-    web_server:
-      sorting_group_id: grp_ch4
-      sorting_weight: 9
-  - platform: template
-    name: "ℹ️ Info Diagnose"
-    id: st_info_diag
-    web_server:
-      sorting_group_id: grp_diag
-      sorting_weight: 9
-
+    name: "ℹ️ Diagnose"
+    id: i_diag
+    web_server: { sorting_group_id: grp_diag, sorting_weight: 0 }
+  - platform: version
+    name: "ESPHome-Version"
+    web_server: { sorting_group_id: grp_diag, sorting_weight: 6 }
   - platform: ethernet_info
     ip_address:
       name: "IP-Adresse"
-      web_server:
-        sorting_group_id: grp_diag
-        sorting_weight: 2
+      web_server: { sorting_group_id: grp_diag, sorting_weight: 4 }
     mac_address:
       name: "MAC-Adresse"
-      web_server:
-        sorting_group_id: grp_diag
-        sorting_weight: 3
-
-  - platform: version
-    name: "ESPHome-Version"
-    web_server:
-      sorting_group_id: grp_diag
-      sorting_weight: 5
+      web_server: { sorting_group_id: grp_diag, sorting_weight: 5 }
 
 # ─────────────────────────────────────────────────────────────────
 #  TODO (nächste Schritte):
 #   - 8× binary_sensor an GPIO4..GPIO11 (INPUT_PULLUP, inverted) → DI1-DI8
-#     (DI1 Status Tor offen, DI2 Status Tor zu, DI3 Taster) — mit Log + Gruppe
 #   - Zustand NUR aus DI ableiten (Funk-Befehle sieht der ESP nicht!) → HT11
 #   - Auto-Schließ-Trigger von Button auf DI1 „Tor offen erreicht" umstellen
-#   - Ped-Status-Logik (Status-Problem, siehe CLAUDE.md)
 #   - cover.hoftor (HA-seitig, Keller) + Relais R5/R6 (LEDs F7/F8)
 #  Mapping siehe CLAUDE.md §5.
 # ─────────────────────────────────────────────────────────────────

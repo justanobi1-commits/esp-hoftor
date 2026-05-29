@@ -1,20 +1,20 @@
 # Hoftor-Steuerung — Umbau Shelly → ESP
 
-**Version:** 2.2
+**Version:** 2.3
 **Stand:** 28-05-2026 abends
-**Status:** Hardware großteils da; Aufbau im FIBOX ab Freitag (Anhängerkabel + TWIN-Klemmen). **ESPHome `hoftor.yaml` bis v0.12 gebaut** — Doku-Repo + Server `\\192.168.210.11\config\esphome\hoftor.yaml` synchron, dazu `hoftor_lcars.css`.
+**Status:** Hardware großteils da; Aufbau im FIBOX ab Freitag (Anhängerkabel + TWIN-Klemmen). **ESPHome `hoftor.yaml` bis v0.14 gebaut** — Doku-Repo + Server `\\192.168.210.11\config\esphome\hoftor.yaml` synchron, dazu `hoftor_lcars.css`.
 
 **Implementiert (v0.12):**
 - Ethernet **W5500/PoE** + native API (Noise) + OTA; `reboot_timeout: 0s`.
 - **web_server v3** — Karten/Gruppen je Kanal, **LCARS-Farben** via `css_include: hoftor_lcars.css`, Live-Log.
 - **PCA9554 @ 0x20** → 4 interne Relais r1-r4 = Open(BFT65)/Close(BFT62)/Schritt(BFT64)/Ped(BFT61).
 - Befehle als **Buttons** (fix **1 s** Impuls, pulse_*-Scripts).
-- **Dauerauf** (hält r1) + **Fußgänger Dauerauf** (hält r4) — gegenseitig verriegelt, AUS = aktiv Close-Impuls.
+- **Dauerauf** (hält r1) + **Fußgänger Dauerauf** (hält r4) — **AUS = nach 1 s Close** (`hold_close`-Puffer, abbrechbar). **Verriegelung = blockieren** (v0.14): aktiver Hold sperrt den anderen, bis bewusst aus → nie 2 Relais gleichzeitig. Holds `optimistic:false` + explizites publish.
 - **Auto-Schließ-Zeit** je Ch1/Ch4 (0=aus, sonst ESP sendet nach X s Close; Trigger v1 = Button, v2 = DI1).
 - **Button-Sperren** bei aktivem Halten (Öffnen bleibt bei Fußgänger Dauerauf aktiv = IC=6-Feature), je mit Log.
 - **Status-Punkt** je Kanal (🟢 angezogen / 🔴 aus, event-getrieben via r1-r4 on_turn_on/off, kein Poll).
 - **Diagnose:** Verbindung(API), Uptime, Chip-Temperatur, IP/MAC, ESPHome-Version.
-- **ℹ️ Info-Texte** je Gruppe (beim Boot gesetzt).
+- **ℹ️ Info-Texte je Bedienelement** (direkt darunter, interleaved sorting_weight; beim Boot gesetzt). Diagnose = 1 Sammeltext.
 
 **Entscheidungen fix (28-05):** TCA **aus** (ESP schließt aktiv) · Ped-Kanal = **IC=6 Timer Ped** · ESP sieht **keine Funk-Befehle** → Zustand kommt aus DI · Dauer-Zu verworfen.
 
