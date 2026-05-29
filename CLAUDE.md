@@ -210,8 +210,12 @@ AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nu
 - **1× Phoenix ZB 5 Zahlen 1-10** (Art. **1050025**) — Beschriftungsstreifen vorgedruckt
 
 ### ESP-Steuerung
-- **Waveshare ESP32-S3-POE-ETH-8DI-8RO** — 10 TE, PoE-versorgt, 8 Relais + 8 isolierte DI
-- Versorgung: **PoE primär** (Cat-Kabel zum PoE-Switch); 24V VIN als Backup-Option
+- **Waveshare ESP32-S3-POE-ETH-8DI-8RO** — 10 TE, 8 Relais + 8 isolierte DI
+- **Versorgung: 24V VIN vom DEWIN PSU** (Schraubklemme 7-36V) — nutzt vorhandenes Netzteil, kein PoE-Switch nötig
+  - Strombedarf ESP-Board ~125-210 mA @ 24V, Gesamtlast 24V-Seite worst-case ~365 mA → PSU 1,5A reicht mit Faktor 4 Reserve
+- **Ethernet-Port (RJ45) für Daten weiterhin nutzbar** — normaler Switch (kein PoE), normales Patchkabel. PoE ist nur Strom-Option, Daten funktionieren unabhängig.
+- ⚠️ **NIEMALS VIN + PoE gleichzeitig** (Board-Schaden). Bei VIN-Versorgung: Ethernet an Nicht-PoE-Switch oder PoE am Switch-Port deaktivieren.
+- Alternative bleibt: reines PoE (Strom + Daten über 1 Kabel) falls PoE-Switch vorhanden — dann VIN NICHT anschließen
 
 ### Kabel
 - **Anhängerkabel 13×0,5 mm²** (5 m, Amazon) — Strecke Tor ↔ Verteiler-Klemmen, < 1 m in trockenem Schuppen
