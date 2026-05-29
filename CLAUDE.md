@@ -39,6 +39,7 @@ Dieses ESP-Projekt hat (geplante) HA-Berührungspunkte. Sobald in Betrieb, **auc
 | **Amazon (priz24)** | 2× Phoenix PT 2,5-TWIN (Art. **3209549**, je 9,06 €) | unterwegs, Eintreffen 27.-28.5. ⏳ |
 | **ETUKER Anhängerkabel 13×0,5** (5 m, 24,46 €) | Tor-↔-Verteiler + Innenverdrahtung mit durchgehender Farbe | bestellt, Eintreffen **Freitag 29-05-2026** ⏳ |
 | **FBS-Brücker für RIF-0** | A2-Sammelschiene GND + K11-Sammelschiene +24V + Reserve grau | **noch zu bestellen** ⏳ |
+| **Phoenix PT 4-HESILED 24** (3211903) + 2× D-ST 4 (3030420) | 1 + 2 | **HESI-Nachbestellung** (ersetzt generischen Halter) |
 | **Glassicherung 2 A T 5×20** | 2–3 Stk | im Bestand vorhanden |
 | **Aderendhülsen 0,5 mm²** | bei Bedarf | im Bestand vorhanden |
 | **H07V-K 0,5 mm²** | rot/blau/schwarz/grau/grün/gelb je 15 m | im Bestand vorhanden |
@@ -187,7 +188,9 @@ AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nu
 - **230V Zuleitung** → 2. Verteilung am Schuppen
 - **ABB Ausschalter** (1 TE) — Hand-Trennstelle, bestehend
 - **DEWIN 24V/1,5A/36W Hutschienen-Netzteil** (~2 TE) — bestehend
-- **Hutschienen-Glassicherungshalter** (1 TE) + **Glassicherung 2A T 5×20** — bestehend; Reserve-Sicherungen 2× im Bestand
+- **Phoenix PT 4-HESILED 24** (3211903, 6,2 mm) — Sicherungs-Reihenklemme mit **Durchbrenn-LED** (ersetzt generischen Glassicherungshalter) + **Glassicherung 2 A T 5×20** im Bestand
+  - Endkappen: **2× Phoenix D-ST 4** (3030420) — beidseitig, da HESI-Klemme allein zwischen anderen Bauformen steht. (D-ST 4 ist 36,5 mm hoch, deckt nur den unteren stromführenden Anschlussbereich — Sicherungshalter oben ist konstruktiv selbst isoliert, korrekt so)
+  - LED leuchtet bei durchgebrannter Sicherung + anliegender 24 V → Sofort-Diagnose
 - → liefert 24 V DC SELV
 
 ### Potentialverteilung 24V
@@ -507,7 +510,7 @@ Klemmen #1 (BFT 60) und #4 (BFT 63) brauchen jeweils 2 Abgänge nach unten (zu 2
 User-Entscheidung: **eigenes Relais F6** behalten (statt nur in HA via "Open-Relais R1 dauerhaft halten"). Gründe: visuelle Diagnose, Klarheit, Trennung der Anwendungsfälle "öffnen Impuls" vs "Dauerauf gehalten".
 
 ### Absicherung 24V-Seite
-Trotz PSU mit Strombegrenzung wird eine **Glassicherung 2A T** (träge) im Hutschienen-Sicherungshalter zwischen PSU+ und PTFIX rot eingesetzt. Optional aber empfohlen für Service-Trennpunkt und Schutz bei Verdrahtungsfehlern.
+Trotz PSU mit Strombegrenzung wird eine **Glassicherung 2A T** (träge) in der **Phoenix PT 4-HESILED 24 Sicherungsklemme** zwischen PSU+ und PTFIX rot eingesetzt. Vorteil der HESI-Klemme: **LED zeigt durchgebrannte Sicherung an**. Service-Trennpunkt + Schutz bei Verdrahtungsfehlern + Sofort-Diagnose.
 
 ### Netzwerk: Ethernet XOR WiFi (verifiziert 28-05-2026)
 ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be used simultaneously, even if both are physically available"). Kein Fallback-Netz möglich. Für dieses Projekt ist **Ethernet/PoE die richtige Wahl** (Grund für den Umbau war der schlechte WLAN-Empfang am Tor). Konsequenz: Ein „nach Flash nicht mehr pingbar" ist i. d. R. ein korruptes/abgebrochenes Image (z. B. PoE-Wackler beim OTA), KEIN fehlender Netzweg — ein WiFi-Fallback würde das auch nicht retten. **Recovery = USB-C-Reflash** (Configs sicher). Beim OTA die Versorgung stabil halten; `safe_mode` fängt nur fehlerhafte App-Logik ab, nicht ein totes Image.
