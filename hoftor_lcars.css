@@ -1,0 +1,80 @@
+/* ───────────────────────────────────────────────────────────────
+   LCARS-Theme für Hoftor — ESP Web-Interface (web_server v3, HA-Styling)
+   Farbwerte aus dem DG-HA LCARS-Theme (Palette: thelcars.com)
+   v0.6 | 2026-05-28 | Erster Wurf — über HA-CSS-Variablen.
+   Hinweis: voller LCARS-„Elbow"-Look (card-mod) ist hier NICHT möglich,
+   nur die Farbgebung. Iterativ verfeinern.
+   ─────────────────────────────────────────────────────────────── */
+
+:root,
+html,
+body {
+  /* Akzent / Primär — LCARS-Orange */
+  --primary-color: #ff9900;
+  --accent-color: #ff7700;
+  --app-header-background-color: #ff7700;
+  --app-header-text-color: #000000;
+
+  /* Hintergründe */
+  --primary-background-color: #000000;
+  --secondary-background-color: #15151f;
+  --card-background-color: #15151f;
+  --ha-card-background: #15151f;
+  --paper-card-background-color: #15151f;
+
+  /* Text */
+  --primary-text-color: #ffcc99;     /* lcars-honey */
+  --secondary-text-color: #cc88ff;   /* lcars-african-violet */
+  --text-primary-color: #ffcc99;
+  --disabled-text-color: #666688;    /* lcars-gray */
+
+  /* Linien / Divider */
+  --divider-color: #3a3a55;
+
+  /* Schalter */
+  --switch-checked-color: #ff9900;
+  --switch-checked-track-color: #cc6600;
+  --switch-unchecked-color: #666688;
+  --switch-unchecked-track-color: #3a3a55;
+
+  /* Icons */
+  --paper-item-icon-color: #cc88ff;  /* Violett */
+  --state-icon-color: #aaaaff;       /* lcars-sky */
+
+  /* Material-Komponenten */
+  --mdc-theme-primary: #ff9900;
+  --mdc-theme-secondary: #cc33ff;    /* lcars-lilac */
+}
+
+body {
+  background-color: #000000;
+  color: #ffcc99;
+  font-family: Antonio, "Arial Narrow", "Segoe UI", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* Überschriften / Gruppen-Header in LCARS-Orange, Versalien */
+h1, h2, h3,
+.card-header,
+.group-header,
+[class*="header"] {
+  color: #ff9900 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Buttons / aktive Flächen */
+button,
+.btn,
+mwc-button {
+  --mdc-theme-primary: #ff9900;
+  color: #ff9900;
+}
+
+/* Log-Konsole dunkel mit hellem Text */
+pre,
+.log,
+#log {
+  background-color: #0a0a12 !important;
+  color: #aaffaa !important;
+}

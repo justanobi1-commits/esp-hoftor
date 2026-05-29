@@ -1,8 +1,24 @@
 # Hoftor-Steuerung — Umbau Shelly → ESP
 
-**Version:** 2.0
-**Stand:** 27-05-2026
-**Status:** ESP + automation24-Lieferung angekommen. Topologie final mit FBS-Brücker-Konzept. Aufbau ab Freitag möglich (Anhängerkabel + TWIN-Klemmen).
+**Version:** 2.2
+**Stand:** 28-05-2026 abends
+**Status:** Hardware großteils da; Aufbau im FIBOX ab Freitag (Anhängerkabel + TWIN-Klemmen). **ESPHome `hoftor.yaml` bis v0.12 gebaut** — Doku-Repo + Server `\\192.168.210.11\config\esphome\hoftor.yaml` synchron, dazu `hoftor_lcars.css`.
+
+**Implementiert (v0.12):**
+- Ethernet **W5500/PoE** + native API (Noise) + OTA; `reboot_timeout: 0s`.
+- **web_server v3** — Karten/Gruppen je Kanal, **LCARS-Farben** via `css_include: hoftor_lcars.css`, Live-Log.
+- **PCA9554 @ 0x20** → 4 interne Relais r1-r4 = Open(BFT65)/Close(BFT62)/Schritt(BFT64)/Ped(BFT61).
+- Befehle als **Buttons** (fix **1 s** Impuls, pulse_*-Scripts).
+- **Dauerauf** (hält r1) + **Fußgänger Dauerauf** (hält r4) — gegenseitig verriegelt, AUS = aktiv Close-Impuls.
+- **Auto-Schließ-Zeit** je Ch1/Ch4 (0=aus, sonst ESP sendet nach X s Close; Trigger v1 = Button, v2 = DI1).
+- **Button-Sperren** bei aktivem Halten (Öffnen bleibt bei Fußgänger Dauerauf aktiv = IC=6-Feature), je mit Log.
+- **Status-Punkt** je Kanal (🟢 angezogen / 🔴 aus, event-getrieben via r1-r4 on_turn_on/off, kein Poll).
+- **Diagnose:** Verbindung(API), Uptime, Chip-Temperatur, IP/MAC, ESPHome-Version.
+- **ℹ️ Info-Texte** je Gruppe (beim Boot gesetzt).
+
+**Entscheidungen fix (28-05):** TCA **aus** (ESP schließt aktiv) · Ped-Kanal = **IC=6 Timer Ped** · ESP sieht **keine Funk-Befehle** → Zustand kommt aus DI · Dauer-Zu verworfen.
+
+**Offen:** v0.12 flashen (ESP war zuletzt offline → ggf. USB-Recovery). Dann beim Verkabeln: i²C-Scan 0x20 + Relais physisch + **Polarität** (NC/COM/NO, COM+NO fail-safe) + **Boot-Verhalten** (Relais-Klick = kurzer Befehl?). Danach: 8× DI (GPIO4-11) + DI-Zustandslogik (HT11) + Auto-Schließ-Trigger auf DI1 + R5/R6 (LEDs F7/F8) + `cover.hoftor` (HA-seitig im Keller, read-only → Florian baut, Claude liefert Config). Schuppen-Klima **BME280** bestellt (HT14, bme280_i2c @ 0x76, eigene Gruppe).
 
 ## Cross-References (HA-Doku)
 
@@ -127,6 +143,29 @@ Gründe für Umbau:
 | 4 | Ped — partielle Fußgängeröffnung |
 | 5 | Timer — wie Open, aber Stromausfall-Sicherheit |
 | 6 | Timer Ped |
+
+### Ped / Fußgänger = nur EIN Flügel (im Handbuch verifiziert 28-05-2026)
+Quelle: Thalia-Handbuch S. 42/45/47/48. Jeder Steuereingang (Klemmen 61/62/64/65) ist frei auf eine der obigen Logiken stellbar.
+- **IC=4 „Ped"** = *partielle Fußgängeröffnung* → öffnet **nur Motor 1 / einen Flügel** (Funktionsweise gemäß IMPULSFOLGE/Schritt-Logik). Voraussetzung: Logik **„mOTOR" = 2** (zweiflügelig). Bei 1-Flügel-Setup macht Ped eine Teilöffnung in % desselben Flügels.
+- **Parameter `TEILOEFFN. M1 [%]`** (10–100 %, Default 100): wie weit Flügel 1 bei Ped aufgeht. Default 100 % = Flügel 1 ganz auf.
+- **Parameter `ped TCA [s]`** (0–120, Default 0): eigene Auto-Schließzeit NUR nach Fußgänger-Manöver (0 = wie normales TCA).
+- **IC=6 „Timer Ped"**: Fußgängeröffnung; Eingang gehalten → Flügel bleibt offen; wenn gehalten UND Open/Start kommt → volles Manöver, danach zurück zur Fußgängeröffnung; schließt auch nach Stromausfall.
+
+**Geplante Umnutzung (Option):** Klemme 61 (aktuell Open=Dauerauf, der „doppelte Open") → auf **Ped (4)** umstellen = „nur ein Flügel / Fußgänger". **Dauerauf** dann nicht mehr per eigenem Relais, sondern per **gehaltenem Open auf K1 (Klemme 65)** in ESP/HA-Logik. Folge am ESP: Kanal 4 „Dauerauf" → „Fußgänger / ein Flügel" umbenennen (+ Icon), Dauerauf-Halte-Logik auf K1.
+
+**⚠️ STATUS-LOGIK-PROBLEM bei Ped (Florian 28-05):** Tor-Status ist binär — AUX16 „Tor offen"→DI1, AUX13 „Tor zu"→DI2. Ped (ein Flügel) ist ein 3. Zustand. **Frage = was meldet AUX16 bei Ped?** MESSEN beim Test: schließt AUX16 schon „nicht-zu" (dann liest ESP „offen", kein Problem) ODER erst bei voll-offen (dann bei Ped **beide DI=0** = derselbe Zustand wie „fährt/Störung" in HT11 → Fehlalarm/ungewollter Close). Handbuch unklar.
+- **Lösung A (keine HW):** ESP-State-Machine — ESP weiß, dass er Ped kommandiert hat → „beide 0" = „Fußgänger offen". Nur zuverlässig, wenn Ped NICHT auch per Funk-Handsender ausgelöst wird (ESP sieht Funk nicht).
+- **Lösung B (robust, auch Funk):** 3. Statussignal **SCA** (BFT-AUX Logik 1 = Kontakt zu, sobald ein Flügel offen) → unterscheidet Ped sauber von Störung. Braucht freien EBD-AUX (z. B. 22/23) + Koppelrelais + freien DI — alles im Schuppen, keine Erdader.
+- **HT11 (Fehlererkennung) + HT12 (Auto-Close) müssen den Ped-Zustand kennen**, sonst Fehlauslösung bei Fußgänger-Stellung.
+
+### Grundsatz: ESP sieht keine Funk-Befehle (Florian 28-05)
+Die BFT wird auch per **Funk-Fernbedienung** bedient — diese Befehle gehen **direkt an die BFT, der ESP bekommt sie NICHT mit**. Der ESP erfährt eine Zustandsänderung **nur über die Status-DIs** (Tor offen/zu). **Konsequenzen:**
+- Die ESP-Button-**Sperren** (v0.8) betreffen nur die ESP-Buttons — sie können das Tor nicht „verriegeln" (Funk geht immer).
+- **Die Wahrheit über den Tor-Zustand kommt aus den DIs**, NICHT aus der ESP-Befehls-Historie. HT11-Zustandslogik daher rein DI-basiert (offen/zu/fährt/Störung), nicht aus „was hat der ESP gesendet".
+- **Entscheidungen fix 28-05:** TCA aus (ESP schließt aktiv), Ped-Kanal = IC=6 Timer Ped, Dauerauf/Fußgänger-Dauerauf via gehaltenem Relais.
+
+### AUX-Belegung (Quercheck Handbuch)
+AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nur mit EBD-Karte). Status-Logiken: **13 = Status Tor geschlossen**, **16 = Zustand offenes Tor**. Unsere Nutzung (24/25 = Tor offen, 26/27 = Tor zu) passt dazu.
 
 ## 3. Aktueller Aufbau (Bestand)
 
@@ -435,6 +474,7 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
   - **Countdown-Sensor** als `sensor` (Restzeit in Sekunden) für **HA-Dashboard-Anzeige** (im ESP-Web nicht zwingend)
   - **Multi-HA-Zugriff (Mehrmandanten-Architektur):**
     - **Master:** **HA Keller/Hof** — bindet alle Hof-Geräte (Tore, Garagen, Außenbeleuchtung) direkt. ESP Hoftor wird hier eingebunden via ESPHome-Integration.
+    - ⚠️ **Claude-Zugriff auf Keller = NUR LESEN** (Entscheidung 28-05-2026, siehe Memory `feedback_ha_instanzen_regeln.md`). Heißt: HA-seitige Einrichtung (Adoption, `cover.hoftor`, Dauerauf-/LED-Automationen, Labels/Area) macht **Florian selbst** im Keller-HA. **Claude liefert fertige Configs zum Einfügen, verifiziert lesend, dokumentiert.** Im DG-HA wird das Gerät NICHT adoptiert (keine Migration). ESP-YAML/OTA bleibt bei Claude (Builder/Repo, HA-unabhängig).
     - **Slaves:** HA Wohnung A + HA Wohnung B (Wohnungs-HAs) — spiegeln Hoftor-Entitäten via bestehender remote_homeassistant
     - **Privacy:** Wohnungs-HAs haben **keinen Zugriff untereinander**, nur lesend/schreibend auf gefilterten Master-Bestand
     - Filter pro Slave erweitern: `cover.hoftor*`, `switch.hoftor*`, `sensor.hoftor*`, `number.hoftor*`, `binary_sensor.hoftor*`
@@ -468,6 +508,9 @@ User-Entscheidung: **eigenes Relais F6** behalten (statt nur in HA via "Open-Rel
 
 ### Absicherung 24V-Seite
 Trotz PSU mit Strombegrenzung wird eine **Glassicherung 2A T** (träge) im Hutschienen-Sicherungshalter zwischen PSU+ und PTFIX rot eingesetzt. Optional aber empfohlen für Service-Trennpunkt und Schutz bei Verdrahtungsfehlern.
+
+### Netzwerk: Ethernet XOR WiFi (verifiziert 28-05-2026)
+ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be used simultaneously, even if both are physically available"). Kein Fallback-Netz möglich. Für dieses Projekt ist **Ethernet/PoE die richtige Wahl** (Grund für den Umbau war der schlechte WLAN-Empfang am Tor). Konsequenz: Ein „nach Flash nicht mehr pingbar" ist i. d. R. ein korruptes/abgebrochenes Image (z. B. PoE-Wackler beim OTA), KEIN fehlender Netzweg — ein WiFi-Fallback würde das auch nicht retten. **Recovery = USB-C-Reflash** (Configs sicher). Beim OTA die Versorgung stabil halten; `safe_mode` fängt nur fehlerhafte App-Logik ab, nicht ein totes Image.
 
 ## 10. Dateien & Referenzen
 
