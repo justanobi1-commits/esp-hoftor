@@ -211,11 +211,15 @@ AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nu
 
 ### ESP-Steuerung
 - **Waveshare ESP32-S3-POE-ETH-8DI-8RO** — 10 TE, 8 Relais + 8 isolierte DI
-- **Versorgung: 24V VIN vom DEWIN PSU** (Schraubklemme 7-36V) — nutzt vorhandenes Netzteil, kein PoE-Switch nötig
-  - Strombedarf ESP-Board ~125-210 mA @ 24V, Gesamtlast 24V-Seite worst-case ~365 mA → PSU 1,5A reicht mit Faktor 4 Reserve
-- **Ethernet-Port (RJ45) für Daten weiterhin nutzbar** — normaler Switch (kein PoE), normales Patchkabel. PoE ist nur Strom-Option, Daten funktionieren unabhängig.
-- ⚠️ **NIEMALS VIN + PoE gleichzeitig** (Board-Schaden). Bei VIN-Versorgung: Ethernet an Nicht-PoE-Switch oder PoE am Switch-Port deaktivieren.
-- Alternative bleibt: reines PoE (Strom + Daten über 1 Kabel) falls PoE-Switch vorhanden — dann VIN NICHT anschließen
+- **Versorgung: PoE** (Strom + Daten über 1 Kabel vom vorhandenen PoE-Switch)
+  - **VIN-Schraubklemme bleibt FREI** — kein 24V vom PSU an den ESP
+  - **Begründung:** PoE-Switch + PoE-fähiges Board → würde man zusätzlich VIN anschließen, besteht reales Risiko dass VIN + PoE zusammentreffen (Umstöpseln, Port-Reset). Ob das Board VIN+PoE sicher ORt, ist NICHT im Datenblatt belegt. Daher: nur PoE, VIN gar nicht erst anschließen → Konflikt physisch ausgeschlossen.
+- **Galvanische Trennung (sauberste Architektur):**
+  - ESP-Logik-Versorgung: PoE
+  - 24V-Schaltkreis (RIF-0 Spulen, LEDs, DI-Schaltspannung): DEWIN PSU
+  - Verbindung ESP ↔ Schaltkreis nur über potentialfreie Relais-Kontakte + opto-isolierte DIs
+- **Strombilanz:** PoE 802.3af bis 15W → ESP ~3-5W ✅. DEWIN PSU ohne ESP-Last nur ~115mA → noch mehr Reserve ✅
+- Ethernet-Config in ESPHome identisch (W5500), egal welche Versorgung
 
 ### Kabel
 - **Anhängerkabel 13×0,5 mm²** (5 m, Amazon) — Strecke Tor ↔ Verteiler-Klemmen, < 1 m in trockenem Schuppen
