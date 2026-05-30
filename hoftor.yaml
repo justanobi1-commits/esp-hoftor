@@ -1,4 +1,11 @@
 # ── Versionen ────────────────────────────────────────────────────
+# v0.18 |  2026-05-29        |  **LED-Blink-Logik: 5×-Verweigerung + Fehler-Endlos-Blinken.**
+#         - Globale Variable g_fehler_aktiv (bool) als Steuerflag
+#         - Script blink_rot_5x: 5× rot 300 ms an / 300 ms aus, dann LED-Status-Refresh
+#         - Script blink_fehler_start: while g_fehler_aktiv → beide LEDs 500 ms an/aus
+#           (endet automatisch wenn Variable false → led_status_refresh)
+#         - Script led_status_refresh: stellt blau/rot anhand DI1/dauerauf/ped_halten her
+#         - 3 Test-Buttons in Diagnose-Gruppe (Phase-2-Trigger folgen)
 # v0.17 |  2026-05-29        |  **LED-Status-Logik (blau + rot, ohne Blink/Fehler).**
 #         - r5 (LED blau) auf PCA9554 Pin 4 — physisches Relais F7
 #         - r6 (LED rot)  auf PCA9554 Pin 5 — physisches Relais F8
@@ -455,6 +462,45 @@ button:
                 level: INFO
                 format: "Ch4: Fußgänger gesperrt (Halten aktiv)"
 
+  # ── Test-Buttons für LED-Blink-Patterns (Diagnose-Gruppe) ──────
+  - platform: template
+    name: "Test: LED rot 5× blinken"
+    icon: "mdi:lightbulb-alert"
+    web_server: { sorting_group_id: grp_diag, sorting_weight: 10 }
+    on_press:
+      - logger.log:
+          level: INFO
+          format: "Test: 5× rot-Blink ausgelöst"
+      - script.execute: blink_rot_5x
+
+  - platform: template
+    name: "Test: Fehler-Blinken EIN"
+    icon: "mdi:alert-circle"
+    web_server: { sorting_group_id: grp_diag, sorting_weight: 11 }
+    on_press:
+      - logger.log:
+          level: INFO
+          format: "Test: Fehler-Blinken EIN"
+      - lambda: 'id(g_fehler_aktiv) = true;'
+      - script.execute: blink_fehler_start
+
+  - platform: template
+    name: "Test: Fehler-Blinken AUS"
+    icon: "mdi:alert-circle-check"
+    web_server: { sorting_group_id: grp_diag, sorting_weight: 12 }
+    on_press:
+      - logger.log:
+          level: INFO
+          format: "Test: Fehler-Blinken AUS"
+      - lambda: 'id(g_fehler_aktiv) = false;'
+
+# ── Globale Variablen (Status-Flags für Logik) ──────────────────
+globals:
+  - id: g_fehler_aktiv
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
 # ── Scripts: feste 1 s Impulse + Auto-Schließen + Halten-Puffer ──
 script:
   - id: pulse_open
@@ -509,6 +555,72 @@ script:
           level: INFO
           format: "Ch4 (Ped): Auto-Schließ-Zeit abgelaufen → Close"
       - script.execute: pulse_close
+
+  # ── LED-Helper-Scripts (v0.18) ────────────────────────────────
+  # Stellt blau/rot anhand DI1 / dauerauf / ped_halten her.
+  # Wird nach Blink-Pattern aufgerufen, damit LEDs den korrekten Normalzustand zeigen.
+  - id: led_status_refresh
+    mode: single
+    then:
+      # LED blau: an wenn DI1=1, sonst aus
+      - if:
+          condition:
+            binary_sensor.is_on: di1_tor_offen
+          then:
+            - switch.turn_on: r5_led_blau
+          else:
+            - switch.turn_off: r5_led_blau
+      # LED rot: an wenn dauerauf ODER ped_halten, sonst aus
+      - if:
+          condition:
+            or:
+              - switch.is_on: dauerauf
+              - switch.is_on: ped_halten
+          then:
+            - switch.turn_on: r6_led_rot
+          else:
+            - switch.turn_off: r6_led_rot
+
+  # 5× LED rot blinken (300 ms an / 300 ms aus) → dann Normalstatus wiederherstellen
+  # Verwendung: bei Befehls-Verweigerung (Phase 2: Taster oder Schalter-Sperre)
+  - id: blink_rot_5x
+    mode: restart      # bei erneutem Aufruf von vorne starten
+    then:
+      - repeat:
+          count: 5
+          then:
+            - switch.turn_on: r6_led_rot
+            - delay: 300ms
+            - switch.turn_off: r6_led_rot
+            - delay: 300ms
+      - script.execute: led_status_refresh
+      - logger.log:
+          level: INFO
+          format: "LED rot 5× blinken beendet → Status refresh"
+
+  # Fehler-Endlos-Blinken beider LEDs (500 ms an / 500 ms aus)
+  # Solange g_fehler_aktiv == true → blinkt weiter.
+  # Stoppen: g_fehler_aktiv = false; script läuft max. 1 s zu Ende → refresh.
+  - id: blink_fehler_start
+    mode: restart
+    then:
+      - logger.log:
+          level: INFO
+          format: "Fehler-Blinken gestartet (beide LEDs)"
+      - while:
+          condition:
+            lambda: 'return id(g_fehler_aktiv);'
+          then:
+            - switch.turn_on: r5_led_blau
+            - switch.turn_on: r6_led_rot
+            - delay: 500ms
+            - switch.turn_off: r5_led_blau
+            - switch.turn_off: r6_led_rot
+            - delay: 500ms
+      - logger.log:
+          level: INFO
+          format: "Fehler-Blinken beendet → Status refresh"
+      - script.execute: led_status_refresh
 
 # ── Eingänge (DI1-DI8 an GPIO4-GPIO11, INPUT_PULLUP, inverted) ──
 # DI1 = Status Tor offen   (BFT 24 via Phoenix RIF-0 F3) → Auto-Close-Trigger
@@ -751,22 +863,20 @@ text_sensor:
       web_server: { sorting_group_id: grp_diag, sorting_weight: 5 }
 
 # ─────────────────────────────────────────────────────────────────
-#  ERLEDIGT bis v0.17:
+#  ERLEDIGT bis v0.18:
 #   ✓ v0.16: 8× binary_sensor DI1-DI8 (GPIO4-GPIO11, INPUT_PULLUP, inverted)
-#   ✓ v0.16: Auto-Schließ-Trigger Ch1 von Button auf DI1=high umgestellt (Option B)
-#   ✓ v0.16: Zustand via DI — auch Funk-Befehle werden erfasst
-#   ✓ v0.17: LED blau (r5) + LED rot (r6) auf PCA9554 Pin 4/5
-#   ✓ v0.17: LED blau ON wenn DI1=1, OFF sonst
-#   ✓ v0.17: LED rot ON wenn dauerauf ODER ped_halten aktiv, OFF wenn beide aus
+#   ✓ v0.16: Auto-Schließ-Trigger Ch1 von Button auf DI1=high (Option B)
+#   ✓ v0.17: LED blau (r5) + LED rot (r6) auf PCA9554 Pin 4/5 + Status-Logik
+#   ✓ v0.18: Blink-Patterns (5× rot bei Verweigerung, beide bei Fehler)
+#            + led_status_refresh Helper + 3 Test-Buttons in Diagnose
 #
 #  TODO nächste Schritte:
 #   - DI3-Taster (Dauerauf-Auslöser): Toggle dauerauf NUR wenn DI1=1 (Tor offen)
 #     Sicherheit: Taster ist außen zugänglich → darf das Tor NICHT öffnen können
-#     Bei Verweigerung (Tor nicht offen): LED rot 5× blinken
+#     Bei Verweigerung (Tor nicht offen): blink_rot_5x ausführen
 #   - Dauerauf-Web-Schalter analog absichern: einschaltbar nur wenn DI1=1
-#   - 5×-Blink-Pattern Script für LED rot (Verweigerung)
-#   - Fehlermodus: DI1=1 UND DI2=1 (Sensor-Defekt) + Tor hängt > 90s
-#     → BEIDE LEDs blinken
+#     → bei Verweigerung blink_rot_5x ergänzen (zusätzlich zur Schalter-Rückspringt-Logik)
+#   - Fehlererkennung: DI1=1 UND DI2=1 (Sensor-Defekt) → g_fehler_aktiv = true + blink_fehler_start
 #   - Notfall-Close bei Tor hängt > Schwelle (einstellbar number)
 #   - Countdown-Sensor für autoclose_open Restzeit (HA-Dashboard)
 #   - cover.hoftor als Cover-Entity in HA
