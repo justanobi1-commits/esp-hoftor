@@ -1,4 +1,5 @@
 # ── Versionen ────────────────────────────────────────────────────
+# v0.22 |  2026-05-30        |  use_address-Übergang entfernt — ESP läuft jetzt auf 192.168.200.40.
 # v0.21 |  2026-05-30        |  DI3-Taster-Logik (extern, mit Sperre).
 #         - DI3 on_press: wenn DI1=1 (Tor offen) → dauerauf toggeln
 #                          wenn DI1=0 → blink_rot_5x (Verweigerung), KEIN Tor öffnen
