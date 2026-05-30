@@ -1,4 +1,9 @@
 # ── Versionen ────────────────────────────────────────────────────
+# v0.19 |  2026-05-29        |  LEDs extern schaltbar machen (HA + Web-UI).
+#         - r5_led_blau + r6_led_rot: `internal: true` entfernt → als Schalter sichtbar
+#         - In grp_led platziert (sorting_weight 1 + 4)
+#         - Hinweis: Manuelles Toggle wird bei nächstem Status-Trigger (DI1/Dauerauf-Wechsel)
+#           automatisch überschrieben — das ist gewollt (Status hat Vorrang)
 # v0.18 |  2026-05-29        |  **LED-Blink-Logik: 5×-Verweigerung + Fehler-Endlos-Blinken.**
 #         - Globale Variable g_fehler_aktiv (bool) als Steuerflag
 #         - Script blink_rot_5x: 5× rot 300 ms an / 300 ms aus, dann LED-Status-Refresh
@@ -220,15 +225,18 @@ switch:
       - text_sensor.template.publish: { id: st_r4, state: "🔴 aus" }
 
   # ── LED-Relais r5 (blau, F7) + r6 (rot, F8) ─────────────────────
-  # Werden NICHT direkt vom User geschaltet, sondern über Status-Logik:
+  # Werden automatisch über Status-Logik gesteuert:
   #   blau: ON wenn DI1=1 (Tor offen)
   #   rot:  ON wenn dauerauf ODER ped_halten aktiv
+  # PLUS extern schaltbar in HA + Web-UI (für Diagnose/Override).
+  # Manuelles Toggle wird beim nächsten Status-Trigger automatisch überschrieben.
   - platform: gpio
     name: "LED blau"
     id: r5_led_blau
-    internal: true
     restore_mode: ALWAYS_OFF
     pin: { pca9554: relay_hub, number: 4, mode: { output: true } }
+    icon: "mdi:lightbulb"
+    web_server: { sorting_group_id: grp_led, sorting_weight: 1 }
     on_turn_on:
       - text_sensor.template.publish: { id: st_r5, state: "🔵 leuchtet" }
     on_turn_off:
@@ -237,9 +245,10 @@ switch:
   - platform: gpio
     name: "LED rot"
     id: r6_led_rot
-    internal: true
     restore_mode: ALWAYS_OFF
     pin: { pca9554: relay_hub, number: 5, mode: { output: true } }
+    icon: "mdi:lightbulb"
+    web_server: { sorting_group_id: grp_led, sorting_weight: 4 }
     on_turn_on:
       - text_sensor.template.publish: { id: st_r6, state: "🔴 leuchtet" }
     on_turn_off:
