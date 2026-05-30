@@ -1,4 +1,10 @@
 # ── Versionen ────────────────────────────────────────────────────
+# v0.21 |  2026-05-30        |  DI3-Taster-Logik (extern, mit Sperre).
+#         - DI3 on_press: wenn DI1=1 (Tor offen) → dauerauf toggeln
+#                          wenn DI1=0 → blink_rot_5x (Verweigerung), KEIN Tor öffnen
+#         - Begründung Sicherheit: Taster ist von außen zugänglich, darf das Tor
+#           NIE selbst öffnen können — nur bestehenden Offen-Zustand „dauerhaft" machen.
+#         - Web-Switch `dauerauf` bleibt OHNE Sperre (kommt später hinter Passwort).
 # v0.20 |  2026-05-29        |  Feste IP + Stabilitäts-Settings für Ethernet.
 #         - manual_ip: 192.168.200.40 (Gateway/DNS = FritzBox 192.168.178.1)
 #         - subnet: 255.255.0.0 (/16, FB 5590 nutzt das ganze 192.168.x.x als ein Netz)
@@ -725,7 +731,24 @@ binary_sensor:
       - delayed_on: 30ms
       - delayed_off: 30ms
     web_server: { sorting_group_id: grp_input, sorting_weight: 3 }
-    # Logik (Toggle Dauerauf, LED-Blink bei Fehlbedienung) → Phase 2
+    # v0.21: Toggle Dauerauf NUR wenn Tor bereits offen (DI1=1).
+    # Sicherheit: Taster ist von außen zugänglich → darf das Tor NICHT öffnen.
+    # Bei Verweigerung: 5× rot blinken, keine Aktion am Tor.
+    on_press:
+      then:
+        - if:
+            condition:
+              binary_sensor.is_on: di1_tor_offen
+            then:
+              - logger.log:
+                  level: INFO
+                  format: "DI3 (Taster): Tor offen → Dauerauf togglen"
+              - switch.toggle: dauerauf
+            else:
+              - logger.log:
+                  level: WARN
+                  format: "DI3 (Taster) VERWEIGERT — Tor nicht offen (Sicherheit: kein Öffnen via Taster)"
+              - script.execute: blink_rot_5x
 
   - platform: gpio
     name: "DI4"
@@ -882,19 +905,18 @@ text_sensor:
       web_server: { sorting_group_id: grp_diag, sorting_weight: 5 }
 
 # ─────────────────────────────────────────────────────────────────
-#  ERLEDIGT bis v0.18:
+#  ERLEDIGT bis v0.21:
 #   ✓ v0.16: 8× binary_sensor DI1-DI8 (GPIO4-GPIO11, INPUT_PULLUP, inverted)
 #   ✓ v0.16: Auto-Schließ-Trigger Ch1 von Button auf DI1=high (Option B)
 #   ✓ v0.17: LED blau (r5) + LED rot (r6) auf PCA9554 Pin 4/5 + Status-Logik
 #   ✓ v0.18: Blink-Patterns (5× rot bei Verweigerung, beide bei Fehler)
 #            + led_status_refresh Helper + 3 Test-Buttons in Diagnose
+#   ✓ v0.19: LEDs r5/r6 extern schaltbar (internal:true entfernt)
+#   ✓ v0.20: Feste IP 192.168.200.40 + reboot_timeout 0s
+#   ✓ v0.21: DI3-Taster togglet Dauerauf nur bei DI1=1, sonst blink_rot_5x.
+#            Web-Switch dauerauf bleibt OHNE Sperre (kommt später hinter Passwort).
 #
 #  TODO nächste Schritte:
-#   - DI3-Taster (Dauerauf-Auslöser): Toggle dauerauf NUR wenn DI1=1 (Tor offen)
-#     Sicherheit: Taster ist außen zugänglich → darf das Tor NICHT öffnen können
-#     Bei Verweigerung (Tor nicht offen): blink_rot_5x ausführen
-#   - Dauerauf-Web-Schalter analog absichern: einschaltbar nur wenn DI1=1
-#     → bei Verweigerung blink_rot_5x ergänzen (zusätzlich zur Schalter-Rückspringt-Logik)
 #   - Fehlererkennung: DI1=1 UND DI2=1 (Sensor-Defekt) → g_fehler_aktiv = true + blink_fehler_start
 #   - Notfall-Close bei Tor hängt > Schwelle (einstellbar number)
 #   - Countdown-Sensor für autoclose_open Restzeit (HA-Dashboard)
