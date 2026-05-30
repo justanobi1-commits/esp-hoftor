@@ -8,7 +8,7 @@
 # v0.20 |  2026-05-29        |  Feste IP + Stabilitäts-Settings für Ethernet.
 #         - manual_ip: 192.168.200.40 (Gateway/DNS = FritzBox 192.168.178.1)
 #         - subnet: 255.255.0.0 (/16, FB 5590 nutzt das ganze 192.168.x.x als ein Netz)
-#         - reboot_timeout: 0s (ESP bleibt online auch bei Ethernet-Disconnect)
+#         - Stabilität läuft über api.reboot_timeout: 0s (ethernet hat kein reboot_timeout).
 # v0.19 |  2026-05-29        |  LEDs extern schaltbar machen (HA + Web-UI).
 #         - r5_led_blau + r6_led_rot: `internal: true` entfernt → als Schalter sichtbar
 #         - In grp_led platziert (sorting_weight 1 + 4)
@@ -152,7 +152,7 @@ ethernet:
   miso_pin: GPIO14
   cs_pin: GPIO16
   interrupt_pin: GPIO12
-  reboot_timeout: 0s   # ESP bleibt online auch bei Ethernet-Disconnect (kein Reboot-Storm)
+  # Hinweis: ethernet hat KEIN reboot_timeout (nur api/wifi). Stabilität läuft über api.reboot_timeout: 0s.
   manual_ip:
     static_ip: 192.168.200.40
     gateway:   192.168.178.1     # FritzBox 5590
