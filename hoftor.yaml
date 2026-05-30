@@ -1,4 +1,14 @@
 # ── Versionen ────────────────────────────────────────────────────
+# v0.16 |  2026-05-29        |  **Option B: Auto-Schließ-Trigger von Button auf DI1 umstellen.**
+#         - 8× binary_sensor an GPIO4..GPIO11 (INPUT_PULLUP, inverted) als DI1-DI8
+#         - DI1 = Status Tor offen (BFT 24 via F3 Koppelrelais)
+#         - DI2 = Status Tor zu (BFT 26 via F4 Koppelrelais)
+#         - DI3 = Taster Dauerauf (externer Taster, Logik in Phase 2)
+#         - DI4-DI8 = Reserve, nur als Sensor verfügbar
+#         - DI1 on_press → autoclose_open starten (wenn Dauerauf+Ped AUS und t>0)
+#         - DI1 on_release → autoclose_open stoppen (Sicherheit)
+#         - Ch1-Öffnen-Button: autoclose_open-Aufruf ENTFERNT — DI1 macht das nun
+#         - Damit funktioniert Auto-Close auch bei Öffnung via Funkfernbedienung (ohne ESP-Befehl)
 # v0.15 |  2026-05-28        |  Fix Block-Revert: bei gesperrtem Halten sprang der Schalter im
 #         Web-UI nicht zurück (publish(false) war No-op bei schon-false Zustand → kein Update).
 #         Jetzt im Block-Fall true→false publishen → erzwingt State-Update → Schalter springt zurück.
@@ -122,6 +132,9 @@ web_server:
     - id: grp_ch4
       name: "Ch4 — Fußgänger (Ped)"
       sorting_weight: 40
+    - id: grp_input
+      name: "Eingänge (DI1-DI8)"
+      sorting_weight: 80
     - id: grp_diag
       name: "Diagnose"
       sorting_weight: 90
@@ -301,11 +314,7 @@ button:
                 level: INFO
                 format: "Ch1 (Tor auf): Öffnen-Impuls"
             - script.execute: pulse_open
-            - if:
-                condition:
-                  lambda: 'return id(t_autoclose_open).state > 0;'
-                then:
-                  - script.execute: autoclose_open
+            # Auto-Close-Trigger: NICHT mehr hier — wird von DI1 (Tor offen erreicht) gestartet (Option B v0.16)
           else:
             - logger.log:
                 level: INFO
@@ -441,8 +450,119 @@ script:
           format: "Ch4 (Ped): Auto-Schließ-Zeit abgelaufen → Close"
       - script.execute: pulse_close
 
-# ── Diagnose ─────────────────────────────────────────────────────
+# ── Eingänge (DI1-DI8 an GPIO4-GPIO11, INPUT_PULLUP, inverted) ──
+# DI1 = Status Tor offen   (BFT 24 via Phoenix RIF-0 F3) → Auto-Close-Trigger
+# DI2 = Status Tor zu      (BFT 26 via Phoenix RIF-0 F4)
+# DI3 = Taster Dauerauf    (externer Taster) — Logik in Phase 2
+# DI4-DI8 = Reserve
 binary_sensor:
+  - platform: gpio
+    name: "DI1 — Tor offen"
+    id: di1_tor_offen
+    pin:
+      number: GPIO4
+      mode: INPUT_PULLUP
+      inverted: true
+    device_class: opening
+    filters:
+      - delayed_on: 50ms
+      - delayed_off: 100ms
+    web_server: { sorting_group_id: grp_input, sorting_weight: 1 }
+    on_press:
+      # Trigger: DI1 wechselt von 0 → 1 (Tor erreicht Endlage offen)
+      # Option B: Auto-Close-Timer hier starten (statt am Button)
+      then:
+        - logger.log:
+            level: INFO
+            format: "DI1: Tor erreicht Endlage offen"
+        - if:
+            condition:
+              and:
+                - switch.is_off: dauerauf
+                - switch.is_off: ped_halten
+            then:
+              - if:
+                  condition:
+                    lambda: 'return id(t_autoclose_open).state > 0;'
+                  then:
+                    - logger.log:
+                        level: INFO
+                        format: "DI1 → autoclose_open gestartet"
+                    - script.execute: autoclose_open
+            else:
+              - logger.log:
+                  level: INFO
+                  format: "DI1 → autoclose_open NICHT gestartet (Halten aktiv)"
+    on_release:
+      # Trigger: DI1 wechselt von 1 → 0 (Tor verlässt Endlage offen)
+      then:
+        - logger.log:
+            level: INFO
+            format: "DI1: Tor verlässt Endlage offen → autoclose_open gestoppt"
+        - script.stop: autoclose_open
+
+  - platform: gpio
+    name: "DI2 — Tor zu"
+    id: di2_tor_zu
+    pin:
+      number: GPIO5
+      mode: INPUT_PULLUP
+      inverted: true
+    device_class: opening
+    filters:
+      - delayed_on: 50ms
+      - delayed_off: 100ms
+    web_server: { sorting_group_id: grp_input, sorting_weight: 2 }
+    on_press:
+      then:
+        - logger.log:
+            level: INFO
+            format: "DI2: Tor erreicht Endlage zu"
+
+  - platform: gpio
+    name: "DI3 — Taster Dauerauf"
+    id: di3_taster
+    pin:
+      number: GPIO6
+      mode: INPUT_PULLUP
+      inverted: true
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms
+    web_server: { sorting_group_id: grp_input, sorting_weight: 3 }
+    # Logik (Toggle Dauerauf, LED-Blink bei Fehlbedienung) → Phase 2
+
+  - platform: gpio
+    name: "DI4"
+    id: di4
+    pin: { number: GPIO7, mode: INPUT_PULLUP, inverted: true }
+    web_server: { sorting_group_id: grp_input, sorting_weight: 4 }
+
+  - platform: gpio
+    name: "DI5"
+    id: di5
+    pin: { number: GPIO8, mode: INPUT_PULLUP, inverted: true }
+    web_server: { sorting_group_id: grp_input, sorting_weight: 5 }
+
+  - platform: gpio
+    name: "DI6"
+    id: di6
+    pin: { number: GPIO9, mode: INPUT_PULLUP, inverted: true }
+    web_server: { sorting_group_id: grp_input, sorting_weight: 6 }
+
+  - platform: gpio
+    name: "DI7"
+    id: di7
+    pin: { number: GPIO10, mode: INPUT_PULLUP, inverted: true }
+    web_server: { sorting_group_id: grp_input, sorting_weight: 7 }
+
+  - platform: gpio
+    name: "DI8"
+    id: di8
+    pin: { number: GPIO11, mode: INPUT_PULLUP, inverted: true }
+    web_server: { sorting_group_id: grp_input, sorting_weight: 8 }
+
+# ── Diagnose ─────────────────────────────────────────────────────
   - platform: status
     name: "Verbindung (API)"
     web_server:
@@ -549,10 +669,20 @@ text_sensor:
       web_server: { sorting_group_id: grp_diag, sorting_weight: 5 }
 
 # ─────────────────────────────────────────────────────────────────
-#  TODO (nächste Schritte):
-#   - 8× binary_sensor an GPIO4..GPIO11 (INPUT_PULLUP, inverted) → DI1-DI8
-#   - Zustand NUR aus DI ableiten (Funk-Befehle sieht der ESP nicht!) → HT11
-#   - Auto-Schließ-Trigger von Button auf DI1 „Tor offen erreicht" umstellen
-#   - cover.hoftor (HA-seitig, Keller) + Relais R5/R6 (LEDs F7/F8)
+#  ERLEDIGT in v0.16:
+#   ✓ 8× binary_sensor DI1-DI8 (GPIO4-GPIO11, INPUT_PULLUP, inverted)
+#   ✓ Auto-Schließ-Trigger Ch1 von Button auf DI1=high umgestellt (Option B)
+#   ✓ Zustand wird via DI gemeldet — auch Funk-Befehle werden erfasst
+#
+#  TODO Phase 2 (nächste Schritte):
+#   - Notfall-Close: DI1=0 UND DI2=0 für > Schwelle (z.B. 90s) → Schließen-Impuls
+#     Variable "notfall_close_sekunden" als number (einstellbar) + interval-Check
+#   - LED-Logik R5 (blau) + R6 (rot) via on-Trigger an di1_tor_offen / dauerauf-Schalter
+#     + 5x-Blink-Pattern bei Fehlbedienung (Taster + Tor NICHT offen)
+#   - DI3-Taster Logik: Toggle dauerauf wenn Tor offen, sonst LED rot 5x blinken
+#   - Fehlermodus: DI1=1 UND DI2=1 (physisch unmöglich) → Sensor-Defekt-Status
+#   - Countdown-Sensor für autoclose_open Restzeit (HA-Dashboard)
+#   - cover.hoftor (HA-seitig, Keller) als Cover-Entity
+#   - Auto-Schließ-Trigger Ch4 (Ped) ggf. auf DI? umstellen (welcher DI meldet Fußgängeröffnung?)
 #  Mapping siehe CLAUDE.md §5.
 # ─────────────────────────────────────────────────────────────────
