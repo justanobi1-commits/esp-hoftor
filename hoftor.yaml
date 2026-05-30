@@ -122,7 +122,7 @@ esphome:
       # LED-Info-Texte
       - text_sensor.template.publish:
           id: i_led_blau
-          state: "🔵 LED blau leuchtet wenn das Tor in der Endlage „offen" steht."
+          state: "🔵 LED blau leuchtet wenn das Tor in der Endlage „offen“ steht."
       - text_sensor.template.publish:
           id: i_led_rot
           state: "🔴 LED rot leuchtet wenn Dauerauf oder Fußgänger-Dauerauf aktiv ist."
