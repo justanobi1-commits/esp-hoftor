@@ -1,6 +1,7 @@
 /* ───────────────────────────────────────────────────────────────
    LCARS-Theme für Hoftor — ESP Web-Interface (web_server v3, HA-Styling)
    Farbwerte aus dem DG-HA LCARS-Theme (Palette: thelcars.com)
+   v0.7 | 2026-05-31 | Sensor-Verlaufsgraphen ausgeblendet.
    v0.6 | 2026-05-28 | Erster Wurf — über HA-CSS-Variablen.
    Hinweis: voller LCARS-„Elbow"-Look (card-mod) ist hier NICHT möglich,
    nur die Farbgebung. Iterativ verfeinern.
@@ -77,4 +78,33 @@ pre,
 #log {
   background-color: #0a0a12 !important;
   color: #aaffaa !important;
+}
+
+/* ── Sensor-Verlaufsgraphen ausblenden (v0.7) ─────────────────────
+   web_server v3 rendert Verlaufsgraphen als <canvas> (große Charts)
+   und als SVG-Sparklines (gestrichelte Mini-Linie unter dem Wert).
+   Alle ausblenden — nur Wert + Label bleiben sichtbar.
+   ─────────────────────────────────────────────────────────────── */
+canvas {
+  display: none !important;
+  height: 0 !important;
+}
+
+/* SVG-Sparklines (z.B. Chip-Temperatur Mini-Linie) */
+.entities-container svg,
+.entity svg,
+li svg,
+td svg {
+  display: none !important;
+}
+
+/* Fallback: alle chart/graph-Wrapper-Klassen */
+[class*="chart"],
+[class*="graph"],
+[class*="sparkline"],
+[class*="history-line"] {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
 }

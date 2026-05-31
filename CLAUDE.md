@@ -1,24 +1,48 @@
 # Hoftor-Steuerung — Umbau Shelly → ESP
 
-**Version:** 2.3
-**Stand:** 28-05-2026 abends
-**Status:** Hardware großteils da; Aufbau im FIBOX ab Freitag (Anhängerkabel + TWIN-Klemmen). **ESPHome `hoftor.yaml` bis v0.14 gebaut** — Doku-Repo + Server `\\192.168.210.11\config\esphome\hoftor.yaml` synchron, dazu `hoftor_lcars.css`.
+**Version:** 2.8
+**Stand:** 31-05-2026
+**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` bis v0.31 gebaut** (Server + Doku-Repo synchron, **noch nicht geflasht**) — Doku-Repo + Server `\\192.168.210.11\config\esphome\hoftor.yaml` synchron, dazu `hoftor_lcars.css`. Hardware-Verbau im FIBOX läuft (Anhängerkabel ab 29-05 verbaut, TWIN-Deckel `D-PT 2,5-TWIN-MT` 3211317 noch offen).
 
-**Implementiert (v0.12):**
-- Ethernet **W5500/PoE** + native API (Noise) + OTA; `reboot_timeout: 0s`.
+**Implementiert (v0.31):**
+- **Close-Reaktions-Check (v0.30/v0.31):** Script `check_close_reaktion` (mode: restart) prüft ob das Tor nach einem Close-Befehl reagiert (DI1 fällt von 1 auf 0). Gestartet von `autoclose_open` und `hold_close` wenn DI1=1. Wartet `stoer_esk1_sek` — reagiert Tor nicht → Esk1 + erneut `pulse_close` + Selbst-Neustart. Nach `stoer_max_close_versuche`: Esk2. Benutzt dieselben Sensoren+Parameter wie Störungs-Interval, läuft vollständig unabhängig davon. Neues Global: `g_close_reaktion_versuche`. Quittierung: DI1 on_release / DI2 on_press / dauerauf+ped_halten turn_on → stop + counter=0. **Fix v0.31:** Störungs-Interval quittierte Esk1/Esk2 jede Sekunde während DI1=1 (Flackern). Guard `g_close_reaktion_versuche==0` verhindert das.
+- **Test-Simulation DI1/DI2/DI3 (v0.26):** Neue Gruppe `grp_test` im Web-Interface + HA. 2 Template-Schalter `test_di1`/`test_di2` simulieren Endschalter offen/zu (pausieren Störungs-Eskalation, triggern LED-Logik + Auto-Close wie physische DIs). Test-Button `test_di3` repliziert Taster-Logik (Toggle Dauerauf wenn DI1=1, sonst blink_rot_5x). DI1/DI2: GPIO-Sensoren intern (`di1_raw`/`di2_raw`, Entprellfilter 50/100 ms) + Template-Binary-Sensor mit `lambda: raw.state || test.state` (update_interval: 200 ms). Alle on_press/on_release-Actions + Störungs-Interval laufen auf Template-Sensoren — transparent für restliche Logik. 19 ℹ️-Info-Text-Sensoren: `internal: true` — nicht mehr in HA (web_server config entfernt).
+- **Bug-Fix Hold-Timer (v0.25):** `dauerauf.turn_on` stoppte `autoclose_ped` nicht; `ped_halten.turn_on` stoppte `autoclose_open` nicht → laufender Auto-Close-Timer konnte `pulse_close` senden trotz aktivem Hold. BFT blockiert Close bei angezogenem Open-Relais, aber Fix stellt sauberen Zustand + korrekten Countdown-Sensor-Wert sicher. Race Ch2/Ch3 + `hold_close` (1-s-Fenster): bewusst nicht gefixt (doppelter Close-Befehl harmlos, `pulse_close` mode:restart verlängert Impuls nur minimal), Kommentar im Code ergänzt.
+
+**Implementiert bis v0.24:**
+- **Countdown-Restzeit-Sensoren (v0.24):** 3 Template-Sensoren in Web-UI + HA — `autoclose_open_restzeit` (Öffnen, r1), `autoclose_ped_restzeit` (Fußgänger/Ped, r4), `stoer_esk1_restzeit`. Lesen Globals (`g_autoclose_open_ende_millis` / `g_autoclose_ped_ende_millis` / abgeleitet aus `g_letzter_endstatus_millis`), `update_interval: 1s`, NAN wenn inaktiv. Auto-Close-Marker werden an allen 4 Stop-Stellen (Dauerauf-Ein, Ped-Halten-Ein, Schließen-Impuls (r2), Schritt-Impuls (r3), Status Tor offen (DI1)-Release) sauber auf 0 gesetzt. Entscheidungen 31-05: CSS bewusst nicht verändert, `web_server`-Log bleibt drin (Latenz nur bei offener Browser-Seite — irrelevant).
+- **Tor-Störungs-Erkennung (v0.23):** 2 `number` (`stoer_esk1_sek` default 180 = 3 Min, `stoer_max_close_versuche` default 3) + 2 `binary_sensor` (`stoerung_esk1`/`stoerung_esk2`, `device_class: problem`). Interval 1 s: bei Status Tor offen (DI1)=0 AND Status Tor zu (DI2)=0 für > Schwelle → `pulse_close` (Schließen, r2) + counter++; bei counter ≥ max → Esk2. Pausiert bei `dauerauf=ON` oder `ped_halten=ON`. Quittierung automatisch sobald Status Tor offen (DI1)=1 oder Status Tor zu (DI2)=1. **LED-Fehler-Endlos-Blinken bewusst NICHT mehr** (`blink_fehler_start` + `g_fehler_aktiv` in v0.23 entfernt — Relais-Verschleiß, Nachbarn, ohne Reaktionsmöglichkeit nutzlos). Eskalation visuell/akustisch macht HA via Push/Alexa/Sonos.
+- Ethernet **W5500/PoE** + feste IP **`192.168.200.40`** (v0.20) + native API (Noise) + OTA; `reboot_timeout: 0s`.
 - **web_server v3** — Karten/Gruppen je Kanal, **LCARS-Farben** via `css_include: hoftor_lcars.css`, Live-Log.
-- **PCA9554 @ 0x20** → 4 interne Relais r1-r4 = Open(BFT65)/Close(BFT62)/Schritt(BFT64)/Ped(BFT61).
+- **PCA9554 @ 0x20** → 6 Relais = Öffnen (r1, BFT 65) / Schließen (r2, BFT 62) / Schritt (r3, BFT 64) / Fußgänger/Ped (r4, BFT 61) / **LED blau (r5, F7)** / **LED rot (r6, F8)**.
 - Befehle als **Buttons** (fix **1 s** Impuls, pulse_*-Scripts).
-- **Dauerauf** (hält r1) + **Fußgänger Dauerauf** (hält r4) — **AUS = nach 1 s Close** (`hold_close`-Puffer, abbrechbar). **Verriegelung = blockieren** (v0.14): aktiver Hold sperrt den anderen, bis bewusst aus → nie 2 Relais gleichzeitig. Holds `optimistic:false` + explizites publish.
-- **Auto-Schließ-Zeit** je Ch1/Ch4 (0=aus, sonst ESP sendet nach X s Close; Trigger v1 = Button, v2 = DI1).
+- **Dauerauf** (hält Öffnen (r1)) + **Fußgänger Dauerauf** (hält Fußgänger/Ped (r4)) — **AUS = nach 1 s Close** (`hold_close`-Puffer, abbrechbar). **Verriegelung = blockieren** (v0.14): aktiver Hold sperrt den anderen, bis bewusst aus → nie 2 Relais gleichzeitig. Holds `optimistic:false` + explizites publish. **Block-Revert sichtbar** (v0.15): gesperrter Hold lässt Web-Schalter zurückspringen.
+- **8× DI an GPIO4-11** (v0.16, INPUT_PULLUP, inverted): Status Tor offen (DI1, BFT 24 via Koppelrelais F3), Status Tor zu (DI2, BFT 26 via Koppelrelais F4), **externer Taster Dauerauf (DI3)** (v0.21, mit Sicherheits-Sperre: öffnet nie selbst, toggelt Dauerauf nur wenn Status Tor offen (DI1)=1, sonst `blink_rot_5x`), DI4-DI8 Reserve.
+- **Auto-Schließ-Zeit** je Öffnen (r1) / Fußgänger/Ped (r4) (0=aus). **Trigger ab v0.16 = Status Tor offen (DI1)** (statt Button) → funktioniert auch bei Funk-Öffnung.
 - **Button-Sperren** bei aktivem Halten (Öffnen bleibt bei Fußgänger Dauerauf aktiv = IC=6-Feature), je mit Log.
-- **Status-Punkt** je Kanal (🟢 angezogen / 🔴 aus, event-getrieben via r1-r4 on_turn_on/off, kein Poll).
+- **Status-Punkt** je Kanal (🟢 angezogen / 🔴 aus, event-getrieben via Öffnen (r1) / Schließen (r2) / Schritt (r3) / Fußgänger/Ped (r4) on_turn_on/off, kein Poll).
+- **LED-Status-Logik** (v0.17): LED blau (r5) ON bei Status Tor offen (DI1)=1, LED rot (r6) ON bei dauerauf||ped_halten. **LED-Blink** (v0.18): `blink_rot_5x` (5×-Verweigerung 300 ms) + `blink_fehler_start` (Endlos 500 ms an/aus bei `g_fehler_aktiv=true`, terminiert wenn false). LED-Status-Refresh-Script. **LEDs extern schaltbar** (v0.19) — manuelles Toggle wird beim nächsten Status-Trigger automatisch überschrieben (gewollt).
 - **Diagnose:** Verbindung(API), Uptime, Chip-Temperatur, IP/MAC, ESPHome-Version.
 - **ℹ️ Info-Texte je Bedienelement** (direkt darunter, interleaved sorting_weight; beim Boot gesetzt). Diagnose = 1 Sammeltext.
 
 **Entscheidungen fix (28-05):** TCA **aus** (ESP schließt aktiv) · Ped-Kanal = **IC=6 Timer Ped** · ESP sieht **keine Funk-Befehle** → Zustand kommt aus DI · Dauer-Zu verworfen.
 
-**Offen:** v0.12 flashen (ESP war zuletzt offline → ggf. USB-Recovery). Dann beim Verkabeln: i²C-Scan 0x20 + Relais physisch + **Polarität** (NC/COM/NO, COM+NO fail-safe) + **Boot-Verhalten** (Relais-Klick = kurzer Befehl?). Danach: 8× DI (GPIO4-11) + DI-Zustandslogik (HT11) + Auto-Schließ-Trigger auf DI1 + R5/R6 (LEDs F7/F8) + `cover.hoftor` (HA-seitig im Keller, read-only → Florian baut, Claude liefert Config). Schuppen-Klima **BME280** bestellt (HT14, bme280_i2c @ 0x76, eigene Gruppe).
+**Offen am ESP (Code, PC):**
+- v0.31 flashen + live testen (Störungs-Eskalation, Close-Reaktions-Check)
+- BFT-Ped-SCA-Frage (HT13): nach AUX16-Messung Lösung A (State-Machine) oder B (3. Statussignal SCA via freien EBD-AUX 22/23 + Koppelrelais + DI)
+- Optional später: Auto-Schließ-Trigger Ch4 (Ped) auf passenden DI umstellen (wenn SCA verkabelt)
+
+**Offen physisch (Tor/Verkabelung):**
+- TWIN-Abschlussdeckel `D-PT 2,5-TWIN-MT` (3211317) ×3-4 bestellen (HT3b)
+- FBS-Brücker für RIF-0 (A2-GND, K11-+24V) bestellen
+- Verdrahtung nach PDF v2 + Aderfarben-Mapping (HT5)
+- BFT-Parametrierung (Ped=IC=6, mOTOR=2, TEILOEFFN. M1 %)
+- Parallel-Test mit Tor-Simulation
+- Migration: Bestand abklemmen → ESP-System einklemmen
+- ~~Schuppen-Klima BME280~~ verworfen 31-05 (Einbau im FIBOX → misst nur Gehäuse, nicht Schuppen-Luft).
+
+**Offen HA-Seite (Keller-Master, read-only für Claude → Florian adoptiert):**
+- `cover.hoftor` + Dauerauf-Logik + LED-Blink-Trigger (HT9)
 
 ## Cross-References (HA-Doku)
 
@@ -154,19 +178,19 @@ Quelle: Thalia-Handbuch S. 42/45/47/48. Jeder Steuereingang (Klemmen 61/62/64/65
 
 **Geplante Umnutzung (Option):** Klemme 61 (aktuell Open=Dauerauf, der „doppelte Open") → auf **Ped (4)** umstellen = „nur ein Flügel / Fußgänger". **Dauerauf** dann nicht mehr per eigenem Relais, sondern per **gehaltenem Open auf K1 (Klemme 65)** in ESP/HA-Logik. Folge am ESP: Kanal 4 „Dauerauf" → „Fußgänger / ein Flügel" umbenennen (+ Icon), Dauerauf-Halte-Logik auf K1.
 
-**⚠️ STATUS-LOGIK-PROBLEM bei Ped (Florian 28-05):** Tor-Status ist binär — AUX16 „Tor offen"→DI1, AUX13 „Tor zu"→DI2. Ped (ein Flügel) ist ein 3. Zustand. **Frage = was meldet AUX16 bei Ped?** MESSEN beim Test: schließt AUX16 schon „nicht-zu" (dann liest ESP „offen", kein Problem) ODER erst bei voll-offen (dann bei Ped **beide DI=0** = derselbe Zustand wie „fährt/Störung" in HT11 → Fehlalarm/ungewollter Close). Handbuch unklar.
+**⚠️ STATUS-LOGIK-PROBLEM bei Ped (Florian 28-05):** Tor-Status ist binär — AUX16 „Tor offen" → Status Tor offen (DI1), AUX13 „Tor zu" → Status Tor zu (DI2). Ped (ein Flügel) ist ein 3. Zustand. **Frage = was meldet AUX16 bei Ped?** MESSEN beim Test: schließt AUX16 schon „nicht-zu" (dann liest ESP „offen", kein Problem) ODER erst bei voll-offen (dann bei Ped **beide DIs (DI1 + DI2) = 0** = derselbe Zustand wie „fährt/Störung" in HT11 → Fehlalarm/ungewollter Close). Handbuch unklar.
 - **Lösung A (keine HW):** ESP-State-Machine — ESP weiß, dass er Ped kommandiert hat → „beide 0" = „Fußgänger offen". Nur zuverlässig, wenn Ped NICHT auch per Funk-Handsender ausgelöst wird (ESP sieht Funk nicht).
 - **Lösung B (robust, auch Funk):** 3. Statussignal **SCA** (BFT-AUX Logik 1 = Kontakt zu, sobald ein Flügel offen) → unterscheidet Ped sauber von Störung. Braucht freien EBD-AUX (z. B. 22/23) + Koppelrelais + freien DI — alles im Schuppen, keine Erdader.
 - **HT11 (Fehlererkennung) + HT12 (Auto-Close) müssen den Ped-Zustand kennen**, sonst Fehlauslösung bei Fußgänger-Stellung.
 
 ### Grundsatz: ESP sieht keine Funk-Befehle (Florian 28-05)
-Die BFT wird auch per **Funk-Fernbedienung** bedient — diese Befehle gehen **direkt an die BFT, der ESP bekommt sie NICHT mit**. Der ESP erfährt eine Zustandsänderung **nur über die Status-DIs** (Tor offen/zu). **Konsequenzen:**
+Die BFT wird auch per **Funk-Fernbedienung** bedient — diese Befehle gehen **direkt an die BFT, der ESP bekommt sie NICHT mit**. Der ESP erfährt eine Zustandsänderung **nur über die Status-DIs** (Status Tor offen (DI1) / Status Tor zu (DI2)). **Konsequenzen:**
 - Die ESP-Button-**Sperren** (v0.8) betreffen nur die ESP-Buttons — sie können das Tor nicht „verriegeln" (Funk geht immer).
-- **Die Wahrheit über den Tor-Zustand kommt aus den DIs**, NICHT aus der ESP-Befehls-Historie. HT11-Zustandslogik daher rein DI-basiert (offen/zu/fährt/Störung), nicht aus „was hat der ESP gesendet".
+- **Die Wahrheit über den Tor-Zustand kommt aus den Status-DIs (DI1 / DI2)**, NICHT aus der ESP-Befehls-Historie. HT11-Zustandslogik daher rein DI-basiert (offen/zu/fährt/Störung), nicht aus „was hat der ESP gesendet".
 - **Entscheidungen fix 28-05:** TCA aus (ESP schließt aktiv), Ped-Kanal = IC=6 Timer Ped, Dauerauf/Fußgänger-Dauerauf via gehaltenem Relais.
 
 ### AUX-Belegung (Quercheck Handbuch)
-AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nur mit EBD-Karte). Status-Logiken: **13 = Status Tor geschlossen**, **16 = Zustand offenes Tor**. Unsere Nutzung (24/25 = Tor offen, 26/27 = Tor zu) passt dazu.
+AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nur mit EBD-Karte). Status-Logiken: **13 = Status Tor geschlossen**, **16 = Zustand offenes Tor**. Unsere Nutzung (24/25 = Status Tor offen (DI1), 26/27 = Status Tor zu (DI2)) passt dazu.
 
 ## 3. Aktueller Aufbau (Bestand)
 
@@ -305,24 +329,24 @@ K14 zu den COMs der BFT (über TWIN-Klemmen):
 
 F7-K14 → LED blau Anode (mit 1kΩ Vorwiderstand → GND)
 F8-K14 → LED rot Anode
-F3-K14 → ESP DI1 (Status Tor offen)
-F4-K14 → ESP DI2 (Status Tor zu)
+F3-K14 → ESP Status Tor offen (DI1)
+F4-K14 → ESP Status Tor zu (DI2)
 ```
 
 ### ESP-Pin → Phoenix RIF-0 → Tor-Funktion
 
 | ESP-Pin | Relais | Funktion | Schaltet Kontakt zwischen (Phoenix-Anschluss) |
 |---|---|---|---|
-| Relais R1 | **F1** | Befehl öffnen (Impuls) | K11=PT#6 (BFT 65), K14=PT#4 TWIN (BFT 63 COM-EBD) |
-| Relais R2 | **F2** | Befehl schließen (Impuls) | K11=PT#3 (BFT 62), K14=PT#1 TWIN (BFT 60 COM-Haupt) |
-| Relais R3 | **F5** | Befehl Schritt (Impuls) | K11=PT#5 (BFT 64), K14=PT#4 TWIN (BFT 63 COM-EBD) |
-| Relais R4 | **F6** | Befehl Dauerauf (dauerhaft) | K11=PT#2 (BFT 61), K14=PT#1 TWIN (BFT 60 COM-Haupt) |
-| Relais R5 | **F7** | LED blau ein (Tor offen) | K11=+24V (FBS 4-6), K14=LED blau Anode (mit 1kΩ Vorwiderstand → GND) |
-| Relais R6 | **F8** | LED rot ein (Dauerauf aktiv) | K11=+24V (FBS 4-6), K14=LED rot Anode (mit 1kΩ Vorwiderstand → GND) |
-| Eingang DI1 | **F3** | Status Tor offen lesen | F3 schaltet: K11=+24V (FBS 4-6) → K14=ESP DI1 wenn BFT 24-25 schließt |
-| Eingang DI2 | **F4** | Status Tor geschlossen lesen | F4 schaltet: K11=+24V (FBS 4-6) → K14=ESP DI2 wenn BFT 26-27 schließt |
-| Eingang DI3 | – | Taster Dauerauf-Auslöser | externer Taster gegen +24V |
-| R7, R8 | – | Reserve |
+| Öffnen (r1) | **F1** | Befehl öffnen (Impuls, BFT 65) | K11=PT#6 (BFT 65), K14=PT#4 TWIN (BFT 63 COM-EBD) |
+| Schließen (r2) | **F2** | Befehl schließen (Impuls, BFT 62) | K11=PT#3 (BFT 62), K14=PT#1 TWIN (BFT 60 COM-Haupt) |
+| Schritt (r3) | **F5** | Befehl Schritt (Impuls, BFT 64) | K11=PT#5 (BFT 64), K14=PT#4 TWIN (BFT 63 COM-EBD) |
+| Fußgänger/Ped (r4) | **F6** | Befehl Dauerauf/Ped (dauerhaft, BFT 61) | K11=PT#2 (BFT 61), K14=PT#1 TWIN (BFT 60 COM-Haupt) |
+| LED blau (r5) | **F7** | LED blau ein (Tor offen) | K11=+24V (FBS 4-6), K14=LED blau Anode (mit 1kΩ Vorwiderstand → GND) |
+| LED rot (r6) | **F8** | LED rot ein (Dauerauf aktiv) | K11=+24V (FBS 4-6), K14=LED rot Anode (mit 1kΩ Vorwiderstand → GND) |
+| Status Tor offen (DI1) | **F3** | Status Tor offen lesen (BFT 24) | F3 schaltet: K11=+24V (FBS 4-6) → K14=ESP Status Tor offen (DI1) wenn BFT 24-25 schließt |
+| Status Tor zu (DI2) | **F4** | Status Tor geschlossen lesen (BFT 26) | F4 schaltet: K11=+24V (FBS 4-6) → K14=ESP Status Tor zu (DI2) wenn BFT 26-27 schließt |
+| externer Taster Dauerauf (DI3) | – | Taster Dauerauf-Auslöser | externer Taster gegen +24V |
+| R7, R8 | – | Reserve (Waveshare-Onboard-Relais) |
 | DI4–DI8 | – | Reserve |
 
 ### Phoenix RIF-0 Anschluss-Übersicht (alle 8) — NEUE Topologie mit FBS-Brücker
@@ -331,13 +355,13 @@ F4-K14 → ESP DI2 (Status Tor zu)
 - **A2 → GND** (via FBS 10-6 BU Sammelschiene, 1 Ader vom PTFIX blau zur ersten A2)
 
 **Befehls-Relais F1, F2, F5, F6** (ESP-getrieben, schalten Tor-Befehl):
-- A1 → ESP-Relais R1/R2/R3/R4 (schaltet +24V vom PTFIX rot)
+- A1 → ESP-Relais Öffnen (r1) / Schließen (r2) / Schritt (r3) / Fußgänger/Ped (r4) (schaltet +24V vom PTFIX rot)
 - A2 → **GND** (via FBS-Brücker)
 - K11 → individuell zur jeweiligen BFT-Befehlsklemme (#2/#3/#5/#6)
 - K14 → über TWIN-Klemme zur BFT-COM (#1 oder #4)
 
 **LED-Relais F7, F8** (ESP-getrieben, schalten LED-Strom):
-- A1 → ESP-Relais R5/R6 (schaltet +24V)
+- A1 → ESP-Relais LED blau (r5) / LED rot (r6) (schaltet +24V)
 - A2 → **GND** (via FBS-Brücker)
 - K11 → **+24V** (via FBS 4-6 rot Sammelschiene, 1 Ader zum ersten K11=F7)
 - K14 → LED-Anode (24V-Komplett-LED ohne externen Vorwiderstand)
@@ -346,7 +370,7 @@ F4-K14 → ESP DI2 (Status Tor zu)
 - A1 → Reihenklemme #7 bzw. #8 (BFT-Statussignal, wird +24V wenn BFT-Kontakt schließt)
 - A2 → **GND** (via FBS-Brücker)
 - K11 → **+24V** (via FBS 4-6 rot Sammelschiene, gemeinsam mit F7+F8)
-- K14 → ESP DI1 bzw. DI2
+- K14 → ESP Status Tor offen (DI1) bzw. Status Tor zu (DI2)
 
 **Verdrahtungs-Ersparnis durch FBS-Brücker:**
 - A2-GND-Sammlung: **1 Ader** statt 8 individueller Adern zum PTFIX blau
@@ -408,7 +432,7 @@ Gesamt belegt: 28 TE | Reserve: 8 TE
 - 6 Klemmen alle grau:
   - #1 LED blau (+), #2 LED rot (+) ← geschaltete Anoden von F7/F8-K14
   - #3 LED blau (−), #4 LED rot (−) ← FBS 2-5 BU brückt zu GND
-  - #5 Taster +24V, #6 Taster Signal → ESP DI3
+  - #5 Taster +24V, #6 Taster Signal → ESP externer Taster Dauerauf (DI3)
 - 1× D-ST 2,5 + 2× CLIPFIX 35
 - Externe Kabel: 2× zu LEDs (24V Industrie-Signalleuchten), 1× zum Taster
 
@@ -471,8 +495,8 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
 
 **Anforderungen Software:**
 - [ ] **ESPHome YAML** für Waveshare schreiben
-  - 6 switch (Relais R1-R6)
-  - 3 binary_sensor (DI1-DI3)
+  - 6 switch (Öffnen (r1) / Schließen (r2) / Schritt (r3) / Fußgänger/Ped (r4) / LED blau (r5) / LED rot (r6))
+  - 3 binary_sensor (Status Tor offen (DI1) / Status Tor zu (DI2) / externer Taster Dauerauf (DI3))
   - HA-Integration (cover.gate, sensor.gate_open, sensor.gate_closed, button.dauerauf)
   - **Web-Interface (web_server Component)** — für lokale Steuerung am Tor ohne HA-Abhängigkeit
   - **Einstellbare Parameter via `number` Component:**
@@ -496,9 +520,9 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
     - `logger: level: INFO`, api.connection auf WARN
     - encryption mit pre-shared key
 - [ ] **Home Assistant Automationen**
-  - Dauerauf-Logik: Taster gedrückt + Tor offen → R4 dauerhaft halten bis erneut gedrückt oder Tor schließen-Befehl
-  - LED-Blink-Logik: Wenn Dauerauf-Taster gedrückt aber Tor nicht offen → R6 (LED rot) 5× blinken
-  - Cover-Entity mit Position aus DI1/DI2 ableiten
+  - Dauerauf-Logik: Taster gedrückt + Tor offen → Fußgänger/Ped (r4) dauerhaft halten bis erneut gedrückt oder Tor schließen-Befehl
+  - LED-Blink-Logik: Wenn Dauerauf-Taster gedrückt aber Tor nicht offen → LED rot (r6) 5× blinken
+  - Cover-Entity mit Position aus Status Tor offen (DI1) / Status Tor zu (DI2) ableiten
 
 ## 9. Wichtige Entscheidungen & Erkenntnisse
 
