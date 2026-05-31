@@ -1,10 +1,11 @@
 # Hoftor-Steuerung — Umbau Shelly → ESP
 
-**Version:** 2.8
+**Version:** 2.9
 **Stand:** 31-05-2026
-**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` bis v0.31 gebaut** (Server + Doku-Repo synchron, **noch nicht geflasht**) — Doku-Repo + Server `\\192.168.210.11\config\esphome\hoftor.yaml` synchron, dazu `hoftor_lcars.css`. Hardware-Verbau im FIBOX läuft (Anhängerkabel ab 29-05 verbaut, TWIN-Deckel `D-PT 2,5-TWIN-MT` 3211317 noch offen).
+**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` bis v0.32 gebaut** (Server + Doku-Repo synchron, **noch nicht geflasht**) — Doku-Repo + Server `\\192.168.210.11\config\esphome\hoftor.yaml` synchron, dazu `hoftor_lcars.css`. Hardware-Verbau im FIBOX läuft (Anhängerkabel ab 29-05 verbaut, TWIN-Deckel `D-PT 2,5-TWIN-MT` 3211317 noch offen).
 
-**Implementiert (v0.31):**
+**Implementiert (v0.32):**
+- **Log-/State-Spam-Fix (v0.32):** Die 3 Countdown-Sensoren (`autoclose_open_restzeit`, `autoclose_ped_restzeit`, `stoer_esk1_restzeit`) publizierten via `update_interval: 1s` jede Sekunde `NaN` wenn inaktiv → web_server-Stream + Log voll mit „nan s". Fix: `filter_out: nan` an allen dreien — NaN wird nicht mehr publiziert. Nebeneffekt: bei Inaktivität bleibt der letzte Zahlenwert stehen statt „unbekannt" (nach Boot „unbekannt" bis Script erstmals läuft). Akzeptiert.
 - **Close-Reaktions-Check (v0.30/v0.31):** Script `check_close_reaktion` (mode: restart) prüft ob das Tor nach einem Close-Befehl reagiert (DI1 fällt von 1 auf 0). Gestartet von `autoclose_open` und `hold_close` wenn DI1=1. Wartet `stoer_esk1_sek` — reagiert Tor nicht → Esk1 + erneut `pulse_close` + Selbst-Neustart. Nach `stoer_max_close_versuche`: Esk2. Benutzt dieselben Sensoren+Parameter wie Störungs-Interval, läuft vollständig unabhängig davon. Neues Global: `g_close_reaktion_versuche`. Quittierung: DI1 on_release / DI2 on_press / dauerauf+ped_halten turn_on → stop + counter=0. **Fix v0.31:** Störungs-Interval quittierte Esk1/Esk2 jede Sekunde während DI1=1 (Flackern). Guard `g_close_reaktion_versuche==0` verhindert das.
 - **Test-Simulation DI1/DI2/DI3 (v0.26):** Neue Gruppe `grp_test` im Web-Interface + HA. 2 Template-Schalter `test_di1`/`test_di2` simulieren Endschalter offen/zu (pausieren Störungs-Eskalation, triggern LED-Logik + Auto-Close wie physische DIs). Test-Button `test_di3` repliziert Taster-Logik (Toggle Dauerauf wenn DI1=1, sonst blink_rot_5x). DI1/DI2: GPIO-Sensoren intern (`di1_raw`/`di2_raw`, Entprellfilter 50/100 ms) + Template-Binary-Sensor mit `lambda: raw.state || test.state` (update_interval: 200 ms). Alle on_press/on_release-Actions + Störungs-Interval laufen auf Template-Sensoren — transparent für restliche Logik. 19 ℹ️-Info-Text-Sensoren: `internal: true` — nicht mehr in HA (web_server config entfernt).
 - **Bug-Fix Hold-Timer (v0.25):** `dauerauf.turn_on` stoppte `autoclose_ped` nicht; `ped_halten.turn_on` stoppte `autoclose_open` nicht → laufender Auto-Close-Timer konnte `pulse_close` senden trotz aktivem Hold. BFT blockiert Close bei angezogenem Open-Relais, aber Fix stellt sauberen Zustand + korrekten Countdown-Sensor-Wert sicher. Race Ch2/Ch3 + `hold_close` (1-s-Fenster): bewusst nicht gefixt (doppelter Close-Befehl harmlos, `pulse_close` mode:restart verlängert Impuls nur minimal), Kommentar im Code ergänzt.
@@ -28,7 +29,7 @@
 **Entscheidungen fix (28-05):** TCA **aus** (ESP schließt aktiv) · Ped-Kanal = **IC=6 Timer Ped** · ESP sieht **keine Funk-Befehle** → Zustand kommt aus DI · Dauer-Zu verworfen.
 
 **Offen am ESP (Code, PC):**
-- v0.31 flashen + live testen (Störungs-Eskalation, Close-Reaktions-Check)
+- v0.32 flashen + live testen (Störungs-Eskalation, Close-Reaktions-Check)
 - BFT-Ped-SCA-Frage (HT13): nach AUX16-Messung Lösung A (State-Machine) oder B (3. Statussignal SCA via freien EBD-AUX 22/23 + Koppelrelais + DI)
 - Optional später: Auto-Schließ-Trigger Ch4 (Ped) auf passenden DI umstellen (wenn SCA verkabelt)
 
