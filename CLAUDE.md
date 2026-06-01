@@ -1,8 +1,12 @@
 # Hoftor-Steuerung — Umbau Shelly → ESP
 
-**Version:** 2.9
-**Stand:** 31-05-2026
-**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` bis v0.32 gebaut** (Server + Doku-Repo synchron, **noch nicht geflasht**) — Doku-Repo + Server `\\192.168.210.11\config\esphome\hoftor.yaml` synchron, dazu `hoftor_lcars.css`. Hardware-Verbau im FIBOX läuft (Anhängerkabel ab 29-05 verbaut, TWIN-Deckel `D-PT 2,5-TWIN-MT` 3211317 noch offen).
+**Version:** 3.0
+**Stand:** 01-06-2026
+**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` bis v0.34 gebaut** (**noch nicht geflasht**). ⚠️ **Drift:** Doku-Repo `hoftor.yaml` ist auf v0.34, der Server `\\192.168.210.11\config\esphome\hoftor.yaml` noch auf v0.32 — vor dem Flashen synchronisieren. Dazu `hoftor_lcars.css`. Hardware-Verbau im FIBOX läuft (Anhängerkabel ab 29-05 verbaut, TWIN-Deckel `D-PT 2,5-TWIN-MT` 3211317 noch offen).
+
+**Implementiert (v0.33/v0.34):**
+- **Bedien-Anleitung im Web-Interface (v0.34):** Neue Gruppe `grp_hilfe` („ℹ️ Bedienung & Hilfe", `sorting_weight: 100`, ganz unten) mit 6 `text_sensor`-Blöcken (`hlp_1`..`hlp_6`: Allgemein · Tor öffnen · Schließen/Schritt · Fußgänger · Wichtig · Störung). Texte im `on_boot` gesetzt, je < 255 Zeichen (ESPHome/HA-State-Limit). `disabled_by_default: true` → sichtbar im web_server, in HA standardmäßig deaktiviert (vermeidet die nutzlosen Keller-Entities aus v0.26). **Offen:** ob `disabled_by_default` die Blöcke wirklich nur in HA und nicht im web_server ausblendet, beim Erst-Flash verifizieren. Vollständige (lange) Variante als `Hoftor_Kurzbeschreibung_Webinterface.md`.
+- **Audit-Korrekturen (v0.33):** Code-Audit YAML — A1: `on_boot`-Kommentar `priority -10`→`-100`. A2: `autoclose_ped` ohne `check_close_reaktion` dokumentiert (AUX16 bei Ped unklar, HT13). A3: `hold_close` — `pulse_close` vor `check_close_reaktion` (Lesereihenfolge). A4: `device_class: opening` aus `di2_tor_zu` entfernt (zeigte Tor-ZU fälschlich als „Open"). B1/B2: Asymmetrie `stoer_max_close_versuche` + fehlender DI1-Guard kommentiert. B3: 19 tote Info-Text-Sensoren (`i_*`, seit v0.26 `internal:true`) komplett entfernt. Doku-Korrekturen (C1–C9) in `Hoftor_Dokumentation_v0.33.docx`.
 
 **Implementiert (v0.32):**
 - **Log-/State-Spam-Fix (v0.32):** Die 3 Countdown-Sensoren (`autoclose_open_restzeit`, `autoclose_ped_restzeit`, `stoer_esk1_restzeit`) publizierten via `update_interval: 1s` jede Sekunde `NaN` wenn inaktiv → web_server-Stream + Log voll mit „nan s". Fix: `filter_out: nan` an allen dreien — NaN wird nicht mehr publiziert. Nebeneffekt: bei Inaktivität bleibt der letzte Zahlenwert stehen statt „unbekannt" (nach Boot „unbekannt" bis Script erstmals läuft). Akzeptiert.
@@ -29,7 +33,8 @@
 **Entscheidungen fix (28-05):** TCA **aus** (ESP schließt aktiv) · Ped-Kanal = **IC=6 Timer Ped** · ESP sieht **keine Funk-Befehle** → Zustand kommt aus DI · Dauer-Zu verworfen.
 
 **Offen am ESP (Code, PC):**
-- v0.32 flashen + live testen (Störungs-Eskalation, Close-Reaktions-Check)
+- **v0.34 vor dem Flashen auf Server `\\192.168.210.11\config\esphome\` kopieren** (aktuell Drift: Server noch v0.32)
+- v0.34 flashen + live testen (Störungs-Eskalation, Close-Reaktions-Check, **Bedien-Anleitung grp_hilfe: erscheint sie im web_server trotz `disabled_by_default`?**)
 - BFT-Ped-SCA-Frage (HT13): nach AUX16-Messung Lösung A (State-Machine) oder B (3. Statussignal SCA via freien EBD-AUX 22/23 + Koppelrelais + DI)
 - Optional später: Auto-Schließ-Trigger Ch4 (Ped) auf passenden DI umstellen (wenn SCA verkabelt)
 
@@ -553,6 +558,8 @@ ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be us
 | Datei | Speicherort |
 |---|---|
 | Diese Doku | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\CLAUDE.md` |
+| Technische Doku (Word) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Hoftor_Dokumentation_v0.34.docx` |
+| Kurzbeschreibung Web-Interface | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Hoftor_Kurzbeschreibung_Webinterface.md` |
 | Aderfarben-Template | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\aderfarben_template.md` |
 | PDF Schaltplan v2 | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Schaltplan_Hoftor_v2_KlemmenRelais.pdf` |
 | Python Generator v2 | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\make_schaltplan_v2.py` |

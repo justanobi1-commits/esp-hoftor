@@ -1,4 +1,10 @@
 # ── Versionen ────────────────────────────────────────────────────
+# v0.34 |  2026-06-01        |  **Bedien-Anleitung im Web-Interface (Gruppe grp_hilfe, ganz unten).**
+#         6 text_sensor-Blöcke (hlp_1..6), Texte im on_boot gesetzt, je < 255 Zeichen
+#         (ESPHome/HA-State-Limit). `disabled_by_default: true` → sichtbar im web_server,
+#         in HA standardmäßig deaktiviert (vermeidet die nutzlosen Entities aus v0.26).
+#         Inhalt: Grundprinzip · Tor öffnen · Schließen/Schritt · Fußgänger · Wichtig · Störung.
+#         Hinweis: web_server-Sichtbarkeit von disabled_by_default beim Erst-Flash verifizieren.
 # v0.33 |  2026-06-01        |  **Audit-Korrekturen + Bereinigung.**
 #         A1: Kommentar `on_boot priority -10` → `-100` (war falsch, Code war schon korrekt).
 #         A2: Kommentar in autoclose_ped — check_close_reaktion fehlt bewusst, da AUX16-
@@ -169,6 +175,26 @@ esphome:
       # Halte-Schalter (optimistic:false) auf AUS setzen
       - switch.template.publish: { id: dauerauf, state: false }
       - switch.template.publish: { id: ped_halten, state: false }
+      # v0.34: Bedien-Anleitung (Gruppe grp_hilfe, disabled_by_default → nur Web-UI, nicht HA).
+      # Je Block < 255 Zeichen (ESPHome/HA-State-Limit).
+      - text_sensor.template.publish:
+          id: hlp_1
+          state: "Jeder Befehl ist ein kurzer Tastendruck an die Tor-Steuerung. Den echten Zustand erkennt sie über die Endlagen (Tor offen / Tor zu), nicht über die Funk-Fernbedienung. Nach Neustart bleibt das Tor stehen — es fährt nichts von selbst."
+      - text_sensor.template.publish:
+          id: hlp_2
+          state: "Öffnen: kurzer Impuls, beide Flügel auf. Dauerauf: hält das Tor offen, bis wieder ausgeschaltet — dann schließt es nach 1 s. Auto-Schließ-Zeit: Sekunden bis automatisch zu (0 = aus); zählt ab sobald das Tor offen ist."
+      - text_sensor.template.publish:
+          id: hlp_3
+          state: "Schließen: kurzer Impuls, beide Flügel zu. Auf-stopp-zu: jeder Druck wechselt öffnen, stoppen, schließen. Beide sind gesperrt, solange Dauerauf oder Fußgänger-Dauerauf aktiv ist."
+      - text_sensor.template.publish:
+          id: hlp_4
+          state: "Fußgänger: öffnet nur einen Flügel. Fußgänger-Dauerauf: hält diesen Flügel offen, bis ausgeschaltet (schließt dann nach 1 s). Öffnen bleibt möglich — das Tor fährt voll auf und kehrt danach in die Fußgänger-Stellung zurück."
+      - text_sensor.template.publish:
+          id: hlp_5
+          state: "Dauerauf und Fußgänger-Dauerauf sind nie gleichzeitig an. Der Taster am Tor öffnet nie selbst — er schaltet Dauerauf nur, wenn das Tor schon offen ist (sonst blinkt die rote LED 5×). LED blau = Tor offen, LED rot = Dauerauf aktiv."
+      - text_sensor.template.publish:
+          id: hlp_6
+          state: "Hängt das Tor zu lange zwischen offen und zu, sendet die Steuerung automatisch Schließen (Eskalation 1). Hilft das nicht, meldet Eskalation 2 an Home Assistant. Schwelle und Versuche stehen oben in der Gruppe Störungs-Erkennung."
 
 esp32:
   board: esp32-s3-devkitc-1
@@ -235,6 +261,10 @@ web_server:
     - id: grp_diag
       name: "Diagnose"
       sorting_weight: 90
+    # v0.34: Bedien-Anleitung für die Web-UI-Nutzer (Hof-Gemeinschaft). Ganz unten.
+    - id: grp_hilfe
+      name: "ℹ️ Bedienung & Hilfe"
+      sorting_weight: 100
 
 i2c:
   sda: GPIO42
@@ -1215,6 +1245,42 @@ text_sensor:
     mac_address:
       name: "MAC-Adresse"
       web_server: { sorting_group_id: grp_diag, sorting_weight: 5 }
+
+  # ── Bedien-Anleitung (v0.34) ──────────────────────────────────
+  # Sichtbar im web_server (Gruppe grp_hilfe). disabled_by_default → in HA
+  # standardmäßig deaktiviert, damit keine nutzlosen Entities im Keller-Master
+  # erscheinen (Grund der v0.26-Entfernung). Texte werden im on_boot gesetzt.
+  # Je Block < 255 Zeichen (ESPHome/HA-State-Limit).
+  - platform: template
+    name: "Allgemein"
+    id: hlp_1
+    disabled_by_default: true
+    web_server: { sorting_group_id: grp_hilfe, sorting_weight: 1 }
+  - platform: template
+    name: "Tor öffnen"
+    id: hlp_2
+    disabled_by_default: true
+    web_server: { sorting_group_id: grp_hilfe, sorting_weight: 2 }
+  - platform: template
+    name: "Schließen & auf-stopp-zu"
+    id: hlp_3
+    disabled_by_default: true
+    web_server: { sorting_group_id: grp_hilfe, sorting_weight: 3 }
+  - platform: template
+    name: "Fußgänger"
+    id: hlp_4
+    disabled_by_default: true
+    web_server: { sorting_group_id: grp_hilfe, sorting_weight: 4 }
+  - platform: template
+    name: "Wichtig"
+    id: hlp_5
+    disabled_by_default: true
+    web_server: { sorting_group_id: grp_hilfe, sorting_weight: 5 }
+  - platform: template
+    name: "Störung"
+    id: hlp_6
+    disabled_by_default: true
+    web_server: { sorting_group_id: grp_hilfe, sorting_weight: 6 }
 
 # ─────────────────────────────────────────────────────────────────
 #  ERLEDIGT bis v0.23:
