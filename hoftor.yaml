@@ -1,4 +1,18 @@
 # ── Versionen ────────────────────────────────────────────────────
+# v0.33 |  2026-06-01        |  **Audit-Korrekturen + Bereinigung.**
+#         A1: Kommentar `on_boot priority -10` → `-100` (war falsch, Code war schon korrekt).
+#         A2: Kommentar in autoclose_ped — check_close_reaktion fehlt bewusst, da AUX16-
+#             Verhalten bei Ped-Stellung unbekannt (HT13 offen); Fallback = Störungs-Interval.
+#         A3: hold_close — Reihenfolge getauscht: pulse_close zuerst, dann check_close_reaktion
+#             (vorher umgekehrt; beide laufen parallel, aber Lesereihenfolge war irreführend).
+#         A4: device_class: opening aus di2_tor_zu entfernt (ON=Tor ZU wurde als „Open"
+#             angezeigt).
+#         B1: Kommentar an stoer_max_close_versuche — Asymmetrie dokumentiert: Störungs-
+#             Interval sendet max Befehle total; check_close_reaktion sendet max+1 total.
+#         B2: Kommentar in autoclose_open — erklärt warum kein DI1-Guard nötig (Script
+#             läuft nur solange DI1=1; hold_close braucht Guard, weil es ohne DI1-Trigger läuft).
+#         B3: Alle 19 i_*-Info-Text-Sensoren entfernt (internal:true seit v0.26, nie sichtbar).
+#             on_boot-Publishes + Sensor-Definitionen komplett gelöscht.
 # v0.32 |  2026-05-31        |  **Fix: Log-/State-Spam der 3 Countdown-Sensoren (jede Sekunde „nan s").**
 #         `filter_out: nan` an autoclose_open_restzeit + autoclose_ped_restzeit +
 #         stoer_esk1_restzeit → NAN wird nicht mehr publiziert (web_server-Stream + Log ruhig).
@@ -155,66 +169,6 @@ esphome:
       # Halte-Schalter (optimistic:false) auf AUS setzen
       - switch.template.publish: { id: dauerauf, state: false }
       - switch.template.publish: { id: ped_halten, state: false }
-      # Info-Texte je Bedienelement
-      - text_sensor.template.publish:
-          id: i_r1
-          state: "Grünes Symbol: aktiv · rotes Symbol: Ruhezustand."
-      - text_sensor.template.publish:
-          id: i_open
-          state: "Öffnet beide Torflügel."
-      - text_sensor.template.publish:
-          id: i_dauer
-          state: "Öffnet beide Torflügel und hält diese offen, bis deaktiviert."
-      - text_sensor.template.publish:
-          id: i_ac1
-          state: "Tor schließt automatisch nach der eingestellten Zeit (0 = aus)."
-      - text_sensor.template.publish:
-          id: i_r2
-          state: "Grünes Symbol: aktiv · rotes Symbol: Ruhezustand."
-      - text_sensor.template.publish:
-          id: i_close
-          state: "Schließt beide Torflügel."
-      - text_sensor.template.publish:
-          id: i_r3
-          state: "Grünes Symbol: aktiv · rotes Symbol: Ruhezustand."
-      - text_sensor.template.publish:
-          id: i_step
-          state: "Jeder Druck wechselt: öffnen → stoppen → schließen."
-      - text_sensor.template.publish:
-          id: i_r4
-          state: "Grünes Symbol: aktiv · rotes Symbol: Ruhezustand."
-      - text_sensor.template.publish:
-          id: i_ped
-          state: "Öffnet nur einen Torflügel."
-      - text_sensor.template.publish:
-          id: i_pedhold
-          state: "Öffnet einen Torflügel und hält ihn offen, bis deaktiviert. „Öffnen“ bleibt möglich — das Tor fährt danach wieder in die Fußgänger-Position zurück."
-      - text_sensor.template.publish:
-          id: i_ac4
-          state: "Tor schließt automatisch nach der eingestellten Zeit (0 = aus)."
-      - text_sensor.template.publish:
-          id: i_diag
-          state: "Geräte-Status und Netzwerk-Infos."
-      # LED-Info-Texte
-      - text_sensor.template.publish:
-          id: i_led_blau
-          state: "🔵 LED blau leuchtet wenn das Tor in der Endlage „offen“ steht."
-      - text_sensor.template.publish:
-          id: i_led_rot
-          state: "🔴 LED rot leuchtet wenn Dauerauf oder Fußgänger-Dauerauf aktiv ist."
-      # v0.23: Stör-Info-Texte
-      - text_sensor.template.publish:
-          id: i_stoer_esk1_sek
-          state: "Sekunden in Zwischenposition (DI1=0 UND DI2=0) bevor Eskalation 1 zuschlägt. Default 180 (3 Min). Bei Esk1: ein Close-Befehl + HA-Status. Pausiert während Dauerauf/Fußgänger-Dauerauf."
-      - text_sensor.template.publish:
-          id: i_stoer_max
-          state: "Wie oft der ESP automatisch Close bei wiederholter Zwischenposition versucht, bevor Eskalation 2 zuschlägt. Default 3. Pause-Zeit zwischen Versuchen = Esk1-Schwelle."
-      - text_sensor.template.publish:
-          id: i_stoer_esk1
-          state: "🚨 ON = Tor hängt > Schwelle in Zwischenposition. ESP hat Close gesendet. Geht aus sobald Endschalter (offen/zu) wieder erreicht."
-      - text_sensor.template.publish:
-          id: i_stoer_esk2
-          state: "🚨🚨 ON = nach max Close-Versuchen weiterhin keine Endlage. HA sollte hier benachrichtigen (Push/Alexa/Sonos). Geht aus sobald Endschalter wieder."
 
 esp32:
   board: esp32-s3-devkitc-1
@@ -530,6 +484,10 @@ number:
   - platform: template
     name: "Störung — max. Schließ-Versuche bis Esk2"
     id: stoer_max_close_versuche
+    # Hinweis: dieser Parameter steuert beide Systeme, bedeutet aber je etwas anderes:
+    # - Störungs-Interval:      sendet genau max Close-Befehle total, dann Esk2.
+    # - check_close_reaktion:   sendet max Retries ZUSÄTZLICH zum initialen Close
+    #   aus autoclose_open/hold_close → total max+1 Close-Befehle über diesen Pfad.
     optimistic: true
     restore_value: true
     initial_value: 3
@@ -686,7 +644,7 @@ button:
 globals:
   # ── Tor-Störungs-Erkennung (v0.23) ──
   # g_letzter_endstatus_millis: millis()-Timestamp wann zuletzt DI1=1 oder DI2=1 war.
-  # Wird beim Boot via on_boot priority -10 auf millis() gesetzt (sonst Sofort-Alarm).
+  # Wird beim Boot via on_boot priority -100 auf millis() gesetzt (sonst Sofort-Alarm).
   - id: g_letzter_endstatus_millis
     type: uint32_t
     restore_value: no
@@ -760,12 +718,12 @@ script:
       - logger.log:
           level: INFO
           format: "Halten-Puffer (1 s) abgelaufen → Close"
+      - script.execute: pulse_close
       - if:
           condition:
             binary_sensor.is_on: di1_tor_offen
           then:
             - script.execute: check_close_reaktion  # v0.30: Tor offen → reagiert es auf Close?
-      - script.execute: pulse_close
 
   - id: autoclose_open
     mode: restart
@@ -779,6 +737,9 @@ script:
           level: INFO
           format: "Ch1 (Tor auf): Auto-Schließ-Zeit abgelaufen → Close"
       - script.execute: pulse_close
+      # Kein DI1-Guard nötig: autoclose_open wird nur von DI1 on_press gestartet und bei
+      # DI1 on_release sofort gestoppt — am Ende des Delays ist DI1 praktisch sicher 1.
+      # (hold_close prüft DI1 explizit, weil es auch ohne vorherigen DI1-Trigger läuft.)
       - script.execute: check_close_reaktion   # v0.30: Tor reagiert nicht → Esk1/Esk2
   - id: autoclose_ped
     mode: restart
@@ -792,6 +753,10 @@ script:
           level: INFO
           format: "Ch4 (Ped): Auto-Schließ-Zeit abgelaufen → Close"
       - script.execute: pulse_close
+      # Kein check_close_reaktion hier: AUX16-Verhalten bei Ped-Stellung unbekannt (HT13).
+      # Wenn AUX16 nur bei voll-offen schließt, wären DI1=0 UND DI2=0 in Ped-Stellung —
+      # identisch mit Zwischenposition/Störung. check_close_reaktion würde dann sofort feuern.
+      # Fallback: der Störungs-Interval erkennt fehlende Endlage nach stoer_esk1_sek s.
 
   # ── Close-Reaktions-Check (v0.30) ────────────────────────────
   # Gestartet wenn DI1=1 nach pulse_close (Tor hat Close-Befehl bekommen aber reagiert noch nicht).
@@ -1045,7 +1010,7 @@ binary_sensor:
   - platform: template
     name: "DI2 — Tor zu"
     id: di2_tor_zu
-    device_class: opening
+    # kein device_class: opening — DI2=1 bedeutet Tor ZU, HA würde das als "Open" anzeigen (falsch)
     web_server: { sorting_group_id: grp_input, sorting_weight: 2 }
     on_press:
       then:
@@ -1207,74 +1172,26 @@ sensor:
     web_server: { sorting_group_id: grp_stoer, sorting_weight: 5 }
 
 text_sensor:
-  # ── Status-Punkte je Kanal (w0) + Info-Texte (w ungerade, direkt darunter) ──
+  # ── Status-Punkte je Kanal (sorting_weight: 0) ──
   - platform: template
     name: "Ch1 — Relais"
     id: st_r1
     web_server: { sorting_group_id: grp_ch1, sorting_weight: 0 }
-  - platform: template
-    name: "ℹ️ Relais Ch1"
-    id: i_r1
-    internal: true
-  - platform: template
-    name: "ℹ️ Öffnen"
-    id: i_open
-    internal: true
-  - platform: template
-    name: "ℹ️ Dauerauf"
-    id: i_dauer
-    internal: true
-  - platform: template
-    name: "ℹ️ Auto-Schließ-Zeit Ch1"
-    id: i_ac1
-    internal: true
 
   - platform: template
     name: "Ch2 — Relais"
     id: st_r2
     web_server: { sorting_group_id: grp_ch2, sorting_weight: 0 }
-  - platform: template
-    name: "ℹ️ Relais Ch2"
-    id: i_r2
-    internal: true
-  - platform: template
-    name: "ℹ️ Schließen"
-    id: i_close
-    internal: true
 
   - platform: template
     name: "Ch3 — Relais"
     id: st_r3
     web_server: { sorting_group_id: grp_ch3, sorting_weight: 0 }
-  - platform: template
-    name: "ℹ️ Relais Ch3"
-    id: i_r3
-    internal: true
-  - platform: template
-    name: "ℹ️ auf-stopp-zu"
-    id: i_step
-    internal: true
 
   - platform: template
     name: "Ch4 — Relais"
     id: st_r4
     web_server: { sorting_group_id: grp_ch4, sorting_weight: 0 }
-  - platform: template
-    name: "ℹ️ Relais Ch4"
-    id: i_r4
-    internal: true
-  - platform: template
-    name: "ℹ️ Fußgänger"
-    id: i_ped
-    internal: true
-  - platform: template
-    name: "ℹ️ Fußgänger Dauerauf"
-    id: i_pedhold
-    internal: true
-  - platform: template
-    name: "ℹ️ Auto-Schließ-Zeit Ch4"
-    id: i_ac4
-    internal: true
 
   # ── LED-Status (r5 blau, r6 rot) ──────────────────────────────
   - platform: template
@@ -1282,44 +1199,15 @@ text_sensor:
     id: st_r5
     web_server: { sorting_group_id: grp_led, sorting_weight: 0 }
   - platform: template
-    name: "ℹ️ LED blau"
-    id: i_led_blau
-    internal: true
-  - platform: template
     name: "LED rot (F8)"
     id: st_r6
     web_server: { sorting_group_id: grp_led, sorting_weight: 2 }
-  - platform: template
-    name: "ℹ️ LED rot"
-    id: i_led_rot
-    internal: true
 
   # ── Diagnose ───────────────────────────────────────────────────
-  - platform: template
-    name: "ℹ️ Diagnose"
-    id: i_diag
-    internal: true
   - platform: version
     name: "ESPHome-Version"
     web_server: { sorting_group_id: grp_diag, sorting_weight: 6 }
 
-  # ── Tor-Störungs-Info-Texte (v0.23) ──
-  - platform: template
-    name: "ℹ️ Esk1-Schwelle"
-    id: i_stoer_esk1_sek
-    internal: true
-  - platform: template
-    name: "ℹ️ max Close-Versuche"
-    id: i_stoer_max
-    internal: true
-  - platform: template
-    name: "ℹ️ Störung Esk1"
-    id: i_stoer_esk1
-    internal: true
-  - platform: template
-    name: "ℹ️ Störung Esk2"
-    id: i_stoer_esk2
-    internal: true
   - platform: ethernet_info
     ip_address:
       name: "IP-Adresse"
