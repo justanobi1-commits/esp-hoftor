@@ -1,6 +1,9 @@
 /* ───────────────────────────────────────────────────────────────
    LCARS-Theme für Hoftor — ESP Web-Interface (web_server v3, HA-Styling)
    Farbwerte aus dem DG-HA LCARS-Theme (Palette: thelcars.com)
+   v0.8 | 2026-06-01 | Bedien-Anleitung NICHT per CSS machbar: #col_logs liegt im
+                       Shadow-DOM von <esp-app>, css_include durchdringt das nicht
+                       (am Gerät verifiziert). Umgesetzt via js_include → hoftor_help.js.
    v0.7 | 2026-05-31 | Sensor-Verlaufsgraphen ausgeblendet.
    v0.6 | 2026-05-28 | Erster Wurf — über HA-CSS-Variablen.
    Hinweis: voller LCARS-„Elbow"-Look (card-mod) ist hier NICHT möglich,
@@ -108,3 +111,8 @@ td svg {
   min-height: 0 !important;
   overflow: hidden !important;
 }
+
+/* Hinweis: Die Bedien-Anleitung über dem Log (#col_logs, rechte Spalte) wird
+   per JavaScript injiziert (hoftor_help.js via web_server: js_include), NICHT
+   per CSS — #col_logs liegt im Shadow-DOM und ist über css_include nicht
+   erreichbar. Siehe hoftor_help.js. */
