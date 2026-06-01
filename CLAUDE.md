@@ -2,7 +2,7 @@
 
 **Version:** 3.1
 **Stand:** 01-06-2026
-**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` bis v0.35 gebaut** (**noch nicht geflasht**). ⚠️ **Drift:** Doku-Repo `hoftor.yaml` ist auf v0.35, der Server `\\192.168.210.11\config\esphome\hoftor.yaml` noch auf v0.32 — vor dem Flashen synchronisieren (inkl. `hoftor_lcars.css` + neu `hoftor_help.js`). Hardware-Verbau im FIBOX läuft (Anhängerkabel ab 29-05 verbaut, TWIN-Deckel `D-PT 2,5-TWIN-MT` 3211317 noch offen).
+**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` v0.35 — Server synchron, bereit zum Flashen** (**noch nicht geflasht**). Server `\\192.168.210.11\config\esphome\` = Repo: `hoftor.yaml` (v0.35) + `hoftor_lcars.css` (v0.8) + `hoftor_help.js` (Sync 01-06-2026 21:21, byte-identisch verifiziert). Alte Server-Stände gesichert in `archive\` (`hoftor_v0.33_2026-06-01.yaml`, `hoftor_lcars_v0.7_2026-06-01.css`). Hardware-Verbau im FIBOX läuft (Anhängerkabel ab 29-05 verbaut, TWIN-Deckel `D-PT 2,5-TWIN-MT` 3211317 noch offen).
 
 **Implementiert (v0.33–v0.35):**
 - **Bedien-Anleitung über dem Log (v0.35):** Anleitungs-Block in der RECHTEN Spalte (`#col_logs`, über dem Live-Log), per **`web_server: js_include: hoftor_help.js`** (DOM-Injektion, /0.js). **Warum JS:** `#col_logs` liegt im Shadow-DOM von `<esp-app>` — `css_include` durchdringt das nicht (nur CSS-Variablen/Farben), Entities können dort gar nicht hin (eigene Komponente `<esp-log>`). Beides am laufenden Gerät verifiziert (Browser-DOM-Test + `js_include` ergänzt das Frontend, ersetzt es nicht). Das Script wartet aufs Rendern (Polling) + Re-Inject via MutationObserver. **Verworfen:** v0.34-Ansatz (6 `text_sensor` in `grp_hilfe`, linke Spalte) — Florian wollte die Anleitung rechts über dem Log. Lange Variante weiter als `Hoftor_Kurzbeschreibung_Webinterface.md`.
@@ -33,7 +33,7 @@
 **Entscheidungen fix (28-05):** TCA **aus** (ESP schließt aktiv) · Ped-Kanal = **IC=6 Timer Ped** · ESP sieht **keine Funk-Befehle** → Zustand kommt aus DI · Dauer-Zu verworfen.
 
 **Offen am ESP (Code, PC):**
-- **v0.35 vor dem Flashen auf Server `\\192.168.210.11\config\esphome\` kopieren** (`hoftor.yaml` + `hoftor_lcars.css` + neu `hoftor_help.js`; aktuell Drift: Server noch v0.32)
+- ✅ Server-Sync erledigt 01-06-2026 (Server = Repo v0.35, alte Stände in `archive\`). **Bereit zum OTA-Flash aus ESPHome Builder.**
 - v0.35 flashen + live testen (Störungs-Eskalation, Close-Reaktions-Check, **Bedien-Anleitung über dem Log** — DOM-Injektion am echten Frontend gegengeprüft, sollte passen)
 - BFT-Ped-SCA-Frage (HT13): nach AUX16-Messung Lösung A (State-Machine) oder B (3. Statussignal SCA via freien EBD-AUX 22/23 + Koppelrelais + DI)
 - Optional später: Auto-Schließ-Trigger Ch4 (Ped) auf passenden DI umstellen (wenn SCA verkabelt)
