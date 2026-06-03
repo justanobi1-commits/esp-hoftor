@@ -433,7 +433,7 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 | **16** | F8 | r6 | LED rot (Dauerauf) | von ESP r6 | **+24V (FBS 4-6 rot)** | LED rot Anode → Klemme 22 |
 | **17** | F3 | →DI1 | Status Tor offen (BFT24) | Klemme 7 (BFT24-Signal) | **+24V (FBS 4-6 rot)** | ESP DI1 |
 | **18** | F4 | →DI2 | Status Tor zu (BFT26) | Klemme 8 (BFT26-Signal) | **+24V (FBS 4-6 rot)** | ESP DI2 |
-| **19** | – | →DI3 | **Taster Dauerauf** (Koppelrelais) | Klemme 26 (Taster-Signal) | +24V (R-Block, eigener Stich) | ESP DI3 |
+| **19** | – | →DI3 | **Taster Dauerauf** (Koppelrelais) | Klemme 26 (Taster-Signal, Weiß-Schwarz) | +24V (R-h, Rot) | ESP DI3 |
 | **20** | – | – | Reserve (frei, nicht verplant) | – | – | – |
 
 → **K11-+24V-Gruppe = Pos. 15–18 adjacent** → **FBS 4-6 rot** brückt deren K11 gemeinsam auf +24V.
@@ -494,7 +494,7 @@ Ebenen wie Hauptblock: **-O = innen** (Relais/Block, *heute*), **-U = Gerät/au�
 
 **✓ verdrahtet + verifiziert 03-06-2026 (4 Adern, innen -O):** 21-O←R15-K14 (rot), 22-O←R16-K14 (rot), 23-O←Bl-d (blau), 25-O←R-f (rot). Anoden bestätigt nicht vertauscht (R15→21 blau, R16→22 rot), -U frei.
 
-**Noch zu verdrahten (Taster-Koppelrelais R19, 2 Adern, heute machbar):** Klemme **26-O → R19-A1** (Weiß-Schwarz, AHK-Reserve) · **R19-K11 → +24V** (R-Block, Rot, eigener Stich). R19-A2 = GND (Brücke schon da), R19-K14 → DI3 + Taster-Geräteseite (25-U/26-U) später.
+**✓ verdrahtet 03-06-2026 (Taster-Koppelrelais R19, 2 Adern):** Klemme **26-O → R19-A1** (Weiß-Schwarz) · **R-h → R19-K11** (+24V, Rot, eigener Stich). R19-A2 = GND (Brücke), R19-K14 → DI3 + Taster-Geräteseite (25-U/26-U) später.
 
 ### Vorhandene Steckbrücken (Inventar 03-06-2026)
 
