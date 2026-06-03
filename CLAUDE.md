@@ -489,7 +489,7 @@ Ebenen wie Hauptblock: **-O = innen** (Relais/Block, *heute*), **-U = Gerät/au�
 | **25** | Taster +24V | ← R-Block | Rot | Taster-Leg 1 |
 | **26** | Taster Signal | → ESP DI3 (*später, ESP*) | – | Taster-Leg 2 |
 
-**✓ verdrahtet 03-06-2026 (4 Adern, innen -O):** 21-O←R15-K14 (rot), 22-O←R16-K14 (rot), 23-O←Bl-d (blau), 25-O←R-f (rot). (26→ESP DI3 + alle -U-Geräteseiten kommen später.) *Prüfen: rote Anoden 21/22 nicht vertauscht.*
+**✓ verdrahtet + verifiziert 03-06-2026 (4 Adern, innen -O):** 21-O←R15-K14 (rot), 22-O←R16-K14 (rot), 23-O←Bl-d (blau), 25-O←R-f (rot). Anoden bestätigt nicht vertauscht (R15→21 blau, R16→22 rot), -U frei. (26→ESP DI3 + alle -U-Geräteseiten kommen später.)
 
 ### Vorhandene Steckbrücken (Inventar 03-06-2026)
 
