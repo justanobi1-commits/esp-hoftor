@@ -24,7 +24,7 @@
 
 ## Zuordnungstabelle — bestätigt 03-06-2026
 
-Reihenfolge Klemmen 1–10 + Farben bestätigt. „Geht zu" mit neuer physischer Relais-Nummerierung (11–20), F-Rolle in Klammern (= ESPHome-/Schaltplan-Bezug).
+Reihenfolge Klemmen 1–10 + Farben bestätigt. „Geht zu" mit neuer physischer Relais-Nummerierung (11–20), F-Rolle in Klammern (= ESPHome-Bezug).
 
 | PT-Klemme# | BFT-Klemme | Aderfarbe | Funktion | Geht im Verteiler zu |
 |---|---|---|---|---|

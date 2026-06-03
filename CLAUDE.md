@@ -395,7 +395,7 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 
 ## 6a. Belegungsplan — physische Nummerierung (Stand 03-06-2026)
 
-**Verbaut im FIBOX, durchgehend nummeriert.** Diese physische Nummerierung ist die **Verdrahtungs-Referenz**. Die alten **F-Rollen (F1–F8)** bleiben als logischer Bezug für ESPHome-Code + Schaltplan-PDF erhalten (in Klammern angegeben).
+**Verbaut im FIBOX, durchgehend nummeriert.** Diese physische Nummerierung ist die **Verdrahtungs-Referenz**. Die alten **F-Rollen (F1–F8)** bleiben als logischer Bezug für ESPHome-Code erhalten (in Klammern angegeben).
 
 ### Nummern-Übersicht
 
@@ -505,7 +505,7 @@ Ebenen wie Hauptblock: **-O = innen** (Relais/Block, *heute*), **-U = Gerät/au�
 | **FBS 2-5 blau** | Klemmen 23↔24 → LED-Kathoden auf GND |
 | (blau durchgehend) | A2 der Relais 11–20 → GND (bereits gesetzt) |
 
-> **Hinweis:** Schaltplan-PDF v2 (`Schaltplan_Hoftor_v2_KlemmenRelais.pdf`) nutzt noch die alte Relais-Anordnung F1 F5 F2 F6 F7 F8 F3 F4 ohne die 11–20-Nummern. **Bei Gelegenheit neu generieren** (`make_schaltplan_v2.py`), damit physische Nummern + 10 Relais drin sind.
+> **Hinweis:** Die veralteten Schaltplan-PDFs (v1/v2) + Generator-Skripte wurden am 03-06-2026 entfernt (überholt + qualitativ unzureichend). Maßgebliche Verdrahtungs-Referenz ist dieser Belegungsplan (§6a) bzw. `Hoftor_Verdrahtung_v1.docx`.
 
 ### Noch offen — Anschluss-Checkliste (ESP / Tor / 230V)
 
@@ -623,7 +623,7 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
 ### Aufbau (nach Wareneingang)
 - [ ] Hardware im FIBOX MCE65 36M nach Layout montieren
 - [ ] 24 V-Seite verdrahten (PSU → Sicherung → PTFIX → Verbraucher)
-- [ ] 8× Phoenix RIF-0 verdrahten nach PDF v2 Schaltplan
+- [ ] 8× Phoenix RIF-0 verdrahten nach Belegungsplan §6a
 - [ ] Reihenklemmen montieren (8× PT 2,5 + 2× PT 2,5-TWIN an Position #1 und #4)
 - [ ] FBS 2-5 Brücke zwischen Klemme 9 und 10 (GND)
 - [ ] Aderfarben-Zuordnung festlegen sobald Anhängerkabel da
@@ -707,10 +707,6 @@ ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be us
 | Web-UI Bedien-Anleitung (JS-Inject) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\hoftor_help.js` |
 | Web-UI LCARS-Theme (CSS) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\hoftor_lcars.css` |
 | Aderfarben-Template | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\aderfarben_template.md` |
-| PDF Schaltplan v2 | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Schaltplan_Hoftor_v2_KlemmenRelais.pdf` |
-| Python Generator v2 | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\make_schaltplan_v2.py` |
-| PDF Schaltplan v1 (Übersicht) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Schaltplan_Hoftor_v1.pdf` |
-| Python Generator v1 | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\make_schaltplan.py` |
 | BFT Thalia Handbuch (im Repo) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\THALIA_DUO_BT_A80_A160.pdf` |
 
 ### Shops/Bezugsquellen

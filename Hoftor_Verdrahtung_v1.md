@@ -28,7 +28,7 @@ Dieses Dokument beschreibt den **physischen Aufbau und die Verdrahtung** im Vert
 | **Bl-a…m** | PTFIX blau | GND/0 V-Verteilung · a = Zuleitung (PSU−) |
 | **R-a…m** | PTFIX rot | +24 V-Verteilung · a = Zuleitung (Sicherung 27) |
 
-Die alten **F-Rollen (F1–F8)** bleiben als logischer Bezug für Firmware-Code + Schaltplan erhalten und sind in den Tabellen in Klammern angegeben.
+Die alten **F-Rollen (F1–F8)** bleiben als logischer Bezug für den Firmware-Code erhalten und sind in den Tabellen in Klammern angegeben.
 
 ## 3. Anschluss-Benennung (Klemmen-Ebenen)
 
@@ -202,4 +202,4 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 
 - **Firmware-/Software-Logik (ESPHome):** `Hoftor_Dokumentation_v0.35.docx`
 - **Live-Arbeitsdoku / vollständiger Stand:** `CLAUDE.md` (`esp/hoftor`, Abschnitt §6a)
-- **Schaltplan (zu aktualisieren):** `Schaltplan_Hoftor_v2_KlemmenRelais.pdf` (nutzt noch alte F-Anordnung ohne 11–20-Nummern)
+- **BFT-Handbuch:** `THALIA_DUO_BT_A80_A160.pdf` (im Repo)
