@@ -701,7 +701,8 @@ ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be us
 | Datei | Speicherort |
 |---|---|
 | Diese Doku | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\CLAUDE.md` |
-| Technische Doku (Word) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Hoftor_Dokumentation_v0.35.docx` |
+| Technische Doku Firmware (Word) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Hoftor_Dokumentation_v0.35.docx` — **Software/ESPHome-Logik** |
+| **Verdrahtungs-Doku (Word)** | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Hoftor_Verdrahtung_v1.docx` — **Hardware/Belegungsplan** (Quelle: `Hoftor_Verdrahtung_v1.md`). Querverweis ↔ Firmware-Doku. |
 | Kurzbeschreibung Web-Interface | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Hoftor_Kurzbeschreibung_Webinterface.md` |
 | Web-UI Bedien-Anleitung (JS-Inject) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\hoftor_help.js` |
 | Web-UI LCARS-Theme (CSS) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\hoftor_lcars.css` |
