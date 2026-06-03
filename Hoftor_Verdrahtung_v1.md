@@ -11,6 +11,15 @@ Verteiler-Innenausbau · FIBOX MCE65 36M (3×12 TE) · BFT Thalia BT A80/A160 + 
 
 ---
 
+## ⚠️ Sicherheit — vollständiges Spannungsfrei-Schalten
+
+Der lokale Ausschalter (ABB) trennt **NUR den 24-V-Kreis dieser Steuerung** (PSU → R-/Bl-Block → RIF-0-Spulen, LEDs). **Nicht** abgeschaltet werden:
+
+1. **ESP** — per PoE vom Netzwerk-Switch versorgt (isoliertes SELV ~48 V an der RJ45-Buchse).
+2. **BFT-Controller** — hat eine **eigene 230-V-Versorgung**, unabhängig vom Ausschalter. Dadurch können die **Reihenklemmen 1–10 (BFT-Seite) Spannung führen** — insbesondere 1–6, da die BFT an ihren IC-Eingängen (60–65) ihre interne Sensorspannung gegen COM anlegt — **auch bei abgeschaltetem 24-V-Kreis**.
+
+**Vollständig spannungsfrei nur mit allen drei Schritten:** (a) lokaler Ausschalter AUS · (b) ESP-Netzwerkkabel ziehen (oder PoE am Switch deaktivieren) · (c) BFT-Controller separat spannungsfrei schalten.
+
 ## 1. Zweck dieses Dokuments
 
 Dieses Dokument beschreibt den **physischen Aufbau und die Verdrahtung** im Verteiler (Reihenklemmen, Koppelrelais, Potentialverteilung, Brücken, Aderfarben). Die **Steuerungs-/Firmware-Logik** ist bewusst NICHT hier, sondern in der Firmware-Doku (`Hoftor_Dokumentation_v0.35.docx`) beschrieben.
@@ -178,7 +187,7 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 - ESP DI-COM → GND (Bl-Block) — Pflicht
 - PoE-Cat-Kabel an ESP-RJ45
 
-⚠️ **Sicherheit (PoE):** Der ESP wird per PoE versorgt — das ist eine **2. Spannungsquelle vom Netzwerk-Switch, die der lokale Ausschalter NICHT abdeckt**. Die 24-V-Klemmen sind mit Ausschalter AUS dennoch spannungsfrei (isoliertes SELV ~48 V nur an der RJ45-/PD-Schaltung). Zum **vollständigen Freischalten zusätzlich das Netzwerkkabel ziehen** (oder PoE am Switch deaktivieren).
+⚠️ **Freischalten:** siehe Sicherheitshinweis am Dokumentanfang — der Ausschalter trennt nur den 24-V-Kreis; **ESP (PoE) und BFT (eigene 230-V-Versorgung) bleiben unabhängig spannungsführend** (BFT speist die Klemmen 1–10).
 
 **B) Geräteseite Block C** (-U):
 
