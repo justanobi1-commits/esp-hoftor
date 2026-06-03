@@ -532,7 +532,8 @@ Innenausbau (Befehle/Status/LED/Taster intern + Versorgungs-Stiche + R19) ist **
 **D) 230V + 24V-Versorgung:**
 - [ ] 230V L/N/PE (Block B) einführen
 - [ ] 24-V-Netzteil (Phoenix 0,63 A/15 W) auf Hutschiene (Reihe 1) — ESP per PoE, NICHT am PSU
-- [ ] **PSU+ → Sicherung 27-O (1 A T) · 27-U → R-a** (Rot 0,5 mm²). *27-U → R-a schon jetzt vorverdrahtbar; Polarität egal (antiparallele LED).*
+- [x] **27-U → R-a** verdrahtet (Rot 0,5 mm²)
+- [ ] **PSU+ → 27-O** + **Glassicherung 1 A T in Halter 27 stecken** (beides erst bei Inbetriebnahme — Sicherung bewusst noch **draußen** → +24-V-Kreis bleibt während Aufbau spannungslos). Polarität egal (antiparallele LED).
 - [ ] **PSU− → Bl-a** (GND, **ungesichert** — 0-V-Rückleiter nie absichern)
 - [ ] Sicherung 28 = **+24-V-Reserve** (leer)
 

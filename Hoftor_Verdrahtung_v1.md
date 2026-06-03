@@ -204,7 +204,7 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 
 - 230 V L/N/PE (Block B) einführen
 - 24-V-Netzteil **Phoenix 0,63 A / 15 W** auf Hutschiene (Reihe 1) — ESP hängt per PoE NICHT am PSU
-- **PSU+ → Sicherung 27-O (1 A T) · 27-U → R-a** (Rot 0,5 mm²; Polarität egal — antiparallele LED in der HESILED)
+- **27-U → R-a** ✓ verdrahtet (Rot 0,5 mm²) · offen: **PSU+ → 27-O** + **Sicherung 1 A T stecken** (Sicherung bleibt bis Inbetriebnahme draußen → +24-V-Kreis spannungslos). Polarität egal — antiparallele LED in der HESILED.
 - **PSU− → Bl-a** (GND, **ungesichert** — 0-V-Rückleiter nie absichern)
 - Sicherung 28 = **+24-V-Reserve** (leer)
 
