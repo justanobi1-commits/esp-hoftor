@@ -464,28 +464,30 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 → Die Tor-/Außenseite der Klemmen 1–10 (AHK-Adern von der BFT) wird **später** aufgelegt; heute nur die Innenbrücken zu den Relais.
 → Pro AHK-Farbe ~2 m durchgehend für die spätere Tor-Strecke reservieren, Innenbrücken vom Reststück ernten.
 
-### Versorgungs-Stiche (R-/Bl-Block → Relais/Klemmen)
+### Versorgungs-Stiche (R-/Bl-Block → Relais) — ✓ verdrahtet 03-06-2026
 
-Speisen die gesetzten Sammelschienen. Block-Abgang beliebig (ein Potential), `a` = PSU-Zuleitung bleibt frei.
+Speisen die gesetzten Sammelschienen (verifiziert per Foto). `a` bleibt frei für PSU-Zuleitung.
 
 | Von | Farbe | Nach | Zweck |
 |---|---|---|---|
-| Bl-Block (z. B. Bl-b) | Blau | R11-A2 | speist blaue A2-Brücke → alle Relais-A2 = GND |
-| R-Block (z. B. R-b) | Rot | R15-K11 | speist FBS 4-6 rot → K11 von 15–18 = +24V |
-| R-Block (z. B. R-c) | Rot | Klemme 9-O | +24V Status-Rückleiter (via FBS 2-5 rot auf 10) |
-| *(später)* R-Block | Rot | Klemme 25 | +24V Taster (Block C) |
-| *(später)* Bl-Block | Blau | Klemme 23 | LED-Kathoden GND (via FBS 2-5 blau auf 24) |
+| Bl-b | Blau | R11-A2 | speist blaue A2-Brücke → alle Relais-A2 = GND |
+| R-b | Rot | R15-K11 | speist FBS 4-6 rot → K11 von 15–18 = +24V |
+| R-d | Rot | Klemme 9-O | +24V Status-Rückleiter (via FBS 2-5 rot auf 10) |
 
 ### Block C — Klemmen 21–26 (LED + Taster)
 
-| Klemme | Funktion | Verbindung |
-|---|---|---|
-| **21** | LED blau (+) | ← Relais 15 (F7)-K14 |
-| **22** | LED rot (+) | ← Relais 16 (F8)-K14 |
-| **23** | LED blau (−) | → GND, **FBS 2-5 blau** brückt 23↔24 |
-| **24** | LED rot (−) | → GND (via FBS 2-5 blau) |
-| **25** | Taster +24V | ← R-Block |
-| **26** | Taster Signal | → ESP DI3 |
+Ebenen wie Hauptblock: **-O = innen** (Relais/Block, *heute*), **-U = Gerät/außen** (LED/Taster, *später* von unten).
+
+| Klemme | Funktion | Innen (-O, heute) | Farbe | Außen (-U, später) |
+|---|---|---|---|---|
+| **21** | LED blau (+) | ← Relais 15 (F7)-K14 | Rot | LED blau Anode |
+| **22** | LED rot (+) | ← Relais 16 (F8)-K14 | Rot | LED rot Anode |
+| **23** | LED blau (−) | ← Bl-Block (GND), **FBS 2-5 blau** brückt 23↔24 | Blau | LED blau Kathode |
+| **24** | LED rot (−) | (via FBS 2-5 blau von 23) | – | LED rot Kathode |
+| **25** | Taster +24V | ← R-Block | Rot | Taster-Leg 1 |
+| **26** | Taster Signal | → ESP DI3 (*später, ESP*) | – | Taster-Leg 2 |
+
+**Heute verdrahtbar (4 Adern, innen -O):** 21-O←R15-K14, 22-O←R16-K14, 23-O←Bl-Block, 25-O←R-Block. (26→ESP DI3 + alle -U-Geräteseiten kommen später.)
 
 ### Vorhandene Steckbrücken (Inventar 03-06-2026)
 
