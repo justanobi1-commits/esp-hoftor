@@ -444,6 +444,8 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 
 **Quellen-Regel (Florian 03-06-2026):** Bei **Farbgleichheit Einzelader (20 AWG) bevorzugen** — schont das AHK-Kabel. Einzeladern vorrätig: Gelb, Schwarz, Grün, Blau, Weiß, Rot. Farben ohne Einzelader (Grau, Braun, Rosa, Weiß-Blau) werden aus dem AHK-Reststück geerntet. Farbe = Funktionsfarbe der zugehörigen AHK-Ader → durchgehende Codierung bleibt erhalten.
 
+**Verdrahtung mit Aderendhülsen (Entscheidung 03-06-2026):** Alle Adern sind feindrähtig (AHK-Litze + H07V-K) → **isolierte 0,5er Aderendhülsen** (~8 mm, trapez gecrimpt). Grund: feindrähtig ohne Hülse erfordert bei Phoenix Push-in das Drücken der Betätigung + spleißt bei 0,5 mm² → Hülse gibt direktes Push-in, gasdichten, vibrationsfesten Kontakt. **Eine Ader pro Öffnung** (TWIN + FBS lösen alle Doppelbelegungen → keine Zwillingshülsen nötig).
+
 | Von Klemme | Farbe | Quelle | Nach |
 |---|---|---|---|
 | 6-O | Grau | **AHK** | Relais 11 (F1)-K11 |
