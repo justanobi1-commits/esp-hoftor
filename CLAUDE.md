@@ -440,7 +440,9 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 → Befehlsrelais 11–14: K11 individuell zur BFT-Befehlsklemme, K14 via TWIN zur COM. A1 = ESP-Relais (geschaltetes +24V vom R-Block).
 → Alle A2 → GND (durchgehende blaue Brücke über 11–20, vom Bl-Block gespeist).
 
-### Interne Brücken Klemme↔Relais (Funktionsfarbe — heute verdrahtbar)
+### Interne Brücken Klemme↔Relais (Funktionsfarbe) — ✓ verdrahtet 03-06-2026
+
+**Status: alle 10 gesetzt + per Foto verifiziert** (R11–R14 K11/K14, R17/R18 A1). Adern auf oberer Reihe -O/-M, untere Reihe -U frei für Tor.
 
 **Quellen-Regel (Florian 03-06-2026):** Bei **Farbgleichheit Einzelader (20 AWG) bevorzugen** — schont das AHK-Kabel. Einzeladern vorrätig: Gelb, Schwarz, Grün, Blau, Weiß, Rot. Farben ohne Einzelader (Grau, Braun, Rosa, Weiß-Blau) werden aus dem AHK-Reststück geerntet. Farbe = Funktionsfarbe der zugehörigen AHK-Ader → durchgehende Codierung bleibt erhalten.
 
