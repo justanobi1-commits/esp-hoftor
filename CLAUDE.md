@@ -2,7 +2,7 @@
 
 **Version:** 3.1
 **Stand:** 01-06-2026
-**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` v0.35 — Server synchron, bereit zum Flashen** (**noch nicht geflasht**). Server `\\192.168.210.11\config\esphome\` = Repo: `hoftor.yaml` (v0.35) + `hoftor_lcars.css` (v0.8) + `hoftor_help.js` (Sync 01-06-2026 21:21, byte-identisch verifiziert). Alte Server-Stände gesichert in `archive\` (`hoftor_v0.33_2026-06-01.yaml`, `hoftor_lcars_v0.7_2026-06-01.css`). Hardware-Verbau im FIBOX läuft (Anhängerkabel ab 29-05 verbaut, TWIN-Deckel `D-PT 2,5-TWIN-MT` 3211317 noch offen).
+**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` v0.35 — Server synchron, bereit zum Flashen** (**noch nicht geflasht**). Server `\\192.168.210.11\config\esphome\` = Repo: `hoftor.yaml` (v0.35) + `hoftor_lcars.css` (v0.8) + `hoftor_help.js` (Sync 01-06-2026 21:21, byte-identisch verifiziert). Alte Server-Stände gesichert in `archive\` (`hoftor_v0.33_2026-06-01.yaml`, `hoftor_lcars_v0.7_2026-06-01.css`). Hardware-Verbau im FIBOX läuft. **Stand 03-06-2026:** Klemmen 1–10 (mit TWIN an #1/#4) montiert, **10× RIF-0 (Pos. 11–20)** auf Hutschiene, A2 durchgehend blau gebrückt, Block C (LED+Taster, Klemmen 21–26) gesetzt, 2 Sicherungshalter (27–28), PTFIX-Verteilerblöcke (Bl-a…m / R-a…m) verbaut. Neue **durchgehende physische Nummerierung** + Belegungsplan siehe **§6a**. AHK-Adern noch nicht aufgelegt.
 
 **Implementiert (v0.33–v0.35):**
 - **Bedien-Anleitung über dem Log (v0.35):** Anleitungs-Block in der RECHTEN Spalte (`#col_logs`, über dem Live-Log), per **`web_server: js_include: hoftor_help.js`** (DOM-Injektion, /0.js). **Warum JS:** `#col_logs` liegt im Shadow-DOM von `<esp-app>` — `css_include` durchdringt das nicht (nur CSS-Variablen/Farben), Entities können dort gar nicht hin (eigene Komponente `<esp-log>`). Beides am laufenden Gerät verifiziert (Browser-DOM-Test + `js_include` ergänzt das Frontend, ersetzt es nicht). Das Script wartet aufs Rendern (Polling) + Re-Inject via MutationObserver. **Verworfen:** v0.34-Ansatz (6 `text_sensor` in `grp_hilfe`, linke Spalte) — Florian wollte die Anleitung rechts über dem Log. Lange Variante weiter als `Hoftor_Kurzbeschreibung_Webinterface.md`.
@@ -229,7 +229,8 @@ AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nu
 - **2× Phoenix PTFIX-NS35** (Art. **3274054**) — Tragschienen-Adapter (1 je PTFIX)
 
 ### Koppelrelais (Ersatz der 8 Finder)
-- **8× Phoenix RIF-0-RPT-24DC/21** (Art. **2903370**) — All-in-One Koppelrelais, 24V DC Spule, Pickup ~17V, 6,2 mm Push-in, 1 Wechsler 6A
+- **Phoenix RIF-0-RPT-24DC/21** (Art. **2903370**) — All-in-One Koppelrelais, 24V DC Spule, Pickup ~17V, 6,2 mm Push-in, 1 Wechsler 6A
+- **Verbaut: 10 Stück (Pos. 11–20)** — 8 belegt (F1–F8) + **Pos. 19–20 Reserve** (z. B. für Ped-SCA-Lösung B / 3. Statussignal, HT13). Belegung + Nummerierung siehe **§6a**.
 
 ### Reihenklemmen (Block 1 — externe Verbindung zur BFT)
 - **8× Phoenix PT 2,5** (Art. **3209510**) — Push-in Durchgangsklemme grau
@@ -392,6 +393,63 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 
 → **1 separate Ader** vom PTFIX blau zum ESP DI-COM (nicht über Block C). Ohne diese Verbindung erkennt der ESP keine DI-Signale.
 
+## 6a. Belegungsplan — physische Nummerierung (Stand 03-06-2026)
+
+**Verbaut im FIBOX, durchgehend nummeriert.** Diese physische Nummerierung ist die **Verdrahtungs-Referenz**. Die alten **F-Rollen (F1–F8)** bleiben als logischer Bezug für ESPHome-Code + Schaltplan-PDF erhalten (in Klammern angegeben).
+
+### Nummern-Übersicht
+
+| Nummern | Bauteil | Funktion |
+|---|---|---|
+| **1–10** | Reihenklemmen (8× PT 2,5 + 2× TWIN an #1/#4) | Tor-Anbindung (AHK-Kabel von der BFT) |
+| **11–20** | 10× RIF-0 Koppelrelais | 8 belegt + **Pos. 19–20 Reserve** |
+| **21–26** | 6 Klemmen (Block C) | LED blau/rot + Taster |
+| **27–28** | 2 Sicherungshalter | 27 = 24V-Hauptsicherung 2A T · 28 = Reserve (falls ESP intern versorgt) |
+| **Bl-a…m** | PTFIX blau | GND/0V-Verteilung · **a = Zuleitung** (vom PSU−) |
+| **R-a…m** | PTFIX rot | +24V-Verteilung · **a = Zuleitung** (von Sicherung 27) |
+| (L/N/PE) | 230V-Einführung + 24V-Netzteil | (Reihe ganz außen, noch zu verkabeln) |
+
+### Relais-Belegung 11–20 (A2 aller = GND, durchgehend blau gebrückt)
+
+| Pos | F-Rolle | ESP | Funktion | A1 (Spule +) | K11 | K14 |
+|---|---|---|---|---|---|---|
+| **11** | F1 | r1 | Öffnen (Impuls, BFT65) | von ESP r1 (+24V) | Klemme 6 (BFT65) | Klemme 4 TWIN (BFT63 COM-EBD) |
+| **12** | F2 | r2 | Schließen (Impuls, BFT62) | von ESP r2 | Klemme 3 (BFT62) | Klemme 1 TWIN (BFT60 COM-Haupt) |
+| **13** | F5 | r3 | Schritt/Start E (BFT64) | von ESP r3 | Klemme 5 (BFT64) | Klemme 4 TWIN (BFT63 COM-EBD) |
+| **14** | F6 | r4 | Dauerauf/Ped (BFT61) | von ESP r4 | Klemme 2 (BFT61) | Klemme 1 TWIN (BFT60 COM-Haupt) |
+| **15** | F7 | r5 | LED blau (Tor offen) | von ESP r5 | **+24V (FBS 4-6 rot)** | LED blau Anode → Klemme 21 |
+| **16** | F8 | r6 | LED rot (Dauerauf) | von ESP r6 | **+24V (FBS 4-6 rot)** | LED rot Anode → Klemme 22 |
+| **17** | F3 | →DI1 | Status Tor offen (BFT24) | Klemme 7 (BFT24-Signal) | **+24V (FBS 4-6 rot)** | ESP DI1 |
+| **18** | F4 | →DI2 | Status Tor zu (BFT26) | Klemme 8 (BFT26-Signal) | **+24V (FBS 4-6 rot)** | ESP DI2 |
+| **19** | – | – | Reserve | – | – | – |
+| **20** | – | – | Reserve | – | – | – |
+
+→ **K11-+24V-Gruppe = Pos. 15–18 adjacent** → **FBS 4-6 rot** brückt deren K11 gemeinsam auf +24V.
+→ Befehlsrelais 11–14: K11 individuell zur BFT-Befehlsklemme, K14 via TWIN zur COM. A1 = ESP-Relais (geschaltetes +24V vom R-Block).
+→ Alle A2 → GND (durchgehende blaue Brücke über 11–20, vom Bl-Block gespeist).
+
+### Block C — Klemmen 21–26 (LED + Taster)
+
+| Klemme | Funktion | Verbindung |
+|---|---|---|
+| **21** | LED blau (+) | ← Relais 15 (F7)-K14 |
+| **22** | LED rot (+) | ← Relais 16 (F8)-K14 |
+| **23** | LED blau (−) | → GND, **FBS 2-5 blau** brückt 23↔24 |
+| **24** | LED rot (−) | → GND (via FBS 2-5 blau) |
+| **25** | Taster +24V | ← R-Block |
+| **26** | Taster Signal | → ESP DI3 |
+
+### Vorhandene Steckbrücken (Inventar 03-06-2026)
+
+| Brücke | Einsatz |
+|---|---|
+| **FBS 4-6 rot** | K11 der Relais 15–18 → +24V-Sammelschiene |
+| **FBS 2-5 rot** | Klemmen 9↔10 → gemeinsamer +24V-Statusrückleiter |
+| **FBS 2-5 blau** | Klemmen 23↔24 → LED-Kathoden auf GND |
+| (blau durchgehend) | A2 der Relais 11–20 → GND (bereits gesetzt) |
+
+> **Hinweis:** Schaltplan-PDF v2 (`Schaltplan_Hoftor_v2_KlemmenRelais.pdf`) nutzt noch die alte Relais-Anordnung F1 F5 F2 F6 F7 F8 F3 F4 ohne die 11–20-Nummern. **Bei Gelegenheit neu generieren** (`make_schaltplan_v2.py`), damit physische Nummern + 10 Relais drin sind.
+
 ## 6. Layout im Verteiler (3×12 TE FIBOX MCE65 36M) — 3 Klemmen-Blöcke
 
 ```
@@ -460,9 +518,11 @@ Gesamt belegt: 28 TE | Reserve: 8 TE
 | PSU → Sicherung → PTFIX | 0,5 mm² | rot (+24V), blau (GND) |
 | PTFIX → RIF-0 Spule A1 (+24V) | 0,5 mm² | rot |
 | RIF-0 → PTFIX GND | 0,5 mm² | blau |
-| ESP-Relais → RIF-0 A2 | 0,5 mm² | schwarz |
-| RIF-0 Kontakte → Reihenklemmen | 0,5 mm² | grün/grau |
-| Reihenklemmen → Ölflex → Tor | 0,5 mm² (Ölflex 12G0,5) | nach Adernummer |
+| ESP-Relais → RIF-0 A1 (Spule) | 0,5 mm² | schwarz (20 AWG Einzelader) |
+| RIF-0 K11/K14 ↔ Reihenklemme | 0,5 mm² | **= AHK-Funktionsfarbe** (durchgehende Codierung, geerntet aus AHK-Reststück — siehe `aderfarben_template.md`) |
+| Reihenklemmen → AHK-Kabel → Tor | 0,5 mm² (AHK 13×0,5) | nach Aderfarbe (Belegung §6a / aderfarben_template.md) |
+
+**Durchgängige Farbcodierung (bestätigt 03-06-2026):** Die Innenbrücken Reihenklemme↔RIF-0 werden in der **Funktionsfarbe** der jeweiligen AHK-Ader gezogen (aus dem entmantelten AHK-Reststück, ~3 m je Farbe übrig — reicht mit Faktor ~5). Versorgungs-/Sammelschienen (+24V rot, GND blau, ESP→Spule schwarz, LED/DI-COM) bleiben in Standardfarbe aus den 6 separaten 20-AWG-Einzeladern — die sind keine Funktionsadern.
 
 PTFIX Klemmbereich Eingang: 0,2–6 mm² → 0,5 mm² passt.
 PT 2,5 Klemmbereich: 0,2–4 mm² eindrähtig → 0,5 mm² passt.
