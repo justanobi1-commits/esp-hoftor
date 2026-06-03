@@ -7,7 +7,7 @@ Verteiler-Innenausbau · FIBOX MCE65 36M (3×12 TE) · BFT Thalia BT A80/A160 + 
 **Querverweise:**
 
 - **Firmware-/Software-Logik (ESPHome):** siehe `Hoftor_Dokumentation_v0.35.docx` (Steuerkanäle, Scripts, Auto-Close, Störungserkennung, DI/Relais-Logik).
-- **Live-Arbeitsdoku (vollständig, versioniert):** `CLAUDE.md` im Projektordner `esp/hoftor` (Abschnitt §6a = Belegungsplan).
+- **Live-Arbeitsdoku (vollständig, versioniert):** `CLAUDE.md` im Projektordner `hw-hoftor` (Abschnitt §6a = Belegungsplan).
 
 ---
 
@@ -213,5 +213,5 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 ## 14. Querverweise
 
 - **Firmware-/Software-Logik (ESPHome):** `Hoftor_Dokumentation_v0.35.docx`
-- **Live-Arbeitsdoku / vollständiger Stand:** `CLAUDE.md` (`esp/hoftor`, Abschnitt §6a)
+- **Live-Arbeitsdoku / vollständiger Stand:** `CLAUDE.md` (`hw-hoftor`, Abschnitt §6a)
 - **BFT-Handbuch:** `THALIA_DUO_BT_A80_A160.pdf` (im Repo)

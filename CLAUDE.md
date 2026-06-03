@@ -53,11 +53,11 @@
 ## Cross-References (HA-Doku)
 
 Dieses ESP-Projekt hat (geplante) HA-Berührungspunkte. Sobald in Betrieb, **auch aktualisieren**:
-- `homeassistant/dachgeschoss/automationen_uebersicht.md` — geplant: Cover-Entity, Dauerauf-Logik, LED-Blink-Logik (HT9)
-- `homeassistant/dachgeschoss/helfer_uebersicht.md` — geplant: ggf. Status-Helfer
-- `homeassistant/dachgeschoss/integrationen_uebersicht.md` — geplant: ESPHome Waveshare ESP32-S3-POE-ETH
-- `homeassistant/dachgeschoss/geraete_uebersicht.md` — geplant: Hardware-Eintrag Hoftor-Steuerung
-- `homeassistant/dachgeschoss/dashboards_uebersicht.md` — ggf. Steuer-Karte
+- `srv-ha-dachgeschoss/automationen_uebersicht.md` — geplant: Cover-Entity, Dauerauf-Logik, LED-Blink-Logik (HT9)
+- `srv-ha-dachgeschoss/helfer_uebersicht.md` — geplant: ggf. Status-Helfer
+- `srv-ha-dachgeschoss/integrationen_uebersicht.md` — geplant: ESPHome Waveshare ESP32-S3-POE-ETH
+- `srv-ha-dachgeschoss/geraete_uebersicht.md` — geplant: Hardware-Eintrag Hoftor-Steuerung
+- `srv-ha-dachgeschoss/dashboards_uebersicht.md` — ggf. Steuer-Karte
 - Memory `project_hoftor_esp.md` — Pointer-Datei
 
 ## Bestellstatus (27-05-2026)
@@ -137,7 +137,7 @@ Gründe für Umbau:
 **Modell:** BFT Thalia BT A80 oder A160 (gleiche Klemmenbelegung)
 **Zusatzkarte:** **BFT EBD** (Art. 2614326) — bringt 2 weitere Befehlseingänge + 4 nicht-programmierbare Sicherheitseingänge
 
-**Anleitung:** `THALIA_DUO_BT_A80_A160.pdf` (im Projektordner `esp\hoftor`, seit 03-06-2026 im Repo)
+**Anleitung:** `THALIA_DUO_BT_A80_A160.pdf` (im Projektordner `hw-hoftor`, seit 03-06-2026 im Repo)
 
 ### Konfiguration BFT (im Display abgelesen, bestätigt)
 
@@ -704,14 +704,14 @@ ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be us
 
 | Datei | Speicherort |
 |---|---|
-| Diese Doku | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\CLAUDE.md` |
-| Technische Doku Firmware (Word) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Hoftor_Dokumentation_v0.35.docx` — **Software/ESPHome-Logik** |
-| **Verdrahtungs-Doku (Word)** | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Hoftor_Verdrahtung_v1.docx` — **Hardware/Belegungsplan** (Quelle: `Hoftor_Verdrahtung_v1.md`). Querverweis ↔ Firmware-Doku. |
-| Kurzbeschreibung Web-Interface | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Hoftor_Kurzbeschreibung_Webinterface.md` |
-| Web-UI Bedien-Anleitung (JS-Inject) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\hoftor_help.js` |
-| Web-UI LCARS-Theme (CSS) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\hoftor_lcars.css` |
-| Aderfarben-Template | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\aderfarben_template.md` |
-| BFT Thalia Handbuch (im Repo) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\THALIA_DUO_BT_A80_A160.pdf` |
+| Diese Doku | `S:\Projekte\hw-hoftor\CLAUDE.md` |
+| Technische Doku Firmware (Word) | `S:\Projekte\hw-hoftor\Hoftor_Dokumentation_v0.35.docx` — **Software/ESPHome-Logik** |
+| **Verdrahtungs-Doku (Word)** | `S:\Projekte\hw-hoftor\Hoftor_Verdrahtung_v1.docx` — **Hardware/Belegungsplan** (Quelle: `Hoftor_Verdrahtung_v1.md`). Querverweis ↔ Firmware-Doku. |
+| Kurzbeschreibung Web-Interface | `S:\Projekte\hw-hoftor\Hoftor_Kurzbeschreibung_Webinterface.md` |
+| Web-UI Bedien-Anleitung (JS-Inject) | `S:\Projekte\hw-hoftor\hoftor_help.js` |
+| Web-UI LCARS-Theme (CSS) | `S:\Projekte\hw-hoftor\hoftor_lcars.css` |
+| Aderfarben-Template | `S:\Projekte\hw-hoftor\aderfarben_template.md` |
+| BFT Thalia Handbuch (im Repo) | `S:\Projekte\hw-hoftor\THALIA_DUO_BT_A80_A160.pdf` |
 
 ### Shops/Bezugsquellen
 - **automation24.de** — Phoenix-Klemmen, Koppelrelais, PTFIX, FIBOX-Verteiler (alles 1× verfügbar, keine Großpackungen)

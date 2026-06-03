@@ -156,7 +156,7 @@
 # ─────────────────────────────────────────────────────────────────
 #
 #  Hoftor-Steuerung — Waveshare ESP32-S3-POE-ETH-8DI-8RO
-#  BFT Thalia BT A80/A160 + EBD.  Doku: esp/hoftor/CLAUDE.md
+#  BFT Thalia BT A80/A160 + EBD.  Doku: hw-hoftor/CLAUDE.md
 #  Relais: r1=Open(BFT65) r2=Close(BFT62) r3=Schritt(BFT64) r4=Ped(BFT61, IC=6 Timer Ped)
 #  TCA aus → ESP schließt aktiv.  ⚠️ Erst-Flash USB-C, danach OTA.  Ethernet XOR WiFi.
 
