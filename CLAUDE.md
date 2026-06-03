@@ -464,6 +464,18 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 → Die Tor-/Außenseite der Klemmen 1–10 (AHK-Adern von der BFT) wird **später** aufgelegt; heute nur die Innenbrücken zu den Relais.
 → Pro AHK-Farbe ~2 m durchgehend für die spätere Tor-Strecke reservieren, Innenbrücken vom Reststück ernten.
 
+### Versorgungs-Stiche (R-/Bl-Block → Relais/Klemmen)
+
+Speisen die gesetzten Sammelschienen. Block-Abgang beliebig (ein Potential), `a` = PSU-Zuleitung bleibt frei.
+
+| Von | Farbe | Nach | Zweck |
+|---|---|---|---|
+| Bl-Block (z. B. Bl-b) | Blau | R11-A2 | speist blaue A2-Brücke → alle Relais-A2 = GND |
+| R-Block (z. B. R-b) | Rot | R15-K11 | speist FBS 4-6 rot → K11 von 15–18 = +24V |
+| R-Block (z. B. R-c) | Rot | Klemme 9-O | +24V Status-Rückleiter (via FBS 2-5 rot auf 10) |
+| *(später)* R-Block | Rot | Klemme 25 | +24V Taster (Block C) |
+| *(später)* Bl-Block | Blau | Klemme 23 | LED-Kathoden GND (via FBS 2-5 blau auf 24) |
+
 ### Block C — Klemmen 21–26 (LED + Taster)
 
 | Klemme | Funktion | Verbindung |
