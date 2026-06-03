@@ -38,7 +38,9 @@ Reihenfolge Klemmen 1–10 + Farben bestätigt. „Geht zu" mit neuer physischer
 | 8 | 26 | **Rosa** | Status Tor zu — Signal | Relais 18 (F4)-A1 |
 | 9 | 25 | **Blau** | Status offen — Rückleiter (**+24V**) | R-Block via FBS 2-5 rot (Klemme 9↔10) |
 | 10 | 27 | **Weiß-Blau** | Status zu — Rückleiter (**+24V**) | R-Block via FBS 2-5 rot (Klemme 9↔10) |
-| 11–13 (Reserve) | – | Weiß-Schwarz · Weiß-Rot · Orange | (Reserve) | – |
+| 11–13 (Reserve) | – | Weiß-Schwarz · Weiß-Rot · Orange ⚠️ | (Reserve) | – |
+
+⚠️ **Orange meiden** (Florian 03-06-2026): ähnelt zu sehr der roten Einzelader → Verwechslungsgefahr. Orange bleibt möglichst unbenutzt; bei Reserve-Bedarf Weiß-Schwarz / Weiß-Rot bevorzugen.
 
 **Begründung der Gruppierung:** COMs dunkel/neutral (Schwarz/Braun) · 4 Impuls-Befehle hell/auffällig (Gelb/Grün/Weiß/Grau) · 2 Status-Signale warm (Rot/Rosa) · 2 +24V-Rückleiter blau-Töne (Blau/Weiß-Blau, passen zusammen, da per FBS-Brücker verbunden).
 

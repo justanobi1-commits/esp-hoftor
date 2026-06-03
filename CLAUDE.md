@@ -446,6 +446,8 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 
 **Quellen-Regel (Florian 03-06-2026):** Bei **Farbgleichheit Einzelader (20 AWG) bevorzugen** — schont das AHK-Kabel. Einzeladern vorrätig: Gelb, Schwarz, Grün, Blau, Weiß, Rot. Farben ohne Einzelader (Grau, Braun, Rosa, Weiß-Blau) werden aus dem AHK-Reststück geerntet. Farbe = Funktionsfarbe der zugehörigen AHK-Ader → durchgehende Codierung bleibt erhalten.
 
+**AHK-Orange meiden (Florian 03-06-2026):** Die orange AHK-Ader ähnelt zu sehr der roten Einzelader → Verwechslungsgefahr. Orange bleibt unbenutzt in der Reserve (Klemmen 11–13); für Innenbrücken/Reserve andere Farben bevorzugen.
+
 **Verdrahtung mit Aderendhülsen (Entscheidung 03-06-2026):** Alle Adern sind feindrähtig (AHK-Litze + H07V-K) → **isolierte 0,5er Aderendhülsen** (~8 mm, trapez gecrimpt). Grund: feindrähtig ohne Hülse erfordert bei Phoenix Push-in das Drücken der Betätigung + spleißt bei 0,5 mm² → Hülse gibt direktes Push-in, gasdichten, vibrationsfesten Kontakt. **Eine Ader pro Öffnung** (TWIN + FBS lösen alle Doppelbelegungen → keine Zwillingshülsen nötig).
 
 | Von Klemme | Farbe | Quelle | Nach |
@@ -487,7 +489,7 @@ Ebenen wie Hauptblock: **-O = innen** (Relais/Block, *heute*), **-U = Gerät/au�
 | **25** | Taster +24V | ← R-Block | Rot | Taster-Leg 1 |
 | **26** | Taster Signal | → ESP DI3 (*später, ESP*) | – | Taster-Leg 2 |
 
-**Heute verdrahtbar (4 Adern, innen -O):** 21-O←R15-K14, 22-O←R16-K14, 23-O←Bl-Block, 25-O←R-Block. (26→ESP DI3 + alle -U-Geräteseiten kommen später.)
+**✓ verdrahtet 03-06-2026 (4 Adern, innen -O):** 21-O←R15-K14 (rot), 22-O←R16-K14 (rot), 23-O←Bl-d (blau), 25-O←R-f (rot). (26→ESP DI3 + alle -U-Geräteseiten kommen später.) *Prüfen: rote Anoden 21/22 nicht vertauscht.*
 
 ### Vorhandene Steckbrücken (Inventar 03-06-2026)
 
