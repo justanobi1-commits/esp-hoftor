@@ -245,6 +245,7 @@ AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nu
 - **Versorgung: PoE** (Strom + Daten über 1 Kabel vom vorhandenen PoE-Switch)
   - **VIN-Schraubklemme bleibt FREI** — kein 24V vom PSU an den ESP
   - **Begründung:** PoE-Switch + PoE-fähiges Board → würde man zusätzlich VIN anschließen, besteht reales Risiko dass VIN + PoE zusammentreffen (Umstöpseln, Port-Reset). Ob das Board VIN+PoE sicher ORt, ist NICHT im Datenblatt belegt. Daher: nur PoE, VIN gar nicht erst anschließen → Konflikt physisch ausgeschlossen.
+  - **⚠️ Sicherheits-/Wartungshinweis (Florian 03-06-2026, PoE bewusst beibehalten):** PoE ist eine **2. Spannungsquelle, die der lokale Ausschalter NICHT abdeckt** (kommt vom Netzwerk-Switch). Isoliertes SELV (~48 V, ≤ 15 W) nur auf der RJ45-/PD-Schaltung des Boards — die **24-V-Klemmen sind mit Ausschalter AUS dennoch spannungsfrei**, und das Tor kann nicht fahren. Zum **vollständigen** Freischalten zusätzlich **das Netzwerkkabel ziehen** (oder PoE am Switch deaktivieren). → In die Wartungs-/Freischalt-Routine aufnehmen.
 - **Galvanische Trennung (sauberste Architektur):**
   - ESP-Logik-Versorgung: PoE
   - 24V-Schaltkreis (RIF-0 Spulen, LEDs, DI-Schaltspannung): DEWIN PSU

@@ -178,6 +178,8 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 - ESP DI-COM → GND (Bl-Block) — Pflicht
 - PoE-Cat-Kabel an ESP-RJ45
 
+⚠️ **Sicherheit (PoE):** Der ESP wird per PoE versorgt — das ist eine **2. Spannungsquelle vom Netzwerk-Switch, die der lokale Ausschalter NICHT abdeckt**. Die 24-V-Klemmen sind mit Ausschalter AUS dennoch spannungsfrei (isoliertes SELV ~48 V nur an der RJ45-/PD-Schaltung). Zum **vollständigen Freischalten zusätzlich das Netzwerkkabel ziehen** (oder PoE am Switch deaktivieren).
+
 **B) Geräteseite Block C** (-U):
 
 - LED blau: + → 21-U, − → 23-U
