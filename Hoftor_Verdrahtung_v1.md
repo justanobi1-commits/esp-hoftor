@@ -33,7 +33,7 @@ Dieses Dokument beschreibt den **physischen Aufbau und die Verdrahtung** im Vert
 | **1–10** | Reihenklemmen (8× PT 2,5 + 2× TWIN an #1/#4) | Tor-Anbindung (AHK-Kabel von der BFT) |
 | **11–20** | 10× RIF-0 Koppelrelais | 9 belegt + Pos. 20 Reserve |
 | **21–26** | 6 Klemmen (Block C) | LED blau/rot + Taster |
-| **27–28** | 2 Sicherungshalter | 27 = 24 V-Hauptsicherung 2 A T · 28 = Reserve |
+| **27–28** | 2 Sicherungshalter (PT 4-HESILED 24) | 27 = 24-V-Hauptsicherung **1 A T** (PSU+ → R-a) · 28 = **+24-V-Reserve** (leer) |
 | **Bl-a…m** | PTFIX blau | GND/0 V-Verteilung · a = Zuleitung (PSU−) |
 | **R-a…m** | PTFIX rot | +24 V-Verteilung · a = Zuleitung (Sicherung 27) |
 
@@ -176,6 +176,7 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 - **Durchgehende Farbcodierung:** Funktionsfarbe von der BFT-Klemme bis zum Relais; Innenbrücken in derselben Farbe (Einzelader bevorzugt, sonst AHK-Rest).
 - **Verdrahtung mit Aderendhülsen:** Alle Adern feindrähtig → isolierte 0,5er Hülsen (~8 mm, trapez gecrimpt), eine Ader pro Öffnung.
 - **AHK-Orange meiden:** Die orange AHK-Ader ähnelt zu sehr der roten Einzelader → Verwechslungsgefahr; Orange bleibt unbenutzt in der Reserve.
+- **24-V-Absicherung nur im Plusleiter:** Sicherung 27 (1 A T) in der +24-V-Einspeisung (HESILED mit antiparalleler LED → Einspeiseseite/Polarität egal). **GND/0 V wird NICHT abgesichert** — der Rückleiter muss als Referenz immer durchverbunden bleiben.
 
 ## 13. Offene Anschluss-Checkliste (ESP / Tor / 230 V)
 
@@ -202,10 +203,10 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 **D) 230 V + 24 V-Versorgung:**
 
 - 230 V L/N/PE (Block B) einführen
-- 24 V-Netzteil auf Hutschiene (Reihe 1)
-- PSU+ → Sicherung 27 → R-a (+24 V-Einspeisung)
-- PSU− → Bl-a (GND-Einspeisung)
-- Sicherung 28 = Reserve (falls ESP intern versorgt)
+- 24-V-Netzteil **Phoenix 0,63 A / 15 W** auf Hutschiene (Reihe 1) — ESP hängt per PoE NICHT am PSU
+- **PSU+ → Sicherung 27 (1 A T) → R-a** (Rot 0,5 mm²; Seite egal — antiparallele LED in der HESILED)
+- **PSU− → Bl-a** (GND, **ungesichert** — 0-V-Rückleiter nie absichern)
+- Sicherung 28 = **+24-V-Reserve** (leer)
 
 ---
 

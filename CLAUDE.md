@@ -70,7 +70,7 @@ Dieses ESP-Projekt hat (geplante) HA-Berührungspunkte. Sobald in Betrieb, **auc
 | **ETUKER Anhängerkabel 13×0,5** (5 m, 24,46 €) | Tor-↔-Verteiler + Innenverdrahtung mit durchgehender Farbe | bestellt, Eintreffen **Freitag 29-05-2026** ⏳ |
 | **FBS-Brücker für RIF-0** | A2-Sammelschiene GND + K11-Sammelschiene +24V + Reserve grau | **noch zu bestellen** ⏳ |
 | **Phoenix PT 4-HESILED 24** (3211903) + 2× D-ST 4 (3030420) | 1 + 2 | **HESI-Nachbestellung** (ersetzt generischen Halter) |
-| **Glassicherung 2 A T 5×20** | 2–3 Stk | im Bestand vorhanden |
+| **Glassicherung 1 A T 5×20** | 2–3 Stk | matcht 0,63-A-PSU |
 | **Aderendhülsen 0,5 mm²** | bei Bedarf | im Bestand vorhanden |
 | **H07V-K 0,5 mm²** | rot/blau/schwarz/grau/grün/gelb je 15 m | im Bestand vorhanden |
 
@@ -105,7 +105,7 @@ FBS-BRÜCKER FÜR RIF-0:
 Gesamt: 9 Positionen, 19 Stück, ~25-30 € + Versand
 
 Hinweise:
-- Block B 230V: 3 Einzelklemmen (1× grau L + 1× blau N + 1× grün-gelb PE). PE endet ausschließlich in der Klemme — DEWIN PSU ist Schutzklasse II, kein PE-Anschluss am Gerät nötig. FIBOX MCE65 36M ist Kunststoffgehäuse (keine Erdung erforderlich).
+- Block B 230V: 3 Einzelklemmen (1× grau L + 1× blau N + 1× grün-gelb PE). PE endet ausschließlich in der Klemme — sofern das Phoenix-PSU Schutzklasse II ist, kein PE-Anschluss am Gerät nötig (am konkreten Gerät prüfen). FIBOX MCE65 36M ist Kunststoffgehäuse (keine Erdung erforderlich).
 - Bestand-Klemmen (2× grau aus Original-Bestellung): wandern in Block C
 - 2. D-ST 2,5 aus Bestand: wandert als Endplatte zu Block C
 - Im Notfall können FBS-Brücker mit Seitenschneider gekürzt werden
@@ -217,8 +217,8 @@ AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nu
 - **B16 LS-Automat** (in Hauptverteilung) — bestehend
 - **230V Zuleitung** → 2. Verteilung am Schuppen
 - **ABB Ausschalter** (1 TE) — Hand-Trennstelle, bestehend
-- **DEWIN 24V/1,5A/36W Hutschienen-Netzteil** (~2 TE) — bestehend
-- **Phoenix PT 4-HESILED 24** (3211903, 6,2 mm) — Sicherungs-Reihenklemme mit **Durchbrenn-LED** (ersetzt generischen Glassicherungshalter) + **Glassicherung 2 A T 5×20** im Bestand
+- **Phoenix Hutschienen-Netzteil 24 V / 0,63 A / 15 W** (~2 TE) — 24 V DC SELV (ersetzt früher geplantes DEWIN 1,5 A; ESP hängt per **PoE NICHT am PSU**, daher reicht 0,63 A locker — Last ~0,1–0,23 A)
+- **Phoenix PT 4-HESILED 24** (3211903, 6,2 mm) — Sicherungs-Reihenklemme mit **Durchbrenn-LED** (ersetzt generischen Glassicherungshalter) + **Glassicherung 1 A T 5×20**. LED-Anzeige via **antiparallele LEDs** → Einspeiseseite/Polarität **egal**.
   - Endkappen: **2× Phoenix D-ST 4** (3030420) — beidseitig, da HESI-Klemme allein zwischen anderen Bauformen steht. (D-ST 4 ist 36,5 mm hoch, deckt nur den unteren stromführenden Anschlussbereich — Sicherungshalter oben ist konstruktiv selbst isoliert, korrekt so)
   - LED leuchtet bei durchgebrannter Sicherung + anliegender 24 V → Sofort-Diagnose
 - → liefert 24 V DC SELV
@@ -248,9 +248,9 @@ AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nu
   - **⚠️ Sicherheits-/Freischalt-Hinweis (Florian 03-06-2026):** Der lokale Ausschalter (ABB) trennt **NUR den eigenen 24-V-Kreis dieser Steuerung** (PSU → R-/Bl-Block → RIF-0-Spulen, LEDs). **NICHT** abgeschaltet sind: **(1) der ESP** (PoE vom Netzwerk-Switch, isoliertes SELV ~48 V an der RJ45-Buchse); **(2) der BFT-Controller** — der hat seine **eigene 230-V-Versorgung** und ist vom Ausschalter unabhängig. Dadurch können auch die **Reihenklemmen 1–10 / BFT-Adern Spannung führen** (insb. 1–6: die BFT legt an ihren IC-Eingängen 60–65 ihre interne Sensorspannung gegen COM an) — **auch wenn unser 24-V-Kreis aus ist**. **Vollständiges Freischalten = (a) Ausschalter AUS + (b) ESP-Netzwerkkabel ziehen / PoE am Switch aus + (c) BFT separat spannungsfrei.**
 - **Galvanische Trennung (sauberste Architektur):**
   - ESP-Logik-Versorgung: PoE
-  - 24V-Schaltkreis (RIF-0 Spulen, LEDs, DI-Schaltspannung): DEWIN PSU
+  - 24V-Schaltkreis (RIF-0 Spulen, LEDs, DI-Schaltspannung): Phoenix-PSU
   - Verbindung ESP ↔ Schaltkreis nur über potentialfreie Relais-Kontakte + opto-isolierte DIs
-- **Strombilanz:** PoE 802.3af bis 15W → ESP ~3-5W ✅. DEWIN PSU ohne ESP-Last nur ~115mA → noch mehr Reserve ✅
+- **Strombilanz:** PoE 802.3af bis 15W → ESP ~3-5W ✅. Phoenix-PSU 0,63 A; 24-V-Last (Relais + LEDs) ~0,1–0,23 A → ~3× Reserve ✅ (ESP per PoE, nicht am PSU)
 - Ethernet-Config in ESPHome identisch (W5500), egal welche Versorgung
 
 ### Kabel
@@ -405,10 +405,10 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 | **1–10** | Reihenklemmen (8× PT 2,5 + 2× TWIN an #1/#4) | Tor-Anbindung (AHK-Kabel von der BFT) |
 | **11–20** | 10× RIF-0 Koppelrelais | 9 belegt (inkl. **R19 = Taster**) + **Pos. 20 Reserve** |
 | **21–26** | 6 Klemmen (Block C) | LED blau/rot + Taster |
-| **27–28** | 2 Sicherungshalter | 27 = 24V-Hauptsicherung 2A T · 28 = Reserve (falls ESP intern versorgt) |
+| **27–28** | 2 Sicherungshalter (PT 4-HESILED 24) | 27 = 24-V-Hauptsicherung **1 A T** (PSU+ → R-a) · 28 = **+24-V-Reserve** (leer) |
 | **Bl-a…m** | PTFIX blau | GND/0V-Verteilung · **a = Zuleitung** (vom PSU−) |
 | **R-a…m** | PTFIX rot | +24V-Verteilung · **a = Zuleitung** (von Sicherung 27) |
-| (L/N/PE) | 230V-Einführung + 24V-Netzteil | (Reihe ganz außen, noch zu verkabeln) |
+| (L/N/PE) | 230V-Einführung + 24-V-Netzteil (Phoenix 0,63 A) | (Reihe ganz außen, noch zu verkabeln) |
 
 ### Anschluss-Benennung (Klemmen-Ebenen)
 
@@ -529,19 +529,19 @@ Innenausbau (Befehle/Status/LED/Taster intern + Versorgungs-Stiche + R19) ist **
 
 **D) 230V + 24V-Versorgung:**
 - [ ] 230V L/N/PE (Block B) einführen
-- [ ] 24V-Netzteil auf Hutschiene (Reihe 1)
-- [ ] **PSU+ → Sicherung 27 → R-a** (+24V-Einspeisung R-Block)
-- [ ] **PSU− → Bl-a** (GND-Einspeisung Bl-Block)
-- [ ] Sicherung 28 = Reserve (falls ESP doch intern versorgt)
+- [ ] 24-V-Netzteil (Phoenix 0,63 A/15 W) auf Hutschiene (Reihe 1) — ESP per PoE, NICHT am PSU
+- [ ] **PSU+ → Sicherung 27 (1 A T) → R-a** (Rot 0,5 mm²; Seite egal — antiparallele LED). *27→R-a-Ausgang schon jetzt vorverdrahtbar.*
+- [ ] **PSU− → Bl-a** (GND, **ungesichert** — 0-V-Rückleiter nie absichern)
+- [ ] Sicherung 28 = **+24-V-Reserve** (leer)
 
 ## 6. Layout im Verteiler (3×12 TE FIBOX MCE65 36M) — 3 Klemmen-Blöcke
 
 ```
 Reihe 1 — 230V + Versorgung (10 TE belegt, 2 TE Reserve)
 ┌────────┬─────┬─────────┬─────┬───────────┬───────────┬─────┐
-│Block B │ ABB │  DEWIN  │ Si. │ PTFIX rot │ PTFIX blau│ Res │
-│ 230V   │ Aus │  PSU    │ 2A  │   +24 V   │    GND    │     │
-│ 3 Kl.  │     │ 24V/1,5A│  T  │           │           │     │
+│Block B │ ABB │ Phoenix │ Si. │ PTFIX rot │ PTFIX blau│ Res │
+│ 230V   │ Aus │  PSU    │ 1A  │   +24 V   │    GND    │     │
+│ 3 Kl.  │     │24V/0,63A│  T  │           │           │     │
 │ ~2 TE  │ 1TE │  2 TE   │ 1TE │   2 TE    │   2 TE    │ 2TE │
 └────────┴─────┴─────────┴─────┴───────────┴───────────┴─────┘
   L+N+PE
@@ -692,7 +692,7 @@ Klemmen #1 (BFT 60) und #4 (BFT 63) brauchen jeweils 2 Abgänge nach unten (zu 2
 User-Entscheidung: **eigenes Relais F6** behalten (statt nur in HA via "Open-Relais R1 dauerhaft halten"). Gründe: visuelle Diagnose, Klarheit, Trennung der Anwendungsfälle "öffnen Impuls" vs "Dauerauf gehalten".
 
 ### Absicherung 24V-Seite
-Trotz PSU mit Strombegrenzung wird eine **Glassicherung 2A T** (träge) in der **Phoenix PT 4-HESILED 24 Sicherungsklemme** zwischen PSU+ und PTFIX rot eingesetzt. Vorteil der HESI-Klemme: **LED zeigt durchgebrannte Sicherung an**. Service-Trennpunkt + Schutz bei Verdrahtungsfehlern + Sofort-Diagnose.
+Trotz PSU mit Strombegrenzung wird eine **Glassicherung 1 A T** (träge) in der **Phoenix PT 4-HESILED 24 Sicherungsklemme** zwischen PSU+ und R-Block (R-a) eingesetzt. **1 A** passt zum 0,63-A-PSU (LED zeigt echten Fehler, nicht nur PSU-Strombegrenzung). Vorteil der HESI-Klemme: **LED zeigt durchgebrannte Sicherung an** — via **antiparallele LEDs**, daher **Einspeiseseite/Polarität egal** (Schaltplan 3211903 bestätigt). Service-Trennpunkt + Schutz + Sofort-Diagnose. **GND (0 V) wird NICHT abgesichert** (Rückleiter muss als Referenz durchverbunden bleiben).
 
 ### Netzwerk: Ethernet XOR WiFi (verifiziert 28-05-2026)
 ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be used simultaneously, even if both are physically available"). Kein Fallback-Netz möglich. Für dieses Projekt ist **Ethernet/PoE die richtige Wahl** (Grund für den Umbau war der schlechte WLAN-Empfang am Tor). Konsequenz: Ein „nach Flash nicht mehr pingbar" ist i. d. R. ein korruptes/abgebrochenes Image (z. B. PoE-Wackler beim OTA), KEIN fehlender Netzweg — ein WiFi-Fallback würde das auch nicht retten. **Recovery = USB-C-Reflash** (Configs sicher). Beim OTA die Versorgung stabil halten; `safe_mode` fängt nur fehlerhafte App-Logik ab, nicht ein totes Image.
@@ -714,7 +714,7 @@ ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be us
 - **automation24.de** — Phoenix-Klemmen, Koppelrelais, PTFIX, FIBOX-Verteiler (alles 1× verfügbar, keine Großpackungen)
 - **Amazon** — PT 2,5-TWIN 3-polig (Phoenix-Äquivalent oder Drittanbieter)
 - **Waveshare-Shop / Amazon / AliExpress** — ESP32-S3-POE-ETH-8DI-8RO
-- **Conrad/Reichelt/Baumarkt** — Glassicherungen 2A T 5×20
+- **Conrad/Reichelt/Baumarkt** — Glassicherungen 1 A T 5×20
 
 ### Wichtige Artikelnummern
 
