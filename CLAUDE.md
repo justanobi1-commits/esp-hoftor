@@ -413,12 +413,11 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 
 **Reihenklemmen 1–10:** `<Nr>-O` = obere Push-in-Reihe, `<Nr>-U` = untere. **TWIN (#1, #4)** zusätzlich `<Nr>-M` = Mitte (3 Anschlüsse). Referenz oben/unten = wie verbaut (Beschriftungsstreifen mittig, Foto 03-06-2026).
 
-**Bedeutungs-Konvention (Florian 03-06-2026):**
-- **-O = Außen-/Tor-Seite** (AHK-Ader von der BFT, wird *später* aufgelegt)
-- **-U = Innen-/Relais-Seite** (Funktionsfarben-Brücke zum RIF-0, *heute*)
-- **TWIN: -O = COM-Eingang (AHK)** · **-M + -U = die 2 Abgänge zu den Relais** (M/U beliebig, gleiches Potential)
-- → Vorteil: AHK später auflegbar ohne Innenverdrahtung zu stören.
-- ⚠️ Falls Kabel-Einführung von unten → Richtung ggf. drehen (O=innen / U=außen). *Default hier: O=Tor.*
+**Bedeutungs-Konvention (Florian 03-06-2026 — Kabeleinführung von unten):**
+- **-U = Außen-/Tor-Seite** (AHK-Ader von der BFT, kommt von unten rein, wird *später* aufgelegt)
+- **-O = Innen-/Relais-Seite** (Funktionsfarben-Brücke zum RIF-0, *heute*)
+- **TWIN: -U = COM-Eingang (AHK, einzelner unterer Port)** · **-O + -M = die 2 Abgänge zu den Relais (oberes Paar)** (O/M beliebig, gleiches Potential)
+- Einheitlich: **oben = innen/Relais, unten = Tor**. → AHK kommt von unten auf -U, Innenverdrahtung auf -O bleibt unberührt.
 
 **Relais 11–20** behalten die Phoenix-Bezeichnung **A1, A2, 11, 14**. Zur Eindeutigkeit immer mit Präfix: `Kl. 1-O` (Reihenklemme) vs. `R11-K11` (Relais).
 
@@ -447,16 +446,16 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 
 | Von Klemme | Farbe | Quelle | Nach |
 |---|---|---|---|
-| 6-U | Grau | **AHK** | Relais 11 (F1)-K11 |
-| 4-U | Braun | **AHK** | Relais 11 (F1)-K14 |
+| 6-O | Grau | **AHK** | Relais 11 (F1)-K11 |
+| 4-O | Braun | **AHK** | Relais 11 (F1)-K14 |
 | 4-M | Braun | **AHK** | Relais 13 (F5)-K14 |
-| 3-U | Grün | Einzel | Relais 12 (F2)-K11 |
-| 1-U | Schwarz | Einzel | Relais 12 (F2)-K14 |
+| 3-O | Grün | Einzel | Relais 12 (F2)-K11 |
+| 1-O | Schwarz | Einzel | Relais 12 (F2)-K14 |
 | 1-M | Schwarz | Einzel | Relais 14 (F6)-K14 |
-| 5-U | Weiß | Einzel | Relais 13 (F5)-K11 |
-| 2-U | Gelb | Einzel | Relais 14 (F6)-K11 |
-| 7-U | Rot | Einzel | Relais 17 (F3)-A1 |
-| 8-U | Rosa | **AHK** | Relais 18 (F4)-A1 |
+| 5-O | Weiß | Einzel | Relais 13 (F5)-K11 |
+| 2-O | Gelb | Einzel | Relais 14 (F6)-K11 |
+| 7-O | Rot | Einzel | Relais 17 (F3)-A1 |
+| 8-O | Rosa | **AHK** | Relais 18 (F4)-A1 |
 
 → Die Tor-/Außenseite der Klemmen 1–10 (AHK-Adern von der BFT) wird **später** aufgelegt; heute nur die Innenbrücken zu den Relais.
 → Pro AHK-Farbe ~2 m durchgehend für die spätere Tor-Strecke reservieren, Innenbrücken vom Reststück ernten.
