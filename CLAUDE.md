@@ -490,11 +490,11 @@ Ebenen wie Hauptblock: **-O = innen** (Relais/Block, *heute*), **-U = Gerät/au�
 | **23** | LED blau (−) | ← Bl-Block (GND), **FBS 2-5 blau** brückt 23↔24 | Blau | LED blau Kathode |
 | **24** | LED rot (−) | (via FBS 2-5 blau von 23) | – | LED rot Kathode |
 | **25** | Taster +24V | ← R-Block | Rot | Taster-Leg 1 |
-| **26** | Taster Signal | → **R19-A1** (Koppelrelais, R19-K14 → DI3) | Grün | Taster-Leg 2 |
+| **26** | Taster Signal | → **R19-A1** (Koppelrelais, R19-K14 → DI3) | Weiß-Schwarz (AHK-Reserve) | Taster-Leg 2 |
 
 **✓ verdrahtet + verifiziert 03-06-2026 (4 Adern, innen -O):** 21-O←R15-K14 (rot), 22-O←R16-K14 (rot), 23-O←Bl-d (blau), 25-O←R-f (rot). Anoden bestätigt nicht vertauscht (R15→21 blau, R16→22 rot), -U frei.
 
-**Noch zu verdrahten (Taster-Koppelrelais R19, 2 Adern, heute machbar):** Klemme **26-O → R19-A1** (Grün) · **R19-K11 → +24V** (R-Block, Rot, eigener Stich). R19-A2 = GND (Brücke schon da), R19-K14 → DI3 + Taster-Geräteseite (25-U/26-U) später.
+**Noch zu verdrahten (Taster-Koppelrelais R19, 2 Adern, heute machbar):** Klemme **26-O → R19-A1** (Weiß-Schwarz, AHK-Reserve) · **R19-K11 → +24V** (R-Block, Rot, eigener Stich). R19-A2 = GND (Brücke schon da), R19-K14 → DI3 + Taster-Geräteseite (25-U/26-U) später.
 
 ### Vorhandene Steckbrücken (Inventar 03-06-2026)
 
