@@ -507,6 +507,32 @@ Ebenen wie Hauptblock: **-O = innen** (Relais/Block, *heute*), **-U = Gerät/au�
 
 > **Hinweis:** Schaltplan-PDF v2 (`Schaltplan_Hoftor_v2_KlemmenRelais.pdf`) nutzt noch die alte Relais-Anordnung F1 F5 F2 F6 F7 F8 F3 F4 ohne die 11–20-Nummern. **Bei Gelegenheit neu generieren** (`make_schaltplan_v2.py`), damit physische Nummern + 10 Relais drin sind.
 
+### Noch offen — Anschluss-Checkliste (ESP / Tor / 230V)
+
+Innenausbau (Befehle/Status/LED/Taster intern + Versorgungs-Stiche + R19) ist **fertig + verifiziert** (Stand 03-06-2026). Offen bleibt:
+
+**A) ESP-Seite** (Waveshare in Reihe 1, PoE, VIN frei):
+- [ ] **A1 von R11–R16** ← Waveshare-Onboard-Relais r1–r6 (geschaltetes +24V, **schwarz**): R11←r1 Öffnen · R12←r2 Schließen · R13←r3 Schritt · R14←r4 Dauerauf/Ped · R15←r5 LED blau · R16←r6 LED rot
+- [ ] **Onboard-Relais-COMs (r1–r6)** ← +24V (R-Block)
+- [ ] **K14 von R17→DI1** (Status offen) · **R18→DI2** (Status zu) · **R19→DI3** (Taster)
+- [ ] **ESP DI-COM → GND** (Bl-Block) — Pflicht, sonst werden DIs nicht erkannt
+- [ ] PoE-Cat-Kabel an ESP-RJ45
+
+**B) Geräteseite Block C** (untere Reihe -U, von unten):
+- [ ] LED blau: **+ → 21-U** · **− → 23-U**
+- [ ] LED rot: **+ → 22-U** · **− → 24-U**
+- [ ] Taster: Bein 1 **→ 25-U** (+24V) · Bein 2 **→ 26-U** (Signal)
+
+**C) Tor-Seite — AHK-Adern auf -U der Klemmen 1–10** (von unten):
+- [ ] 1-U Schwarz←BFT60 · 2-U Gelb←BFT61 · 3-U Grün←BFT62 · 4-U Braun←BFT63 · 5-U Weiß←BFT64 · 6-U Grau←BFT65 · 7-U Rot←BFT24 · 8-U Rosa←BFT26 · **9-U (Farbe offen)→BFT25** · 10-U Weiß-Blau→BFT27
+
+**D) 230V + 24V-Versorgung:**
+- [ ] 230V L/N/PE (Block B) einführen
+- [ ] 24V-Netzteil auf Hutschiene (Reihe 1)
+- [ ] **PSU+ → Sicherung 27 → R-a** (+24V-Einspeisung R-Block)
+- [ ] **PSU− → Bl-a** (GND-Einspeisung Bl-Block)
+- [ ] Sicherung 28 = Reserve (falls ESP doch intern versorgt)
+
 ## 6. Layout im Verteiler (3×12 TE FIBOX MCE65 36M) — 3 Klemmen-Blöcke
 
 ```
