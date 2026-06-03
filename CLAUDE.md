@@ -428,6 +428,24 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 → Befehlsrelais 11–14: K11 individuell zur BFT-Befehlsklemme, K14 via TWIN zur COM. A1 = ESP-Relais (geschaltetes +24V vom R-Block).
 → Alle A2 → GND (durchgehende blaue Brücke über 11–20, vom Bl-Block gespeist).
 
+### Interne Brücken Klemme↔Relais (Funktionsfarbe — heute verdrahtbar)
+
+**Quellen-Regel (Florian 03-06-2026):** Bei **Farbgleichheit Einzelader (20 AWG) bevorzugen** — schont das AHK-Kabel. Einzeladern vorrätig: Gelb, Schwarz, Grün, Blau, Weiß, Rot. Farben ohne Einzelader (Grau, Braun, Rosa, Weiß-Blau) werden aus dem AHK-Reststück geerntet. Farbe = Funktionsfarbe der zugehörigen AHK-Ader → durchgehende Codierung bleibt erhalten.
+
+| Von Klemme | Farbe | Quelle | Nach |
+|---|---|---|---|
+| 6 | Grau | **AHK** | Relais 11 (F1)-K11 |
+| 4 TWIN | Braun | **AHK** | Relais 11 (F1)-K14 **+** Relais 13 (F5)-K14 (2 Abgänge) |
+| 3 | Grün | Einzel | Relais 12 (F2)-K11 |
+| 1 TWIN | Schwarz | Einzel | Relais 12 (F2)-K14 **+** Relais 14 (F6)-K14 (2 Abgänge) |
+| 5 | Weiß | Einzel | Relais 13 (F5)-K11 |
+| 2 | Gelb | Einzel | Relais 14 (F6)-K11 |
+| 7 | Rot | Einzel | Relais 17 (F3)-A1 |
+| 8 | Rosa | **AHK** | Relais 18 (F4)-A1 |
+
+→ Die Tor-/Außenseite der Klemmen 1–10 (AHK-Adern von der BFT) wird **später** aufgelegt; heute nur die Innenbrücken zu den Relais.
+→ Pro AHK-Farbe ~2 m durchgehend für die spätere Tor-Strecke reservieren, Innenbrücken vom Reststück ernten.
+
 ### Block C — Klemmen 21–26 (LED + Taster)
 
 | Klemme | Funktion | Verbindung |
