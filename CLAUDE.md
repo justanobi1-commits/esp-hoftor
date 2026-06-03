@@ -137,7 +137,7 @@ Gründe für Umbau:
 **Modell:** BFT Thalia BT A80 oder A160 (gleiche Klemmenbelegung)
 **Zusatzkarte:** **BFT EBD** (Art. 2614326) — bringt 2 weitere Befehlseingänge + 4 nicht-programmierbare Sicherheitseingänge
 
-**Anleitung:** `C:\Users\obero\Downloads\Thalia-BT-A80-BT-A160-19.05.2025.pdf`
+**Anleitung:** `THALIA_DUO_BT_A80_A160.pdf` (im Projektordner `esp\hoftor`, seit 03-06-2026 im Repo)
 
 ### Konfiguration BFT (im Display abgelesen, bestätigt)
 
@@ -711,7 +711,7 @@ ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be us
 | Python Generator v2 | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\make_schaltplan_v2.py` |
 | PDF Schaltplan v1 (Übersicht) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\Schaltplan_Hoftor_v1.pdf` |
 | Python Generator v1 | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\make_schaltplan.py` |
-| BFT Thalia BT A80 Anleitung | `C:\Users\obero\Downloads\Thalia-BT-A80-BT-A160-19.05.2025.pdf` |
+| BFT Thalia Handbuch (im Repo) | `C:\Users\obero\OneDrive\claude\.claude\esp\hoftor\THALIA_DUO_BT_A80_A160.pdf` |
 
 ### Shops/Bezugsquellen
 - **automation24.de** — Phoenix-Klemmen, Koppelrelais, PTFIX, FIBOX-Verteiler (alles 1× verfügbar, keine Großpackungen)
