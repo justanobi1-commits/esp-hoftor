@@ -33,7 +33,7 @@ Dieses Dokument beschreibt den **physischen Aufbau und die Verdrahtung** im Vert
 | **1–10** | Reihenklemmen (8× PT 2,5 + 2× TWIN an #1/#4) | Tor-Anbindung (AHK-Kabel von der BFT) |
 | **11–20** | 10× RIF-0 Koppelrelais | 9 belegt + Pos. 20 Reserve |
 | **21–26** | 6 Klemmen (Block C) | LED blau/rot + Taster |
-| **27–28** | 2 Sicherungshalter (PT 4-HESILED 24) | 27 = 24-V-Hauptsicherung **1 A T** (PSU+ → R-a) · 28 = **+24-V-Reserve** (leer) |
+| **27–28** | 2 Sicherungshalter (PT 4-HESILED 24) | 27 = **1 A T**: PSU+ auf **27-O**, **27-U** → R-a · 28 = **+24-V-Reserve** (leer) |
 | **Bl-a…m** | PTFIX blau | GND/0 V-Verteilung · a = Zuleitung (PSU−) |
 | **R-a…m** | PTFIX rot | +24 V-Verteilung · a = Zuleitung (Sicherung 27) |
 
@@ -41,7 +41,7 @@ Die alten **F-Rollen (F1–F8)** bleiben als logischer Bezug für den Firmware-C
 
 ## 3. Anschluss-Benennung (Klemmen-Ebenen)
 
-Reihenklemmen 1–10: `<Nr>-O` = obere Push-in-Reihe, `<Nr>-U` = untere. TWIN (#1, #4) zusätzlich `<Nr>-M` = Mitte.
+Reihenklemmen 1–10: `<Nr>-O` = obere Push-in-Reihe, `<Nr>-U` = untere. TWIN (#1, #4) zusätzlich `<Nr>-M` = Mitte. Die **-O/-U-Bezeichnung gilt im ganzen Schrank** — auch Block C (21–26) und **Sicherungshalter 27/28** (z. B. 27-O = PSU+, 27-U = R-a).
 
 **Bedeutung (Kabeleinführung von unten):**
 
@@ -204,7 +204,7 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 
 - 230 V L/N/PE (Block B) einführen
 - 24-V-Netzteil **Phoenix 0,63 A / 15 W** auf Hutschiene (Reihe 1) — ESP hängt per PoE NICHT am PSU
-- **PSU+ → Sicherung 27 (1 A T) → R-a** (Rot 0,5 mm²; Seite egal — antiparallele LED in der HESILED)
+- **PSU+ → Sicherung 27-O (1 A T) · 27-U → R-a** (Rot 0,5 mm²; Polarität egal — antiparallele LED in der HESILED)
 - **PSU− → Bl-a** (GND, **ungesichert** — 0-V-Rückleiter nie absichern)
 - Sicherung 28 = **+24-V-Reserve** (leer)
 
