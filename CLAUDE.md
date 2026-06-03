@@ -230,7 +230,7 @@ AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nu
 
 ### Koppelrelais (Ersatz der 8 Finder)
 - **Phoenix RIF-0-RPT-24DC/21** (Art. **2903370**) — All-in-One Koppelrelais, 24V DC Spule, Pickup ~17V, 6,2 mm Push-in, 1 Wechsler 6A
-- **Verbaut: 10 Stück (Pos. 11–20)** — 8 belegt (F1–F8) + **Pos. 19–20 Reserve** (z. B. für Ped-SCA-Lösung B / 3. Statussignal, HT13). Belegung + Nummerierung siehe **§6a**.
+- **Verbaut: 10 Stück (Pos. 11–20)** — 9 belegt (F1–F8 + **R19 = Taster Dauerauf**) + **Pos. 20 Reserve** (nicht verplant). **Designprinzip: ALLE Feld-I/O über Koppelrelais** (galv. Trennung ESP innen ↔ Außenbereich). Belegung + Nummerierung siehe **§6a**.
 
 ### Reihenklemmen (Block 1 — externe Verbindung zur BFT)
 - **8× Phoenix PT 2,5** (Art. **3209510**) — Push-in Durchgangsklemme grau
@@ -352,7 +352,7 @@ F4-K14 → ESP Status Tor zu (DI2)
 | LED rot (r6) | **F8** | LED rot ein (Dauerauf aktiv) | K11=+24V (FBS 4-6), K14=LED rot Anode (mit 1kΩ Vorwiderstand → GND) |
 | Status Tor offen (DI1) | **F3** | Status Tor offen lesen (BFT 24) | F3 schaltet: K11=+24V (FBS 4-6) → K14=ESP Status Tor offen (DI1) wenn BFT 24-25 schließt |
 | Status Tor zu (DI2) | **F4** | Status Tor geschlossen lesen (BFT 26) | F4 schaltet: K11=+24V (FBS 4-6) → K14=ESP Status Tor zu (DI2) wenn BFT 26-27 schließt |
-| externer Taster Dauerauf (DI3) | – | Taster Dauerauf-Auslöser | externer Taster gegen +24V |
+| externer Taster Dauerauf (DI3) | **R19** | Taster Dauerauf-Auslöser | Taster → Kl. 26 → R19-A1; R19-K14 → DI3 (Koppelrelais, Feld-I/O-Trennung) |
 | R7, R8 | – | Reserve (Waveshare-Onboard-Relais) |
 | DI4–DI8 | – | Reserve |
 
@@ -402,7 +402,7 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 | Nummern | Bauteil | Funktion |
 |---|---|---|
 | **1–10** | Reihenklemmen (8× PT 2,5 + 2× TWIN an #1/#4) | Tor-Anbindung (AHK-Kabel von der BFT) |
-| **11–20** | 10× RIF-0 Koppelrelais | 8 belegt + **Pos. 19–20 Reserve** |
+| **11–20** | 10× RIF-0 Koppelrelais | 9 belegt (inkl. **R19 = Taster**) + **Pos. 20 Reserve** |
 | **21–26** | 6 Klemmen (Block C) | LED blau/rot + Taster |
 | **27–28** | 2 Sicherungshalter | 27 = 24V-Hauptsicherung 2A T · 28 = Reserve (falls ESP intern versorgt) |
 | **Bl-a…m** | PTFIX blau | GND/0V-Verteilung · **a = Zuleitung** (vom PSU−) |
@@ -433,12 +433,15 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 | **16** | F8 | r6 | LED rot (Dauerauf) | von ESP r6 | **+24V (FBS 4-6 rot)** | LED rot Anode → Klemme 22 |
 | **17** | F3 | →DI1 | Status Tor offen (BFT24) | Klemme 7 (BFT24-Signal) | **+24V (FBS 4-6 rot)** | ESP DI1 |
 | **18** | F4 | →DI2 | Status Tor zu (BFT26) | Klemme 8 (BFT26-Signal) | **+24V (FBS 4-6 rot)** | ESP DI2 |
-| **19** | – | – | Reserve | – | – | – |
-| **20** | – | – | Reserve | – | – | – |
+| **19** | – | →DI3 | **Taster Dauerauf** (Koppelrelais) | Klemme 26 (Taster-Signal) | +24V (R-Block, eigener Stich) | ESP DI3 |
+| **20** | – | – | Reserve (frei, nicht verplant) | – | – | – |
 
 → **K11-+24V-Gruppe = Pos. 15–18 adjacent** → **FBS 4-6 rot** brückt deren K11 gemeinsam auf +24V.
 → Befehlsrelais 11–14: K11 individuell zur BFT-Befehlsklemme, K14 via TWIN zur COM. A1 = ESP-Relais (geschaltetes +24V vom R-Block).
+→ **R19 (Taster)** = wie Status-Relais: A1 ← Taster-Signal (Kl. 26), A2 = GND, **K11 = +24V (eigener Stich, NICHT unter FBS — R19 liegt außerhalb 15–18)**, K14 → ESP DI3.
 → Alle A2 → GND (durchgehende blaue Brücke über 11–20, vom Bl-Block gespeist).
+
+**Designprinzip (Florian 03-06-2026): ALLE Feld-I/O laufen über Koppelrelais** — auch der Taster (DI3). Grund: alle Leitungen gehen in den **Außenbereich**, die Steuerung sitzt **innen** → jedes RIF-0 ist eine **galvanische Trennstelle**, die den ESP schützt, falls draußen ein Fehler auftritt (Kurzschluss/Überspannung/Feuchte/EMV) — unabhängig davon, ob technisch zwingend nötig. Konsequenz: Reserve = nur noch **R20** + DI4–DI8 + R7/R8.
 
 ### Interne Brücken Klemme↔Relais (Funktionsfarbe) — ✓ verdrahtet 03-06-2026
 
@@ -487,9 +490,11 @@ Ebenen wie Hauptblock: **-O = innen** (Relais/Block, *heute*), **-U = Gerät/au�
 | **23** | LED blau (−) | ← Bl-Block (GND), **FBS 2-5 blau** brückt 23↔24 | Blau | LED blau Kathode |
 | **24** | LED rot (−) | (via FBS 2-5 blau von 23) | – | LED rot Kathode |
 | **25** | Taster +24V | ← R-Block | Rot | Taster-Leg 1 |
-| **26** | Taster Signal | → ESP DI3 (*später, ESP*) | – | Taster-Leg 2 |
+| **26** | Taster Signal | → **R19-A1** (Koppelrelais, R19-K14 → DI3) | Grün | Taster-Leg 2 |
 
-**✓ verdrahtet + verifiziert 03-06-2026 (4 Adern, innen -O):** 21-O←R15-K14 (rot), 22-O←R16-K14 (rot), 23-O←Bl-d (blau), 25-O←R-f (rot). Anoden bestätigt nicht vertauscht (R15→21 blau, R16→22 rot), -U frei. (26→ESP DI3 + alle -U-Geräteseiten kommen später.)
+**✓ verdrahtet + verifiziert 03-06-2026 (4 Adern, innen -O):** 21-O←R15-K14 (rot), 22-O←R16-K14 (rot), 23-O←Bl-d (blau), 25-O←R-f (rot). Anoden bestätigt nicht vertauscht (R15→21 blau, R16→22 rot), -U frei.
+
+**Noch zu verdrahten (Taster-Koppelrelais R19, 2 Adern, heute machbar):** Klemme **26-O → R19-A1** (Grün) · **R19-K11 → +24V** (R-Block, Rot, eigener Stich). R19-A2 = GND (Brücke schon da), R19-K14 → DI3 + Taster-Geräteseite (25-U/26-U) später.
 
 ### Vorhandene Steckbrücken (Inventar 03-06-2026)
 
