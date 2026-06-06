@@ -53,11 +53,11 @@
 ## Cross-References (HA-Doku)
 
 Dieses ESP-Projekt hat (geplante) HA-Berührungspunkte. Sobald in Betrieb, **auch aktualisieren**:
-- `srv-ha-dachgeschoss/automationen_uebersicht.md` — geplant: Cover-Entity, Dauerauf-Logik, LED-Blink-Logik (HT9)
+- `srv-ha-dachgeschoss/automatisierung.md` — geplant: Cover-Entity, Dauerauf-Logik, LED-Blink-Logik (HT9)
 - `srv-ha-dachgeschoss/helfer_uebersicht.md` — geplant: ggf. Status-Helfer
-- `srv-ha-dachgeschoss/integrationen_uebersicht.md` — geplant: ESPHome Waveshare ESP32-S3-POE-ETH
-- `srv-ha-dachgeschoss/geraete_uebersicht.md` — geplant: Hardware-Eintrag Hoftor-Steuerung
-- `srv-ha-dachgeschoss/dashboards_uebersicht.md` — ggf. Steuer-Karte
+- `srv-ha-dachgeschoss/infrastruktur.md` — geplant: ESPHome Waveshare ESP32-S3-POE-ETH
+- `srv-ha-dachgeschoss/infrastruktur.md` — geplant: Hardware-Eintrag Hoftor-Steuerung
+- `srv-ha-dachgeschoss/README.md` — ggf. Steuer-Karte
 - Memory `project_hoftor_esp.md` — Pointer-Datei
 
 ## Bestellstatus (27-05-2026)
