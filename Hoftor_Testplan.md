@@ -66,11 +66,23 @@ Gruppe „Test (Simulation)" — prüft die Firmware-Logik ohne 24 V / echte DI.
 - [ ] **E3** „Test: DI3 Taster" bei **DI1(test)=EIN** → „Ch1 — Dauerauf" **toggelt** (r1/CH1). Bei **DI1=AUS** → „Test: DI3" → **LED rot blinkt 5×** (r6/CH6 5× kurz, per Web-Status/Multimeter beobachtbar), Dauerauf bleibt aus (Sicherheits-Sperre greift).
 - [ ] **E4** *(optional)* Störungs-Logik: „Störung — Esk1-Schwelle" testweise **30 s**, beide Test-DI **AUS** + kein Halten → nach 30 s `Störung Eskalation 1` = ON + Schließen-Puls (r2/CH2 piept). „Test: DI2" **EIN** → quittiert. Schwelle wieder auf **180**.
 
+## E2. DI-Hardware per Drahtbrücke (Trockenkontakt, ohne 24 V)
+
+Das Board hat **onboard isolierte Versorgung** für die DI-Seite („no extra power supply required for the isolated terminal") + unterstützt **passiven Trockenkontakt** → bei laufendem ESP (PoE) lässt sich ein DI **per Brücke DIx ↔ COM** auslösen, ganz ohne externe 24 V. Risikolos (Kleinspannung, isolierte Seite). **Nicht** gegen **DGND** brücken (Logik-Masse → überbrückt die Trennung).
+
+- [ ] **E2.1** Brücke **DI1 ↔ COM** → `DI1 — Tor offen` = ON; Brücke weg → OFF. (zusätzlich: LED-blau-Logik r5/CH5 wie in E1)
+- [ ] **E2.2** Brücke **DI2 ↔ COM** → `DI2 — Tor zu` = ON; weg → OFF.
+- [ ] **E2.3** Brücke **DI3 ↔ COM** → `DI3 — Taster` = ON; Taster-Logik (bei DI1=ON Dauerauf toggelt, sonst LED rot 5×); weg → OFF.
+- [ ] **E2.4** *(volle Kette)* Statt am Header an **R17-K14 ↔ COM / R18-K14 ↔ COM / R19-K14 ↔ COM** brücken → prüft zusätzlich die DI-Signalader bis zum RIF-0.
+- Reagiert ein DI **nicht** auf die COM-Brücke → braucht echtes 24-V-Signal → Stufe 2.
+
+> Damit ist die DI-Kette **Terminal → ESP → Web** schon in Stufe 1 verifiziert. In Stufe 2 bleibt nur der Weg über **RIF-0 + echtes 24-V-Signal** (BFT-Status/Taster) zu bestätigen.
+
 ## F. Abschluss Stufe 1
 
 - [ ] **F1** Alle B-Checks bestanden (kein Kurzschluss, alle Pfade ok).
 - [ ] **F2** Kanal-Mapping D korrekt (rX → CHx → R1x).
-- [ ] **F3** DI-Logik E plausibel.
+- [ ] **F3** DI-Logik E (Software) + DI-Hardware E2 (Brücke) plausibel.
 - [ ] Ergebnisse / Auffälligkeiten notiert: ____________________
 
 ---
@@ -80,7 +92,7 @@ Gruppe „Test (Simulation)" — prüft die Firmware-Logik ohne 24 V / echte DI.
 1. Glassicherung 27 stecken → 24 V an. Duspol: R-Block = 24 V, Bl = 0 V; Sicherungs-LED prüfen.
 2. RIF-0 **Klick** + **K11/K14-Schalttest** (Koppelrelais schalten jetzt echt).
 3. LEDs anklemmen (Block C -U) → leuchten bei r5/r6.
-4. **Echter DI-Test** über 24-V-Signal (BFT-Status / Taster, brückbar) → DI1/DI2/DI3 lesen.
+4. **DI über RIF-0 + echtes 24-V-Signal** bestätigen (BFT-Status / Taster) — die DI-Kette selbst ist in Stufe 1 (E2) schon per Brücke verifiziert; hier nur noch der Weg über den Koppelrelais-Kontakt.
 5. BFT + Tor-Adern (-U Klemmen 1–10) anklemmen, BFT-Parametrierung, Parallel-/Live-Test.
 
 > ⚠️ **Vollständiges Freischalten** = Ausschalter (Hager) AUS **+** ESP-Netzwerkkabel ziehen **+** BFT separat spannungsfrei (BFT speist die Klemmen 1–10 unabhängig). Siehe Sicherheitshinweis in `Hoftor_Verdrahtung_v1.md`.
