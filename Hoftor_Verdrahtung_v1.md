@@ -184,9 +184,9 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 
 - [x] **Onboard-Relais-COMs CH1–CH6 ← +24 V (R-Block, rot)** — verdrahtet 10-06-2026: CH1←R-c · CH2←R-e · CH3←R-g · CH4←R-i · CH5←R-k · CH6←R-m
 - [x] **NO CH1–CH6 → A1 von R11–R16** — verdrahtet 10-06-2026. **Antriebsfarbe = Funktionsfarbe des Kanals** (durchgängig BFT→Waveshare; ersetzt frühere „schwarz"-Festlegung, da Schwarz = COM-Haupt): R11 **Grau** · R12 **Grün** · R13 **Weiß** · R14 **Gelb** · R15 **Rot** · R16 **Rot** (LEDs rot = +24-V-Antrieb ohne BFT-Funktionsfarbe).
-- [ ] K14 von R17→DI1 (**rot**), R18→DI2 (**rosa**), R19→DI3 (**weiß-schwarz**) — Funktionsfarbe durchgezogen
-- [ ] ESP DI-COM → GND (Bl-Block, blau) — Pflicht. ⚠️ DI-Header hat **COM** *und* **DGND** — vor dem Auflegen klären, welcher der isolierte Eingangs-COM ist.
-- [ ] PoE-Cat-Kabel an ESP-RJ45
+- [x] K14 von R17→DI1 (**rot**), R18→DI2 (**rosa**), R19→DI3 (**weiß-schwarz**) — verdrahtet 10-06-2026, Funktionsfarbe durchgezogen
+- [x] ESP DI-COM → GND — verdrahtet 10-06-2026: **Bl-c → COM** (Blau), **DGND frei** (isolierter Eingangs-COM auf 24-V-GND; DGND = Logik-Masse, bleibt unbeschaltet). Opto-Eingänge bidirektional → Polarität unkritisch.
+- [ ] PoE-Cat-Kabel an ESP-RJ45 (VIN frei) — danach Flash + Kanal-/DI-Test
 
 ⚠️ **Freischalten:** siehe Sicherheitshinweis am Dokumentanfang — der Ausschalter trennt nur den 24-V-Kreis; **ESP (PoE) und BFT (eigene 230-V-Versorgung) bleiben unabhängig spannungsführend** (BFT speist die Klemmen 1–10).
 
