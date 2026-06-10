@@ -711,6 +711,7 @@ ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be us
 | Web-UI Bedien-Anleitung (JS-Inject) | `S:\Projekte\hw-hoftor\hoftor_help.js` |
 | Web-UI LCARS-Theme (CSS) | `S:\Projekte\hw-hoftor\hoftor_lcars.css` |
 | Aderfarben-Template | `S:\Projekte\hw-hoftor\aderfarben_template.md` |
+| **Test-/Inbetriebnahme-Checkliste** | `S:\Projekte\hw-hoftor\Hoftor_Testplan.md` — Stufe 1 (ohne 24 V) + Stufe-2-Vorschau |
 | BFT Thalia Handbuch (im Repo) | `S:\Projekte\hw-hoftor\THALIA_DUO_BT_A80_A160.pdf` |
 
 ### Shops/Bezugsquellen
