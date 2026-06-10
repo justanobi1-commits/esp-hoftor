@@ -2,7 +2,7 @@
 
 **Version:** 3.1
 **Stand:** 01-06-2026
-**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` v0.35 — Server synchron, bereit zum Flashen** (**noch nicht geflasht**). Server `\\192.168.210.11\config\esphome\` = Repo: `hoftor.yaml` (v0.35) + `hoftor_lcars.css` (v0.8) + `hoftor_help.js` (Sync 01-06-2026 21:21, byte-identisch verifiziert). Alte Server-Stände gesichert in `archive\` (`hoftor_v0.33_2026-06-01.yaml`, `hoftor_lcars_v0.7_2026-06-01.css`). Hardware-Verbau im FIBOX läuft. **Stand 03-06-2026:** Klemmen 1–10 (mit TWIN an #1/#4) montiert, **10× RIF-0 (Pos. 11–20)** auf Hutschiene, A2 durchgehend blau gebrückt, Block C (LED+Taster, Klemmen 21–26) gesetzt, 2 Sicherungshalter (27–28), PTFIX-Verteilerblöcke (Bl-a…m / R-a…m) verbaut. Neue **durchgehende physische Nummerierung** + Belegungsplan siehe **§6a**. AHK-Adern noch nicht aufgelegt.
+**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` v0.35 — Server synchron, bereit zum Flashen** (**noch nicht geflasht**). Server `\\192.168.210.11\config\esphome\` = Repo: `hoftor.yaml` (v0.35) + `hoftor_lcars.css` (v0.8) + `hoftor_help.js` (Sync 01-06-2026 21:21, byte-identisch verifiziert). Alte Server-Stände gesichert in `archive\` (`hoftor_v0.33_2026-06-01.yaml`, `hoftor_lcars_v0.7_2026-06-01.css`). Hardware-Verbau im FIBOX läuft. **Stand 03-06-2026:** Klemmen 1–10 (mit TWIN an #1/#4) montiert, **10× RIF-0 (Pos. 11–20)** auf Hutschiene, A2 durchgehend blau gebrückt, Block C (LED+Taster, Klemmen 21–26) gesetzt, 2 Sicherungshalter (27–28), PTFIX-Verteilerblöcke (Bl-a…m / R-a…m) verbaut. Neue **durchgehende physische Nummerierung** + Belegungsplan siehe **§6a**. AHK-Adern noch nicht aufgelegt. **Stand 10-06-2026:** 230-V-/24-V-Versorgungsstrang verdrahtet (230V-Klemmen → **Hager SBN225** → **Phoenix STEP POWER 1088495** → Sicherung 27 → R-Block · PSU− → Bl-Block; Glassicherung-Element noch zu bestätigen). **ESP-Seite Gruppe 1 verdrahtet:** 6 Relais-COMs ← +24 V (R-c/e/g/i/k/m) + 6 Spulenantriebe NO→A1 (R11–R16) in **Funktionsfarbe** (grau/grün/weiß/gelb/rot/rot). Offen: DI-Signale (R17/18/19-K14→DI1/2/3), DI-COM→GND, PoE, dann Flash + Kanaltest.
 
 **Implementiert (v0.33–v0.35):**
 - **Bedien-Anleitung über dem Log (v0.35):** Anleitungs-Block in der RECHTEN Spalte (`#col_logs`, über dem Live-Log), per **`web_server: js_include: hoftor_help.js`** (DOM-Injektion, /0.js). **Warum JS:** `#col_logs` liegt im Shadow-DOM von `<esp-app>` — `css_include` durchdringt das nicht (nur CSS-Variablen/Farben), Entities können dort gar nicht hin (eigene Komponente `<esp-log>`). Beides am laufenden Gerät verifiziert (Browser-DOM-Test + `js_include` ergänzt das Frontend, ersetzt es nicht). Das Script wartet aufs Rendern (Polling) + Re-Inject via MutationObserver. **Verworfen:** v0.34-Ansatz (6 `text_sensor` in `grp_hilfe`, linke Spalte) — Florian wollte die Anleitung rechts über dem Log. Lange Variante weiter als `Hoftor_Kurzbeschreibung_Webinterface.md`.
@@ -216,8 +216,8 @@ AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nu
 ### Stromversorgung-Strang (230V → 24V DC)
 - **B16 LS-Automat** (in Hauptverteilung) — bestehend
 - **230V Zuleitung** → 2. Verteilung am Schuppen
-- **ABB Ausschalter** (1 TE) — Hand-Trennstelle, bestehend
-- **Phoenix Hutschienen-Netzteil 24 V / 0,63 A / 15 W** (~2 TE) — 24 V DC SELV (ersetzt früher geplantes DEWIN 1,5 A; ESP hängt per **PoE NICHT am PSU**, daher reicht 0,63 A locker — Last ~0,1–0,23 A)
+- **Hager SBN225** (2-polig, 25 A, 1 TE) — Hand-Trennstelle (ersetzt früher geplanten „ABB Ausschalter"; verbaut 10-06-2026, lt. Foto)
+- **Phoenix STEP POWER, Ord.-Nr. 1088495** (24 V / 0,63 A, ~2 TE) — 24 V DC SELV mit „DC OK"-LED (ersetzt früher geplantes DEWIN 1,5 A; ESP hängt per **PoE NICHT am PSU**, daher reicht 0,63 A locker — Last ~0,1–0,23 A)
 - **Phoenix PT 4-HESILED 24** (3211903, 6,2 mm) — Sicherungs-Reihenklemme mit **Durchbrenn-LED** (ersetzt generischen Glassicherungshalter) + **Glassicherung 1 A T 5×20**. LED-Anzeige via **antiparallele LEDs** → Einspeiseseite/Polarität **egal**.
   - Endkappen: **2× Phoenix D-ST 4** (3030420) — beidseitig, da HESI-Klemme allein zwischen anderen Bauformen steht. (D-ST 4 ist 36,5 mm hoch, deckt nur den unteren stromführenden Anschlussbereich — Sicherungshalter oben ist konstruktiv selbst isoliert, korrekt so)
   - LED leuchtet bei durchgebrannter Sicherung + anliegender 24 V → Sofort-Diagnose
@@ -408,7 +408,7 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 | **27–28** | 2 Sicherungshalter (PT 4-HESILED 24) | 27 = **1 A T**: PSU+ auf **27-O**, **27-U** → R-a · 28 = **+24-V-Reserve** (leer) |
 | **Bl-a…m** | PTFIX blau | GND/0V-Verteilung · **a = Zuleitung** (vom PSU−) |
 | **R-a…m** | PTFIX rot | +24V-Verteilung · **a = Zuleitung** (von Sicherung 27) |
-| (L/N/PE) | 230V-Einführung + 24-V-Netzteil (Phoenix 0,63 A) | (Reihe ganz außen, noch zu verkabeln) |
+| (L/N/PE) | 230V-Einführung + Hager SBN225 (Trenner) + Phoenix STEP POWER 1088495 (24 V/0,63 A) | **verkabelt 10-06-2026** (230V→Hager→PSU→Sicherung→R-/Bl-Block) |
 
 ### Anschluss-Benennung (Klemmen-Ebenen)
 
@@ -514,11 +514,11 @@ Ebenen wie Hauptblock: **-O = innen** (Relais/Block, *heute*), **-U = Gerät/au�
 
 Innenausbau (Befehle/Status/LED/Taster intern + Versorgungs-Stiche + R19) ist **fertig + verifiziert** (Stand 03-06-2026). Offen bleibt:
 
-**A) ESP-Seite** (Waveshare in Reihe 1, PoE, VIN frei):
-- [ ] **A1 von R11–R16** ← Waveshare-Onboard-Relais r1–r6 (geschaltetes +24V, **schwarz**): R11←r1 Öffnen · R12←r2 Schließen · R13←r3 Schritt · R14←r4 Dauerauf/Ped · R15←r5 LED blau · R16←r6 LED rot
-- [ ] **Onboard-Relais-COMs (r1–r6)** ← +24V (R-Block)
-- [ ] **K14 von R17→DI1** (Status offen) · **R18→DI2** (Status zu) · **R19→DI3** (Taster)
-- [ ] **ESP DI-COM → GND** (Bl-Block) — Pflicht, sonst werden DIs nicht erkannt
+**A) ESP-Seite** (Waveshare in Reihe 1, PoE, VIN frei). **Waveshare = ESP32-S3-POE-ETH-8DI-8RO**; Relais-Klemmen je Kanal **NO–COM–NC** (COM mittig, am Aufdruck verifiziert; NO = bei Florians Einbau die linke Klemme, NC frei). Kanäle CH1=r1 … CH6=r6 (Zuordnung final erst nach Flash testen).
+- [x] **Onboard-Relais-COMs CH1–CH6** ← +24 V (R-Block, **rot**), verdrahtet 10-06-2026: CH1←R-c · CH2←R-e · CH3←R-g · CH4←R-i · CH5←R-k · CH6←R-m
+- [x] **NO CH1–CH6 → A1 von R11–R16** — verdrahtet 10-06-2026. **Antriebsfarbe = Funktionsfarbe des Kanals** (durchgängig BFT→Waveshare, ersetzt die alte „schwarz"-Festlegung): NO CH1→R11-A1 **Grau** (Öffnen) · CH2→R12 **Grün** (Schließen) · CH3→R13 **Weiß** (Schritt) · CH4→R14 **Gelb** (Dauerauf/Ped) · CH5→R15 **Rot** (LED blau) · CH6→R16 **Rot** (LED rot). LEDs = Rot, da +24-V-Antrieb ohne BFT-Funktionsfarbe (Schwarz verworfen — würde mit COM-Haupt + „schwarz=GND"-Lesart kollidieren).
+- [ ] **K14 von R17→DI1** (Status offen, **rot**) · **R18→DI2** (Status zu, **rosa**) · **R19→DI3** (Taster, **weiß-schwarz**) — Funktionsfarbe durchgezogen
+- [ ] **ESP DI-COM → GND** (Bl-Block, blau) — Pflicht, sonst werden DIs nicht erkannt. ⚠️ DI-Header hat **COM** *und* **DGND** — vor dem Auflegen klären, welcher der isolierte Eingangs-COM ist.
 - [ ] PoE-Cat-Kabel an ESP-RJ45
 
 **B) Geräteseite Block C** (untere Reihe -U, von unten):
@@ -529,12 +529,12 @@ Innenausbau (Befehle/Status/LED/Taster intern + Versorgungs-Stiche + R19) ist **
 **C) Tor-Seite — AHK-Adern auf -U der Klemmen 1–10** (von unten):
 - [ ] 1-U Schwarz←BFT60 · 2-U Gelb←BFT61 · 3-U Grün←BFT62 · 4-U Braun←BFT63 · 5-U Weiß←BFT64 · 6-U Grau←BFT65 · 7-U Rot←BFT24 · 8-U Rosa←BFT26 · **9-U (Farbe offen)→BFT25** · 10-U Weiß-Blau→BFT27
 
-**D) 230V + 24V-Versorgung:**
-- [ ] 230V L/N/PE (Block B) einführen
-- [ ] 24-V-Netzteil (Phoenix 0,63 A/15 W) auf Hutschiene (Reihe 1) — ESP per PoE, NICHT am PSU
+**D) 230V + 24V-Versorgung:** (Strang verdrahtet 10-06-2026: 230V-Klemmen → Hager SBN225 → Phoenix STEP POWER 1088495 → Sicherung 27 → R-Block · PSU− ungesichert → Bl-Block)
+- [x] 230V L/N/PE (Block B) einführen → Hager SBN225 → PSU-Eingang (10-06-2026)
+- [x] 24-V-Netzteil (**Phoenix STEP POWER 1088495**, 0,63 A) auf Hutschiene (Reihe 1) — ESP per PoE, NICHT am PSU — **verbaut 10-06-2026**
 - [x] **27-U → R-a** verdrahtet (Rot 0,5 mm²)
-- [ ] **PSU+ → 27-O** + **Glassicherung 1 A T in Halter 27 stecken** (beides erst bei Inbetriebnahme — Sicherung bewusst noch **draußen** → +24-V-Kreis bleibt während Aufbau spannungslos). Polarität egal (antiparallele LED).
-- [ ] **PSU− → Bl-a** (GND, **ungesichert** — 0-V-Rückleiter nie absichern)
+- [x] **PSU+ → 27-O** verdrahtet (10-06-2026). Polarität egal (antiparallele LED). ⚠️ **Glassicherung 1 A T noch bestätigen, ob bereits gesteckt** — Plan war: erst bei Inbetriebnahme stecken, damit +24-V-Kreis beim Aufbau spannungslos bleibt.
+- [x] **PSU− → Bl-a** (GND, **ungesichert** — 0-V-Rückleiter nie absichern) — verdrahtet 10-06-2026
 - [ ] Sicherung 28 = **+24-V-Reserve** (leer)
 
 ## 6. Layout im Verteiler (3×12 TE FIBOX MCE65 36M) — 3 Klemmen-Blöcke
@@ -605,11 +605,11 @@ Gesamt belegt: 28 TE | Reserve: 8 TE
 | PSU → Sicherung → PTFIX | 0,5 mm² | rot (+24V), blau (GND) |
 | PTFIX → RIF-0 Spule A1 (+24V) | 0,5 mm² | rot |
 | RIF-0 → PTFIX GND | 0,5 mm² | blau |
-| ESP-Relais → RIF-0 A1 (Spule) | 0,5 mm² | schwarz (20 AWG Einzelader) |
+| ESP-Relais (NO) → RIF-0 A1 (Spule) | 0,5 mm² | **= Funktionsfarbe des Kanals** (durchgängig BFT→Waveshare): R11 grau · R12 grün · R13 weiß · R14 gelb · R15/R16 rot (LED, +24-V-Antrieb). **Geändert 10-06-2026** — frühere „schwarz"-Festlegung verworfen (Schwarz = COM-Haupt, würde kollidieren). |
 | RIF-0 K11/K14 ↔ Reihenklemme | 0,5 mm² | **= AHK-Funktionsfarbe** (durchgehende Codierung, geerntet aus AHK-Reststück — siehe `aderfarben_template.md`) |
 | Reihenklemmen → AHK-Kabel → Tor | 0,5 mm² (AHK 13×0,5) | nach Aderfarbe (Belegung §6a / aderfarben_template.md) |
 
-**Durchgängige Farbcodierung (bestätigt 03-06-2026):** Die Innenbrücken Reihenklemme↔RIF-0 werden in der **Funktionsfarbe** der jeweiligen AHK-Ader gezogen (aus dem entmantelten AHK-Reststück, ~3 m je Farbe übrig — reicht mit Faktor ~5). Versorgungs-/Sammelschienen (+24V rot, GND blau, ESP→Spule schwarz, LED/DI-COM) bleiben in Standardfarbe aus den 6 separaten 20-AWG-Einzeladern — die sind keine Funktionsadern.
+**Durchgängige Farbcodierung (bestätigt 03-06-2026):** Die Innenbrücken Reihenklemme↔RIF-0 werden in der **Funktionsfarbe** der jeweiligen AHK-Ader gezogen (aus dem entmantelten AHK-Reststück, ~3 m je Farbe übrig — reicht mit Faktor ~5). Versorgungs-/Sammelschienen (+24V rot, GND blau) bleiben in Standardfarbe aus den 6 separaten 20-AWG-Einzeladern. **Die ESP→Spule-Antriebe (NO→A1) laufen jedoch in der Funktionsfarbe des Kanals mit** (Entscheidung 10-06-2026, durchgängig BFT→Waveshare) — nur die 2 LED-Antriebe sind rot (kein BFT-Funktionskanal).
 
 PTFIX Klemmbereich Eingang: 0,2–6 mm² → 0,5 mm² passt.
 PT 2,5 Klemmbereich: 0,2–4 mm² eindrähtig → 0,5 mm² passt.

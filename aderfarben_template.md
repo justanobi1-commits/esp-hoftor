@@ -44,6 +44,26 @@ Reihenfolge Klemmen 1–10 + Farben bestätigt. „Geht zu" mit neuer physischer
 
 **Begründung der Gruppierung:** COMs dunkel/neutral (Schwarz/Braun) · 4 Impuls-Befehle hell/auffällig (Gelb/Grün/Weiß/Grau) · 2 Status-Signale warm (Rot/Rosa) · 2 +24V-Rückleiter blau-Töne (Blau/Weiß-Blau, passen zusammen, da per FBS-Brücker verbunden).
 
+## ESP-Seite — Innenverdrahtung Waveshare (Stand 10-06-2026)
+
+**Prinzip (Florian 10-06-2026): Funktionsfarbe durchgängig bis zum Waveshare.** Die Spulen-Antriebe (Onboard-Relais NO → RIF-0 A1) und die DI-Signale (RIF-0 K14 → ESP-DI) laufen in der **Funktionsfarbe des jeweiligen Kanals** weiter — *nicht* schwarz. So ist jeder Kanal von der BFT-Klemme bis zum ESP eine Farbe. Versorgung bleibt rot (+24 V) / blau (GND).
+
+| ESP-Verbindung | Farbe | Funktion |
+|---|---|---|
+| R-Block → CH1–CH6 COM | **Rot** | +24-V-Einspeisung Relais-COMs (CH1←R-c · CH2←R-e · CH3←R-g · CH4←R-i · CH5←R-k · CH6←R-m) |
+| CH1-NO → R11-A1 | **Grau** | Öffnen (= Kl. 6 / BFT65) |
+| CH2-NO → R12-A1 | **Grün** | Schließen (= Kl. 3 / BFT62) |
+| CH3-NO → R13-A1 | **Weiß** | Schritt (= Kl. 5 / BFT64) |
+| CH4-NO → R14-A1 | **Gelb** | Dauerauf/Ped (= Kl. 2 / BFT61) |
+| CH5-NO → R15-A1 | **Rot** | LED blau (kein BFT-Kanal → +24-V-Antrieb = rot) |
+| CH6-NO → R16-A1 | **Rot** | LED rot (kein BFT-Kanal → +24-V-Antrieb = rot) |
+| R17-K14 → DI1 | **Rot** | Status Tor offen (= Kl. 7 / BFT24) — *offen, noch zu verdrahten* |
+| R18-K14 → DI2 | **Rosa** | Status Tor zu (= Kl. 8 / BFT26) — *offen* |
+| R19-K14 → DI3 | **Weiß-Schwarz** | Taster (= Kl. 26) — *offen* |
+| Bl-Block → DI-COM | **Blau** | GND-Referenz der DIs — *offen; COM vs. DGND am Header noch klären* |
+
+⚠️ **Schwarz ist NICHT der Antrieb** (frühere Annahme verworfen): Schwarz = COM-Hauptplatine (BFT60, Kl. 1). Antriebe tragen die Kanal-Funktionsfarbe.
+
 ## Bei Wareneingang ausfüllen
 
 1. **Foto aller 13 Adern** beim Auspacken
