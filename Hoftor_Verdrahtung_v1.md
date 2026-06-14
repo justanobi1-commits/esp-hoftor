@@ -1,7 +1,5 @@
 # Hoftor-Steuerung — Verdrahtungs- & Belegungsdokumentation
 
-**Version 1.0 — Stand 03-06-2026**
-
 Verteiler-Innenausbau · FIBOX MCE65 36M (3×12 TE) · BFT Thalia BT A80/A160 + EBD
 
 **Querverweise:**
@@ -23,8 +21,6 @@ Der lokale Ausschalter (**Hager SBN225**, 2-pol., 25 A) trennt **NUR den 24-V-Kr
 ## 1. Zweck dieses Dokuments
 
 Dieses Dokument beschreibt den **physischen Aufbau und die Verdrahtung** im Verteiler (Reihenklemmen, Koppelrelais, Potentialverteilung, Brücken, Aderfarben). Die **Steuerungs-/Firmware-Logik** ist bewusst NICHT hier, sondern in der Firmware-Doku (`Hoftor_Dokumentation_v0.35.docx`) beschrieben.
-
-**Stand der Arbeiten (03-06-2026):** Der Verteiler-Innenausbau ist verdrahtet und per Foto verifiziert. Offen sind ESP-Seite, Tor-Adern (AHK-Kabel), LED-/Taster-Geräte und die 230 V-/24 V-Versorgung — siehe Abschnitt 13.
 
 ## 2. Durchgehende Nummerierung
 
@@ -77,12 +73,12 @@ A2 aller Relais = GND (durchgehende blaue Brücke 11–20, gespeist von Bl-b).
 
 | Pos | F-Rolle | ESP | Funktion | A1 (Spule +) | K11 | K14 |
 |---|---|---|---|---|---|---|
-| 11 | F1 | r1 | Öffnen (BFT 65) | ← CH1-NO **Grau** ✓10-06 | Kl. 6 | Kl. 4 TWIN (COM EBD) |
-| 12 | F2 | r2 | Schließen (BFT 62) | ← CH2-NO **Grün** ✓10-06 | Kl. 3 | Kl. 1 TWIN (COM Haupt) |
-| 13 | F5 | r3 | Schritt (BFT 64) | ← CH3-NO **Weiß** ✓10-06 | Kl. 5 | Kl. 4 TWIN (COM EBD) |
-| 14 | F6 | r4 | Dauerauf/Ped (BFT 61) | ← CH4-NO **Gelb** ✓10-06 | Kl. 2 | Kl. 1 TWIN (COM Haupt) |
-| 15 | F7 | r5 | LED blau (Tor offen) | ← CH5-NO **Rot** ✓10-06 | +24 V (FBS 4-6 rot) | LED blau → Kl. 21 |
-| 16 | F8 | r6 | LED rot (Dauerauf) | ← CH6-NO **Rot** ✓10-06 | +24 V (FBS 4-6 rot) | LED rot → Kl. 22 |
+| 11 | F1 | r1 | Öffnen (BFT 65) | ← CH1-NO **Grau** | Kl. 6 | Kl. 4 TWIN (COM EBD) |
+| 12 | F2 | r2 | Schließen (BFT 62) | ← CH2-NO **Grün** | Kl. 3 | Kl. 1 TWIN (COM Haupt) |
+| 13 | F5 | r3 | Schritt (BFT 64) | ← CH3-NO **Weiß** | Kl. 5 | Kl. 4 TWIN (COM EBD) |
+| 14 | F6 | r4 | Dauerauf/Ped (BFT 61) | ← CH4-NO **Gelb** | Kl. 2 | Kl. 1 TWIN (COM Haupt) |
+| 15 | F7 | r5 | LED blau (Tor offen) | ← CH5-NO **Rot** | +24 V (FBS 4-6 rot) | LED blau → Kl. 21 |
+| 16 | F8 | r6 | LED rot (Dauerauf) | ← CH6-NO **Rot** | +24 V (FBS 4-6 rot) | LED rot → Kl. 22 |
 | 17 | F3 | →DI1 | Status Tor offen (BFT 24) | Kl. 7 (Signal) | +24 V (FBS 4-6 rot) | ESP DI1 (später) |
 | 18 | F4 | →DI2 | Status Tor zu (BFT 26) | Kl. 8 (Signal) | +24 V (FBS 4-6 rot) | ESP DI2 (später) |
 | 19 | – | →DI3 | Taster Dauerauf (Koppelrelais) | Kl. 26 (Weiß-Schwarz) | +24 V (R-h) | ESP DI3 (später) |
@@ -90,7 +86,7 @@ A2 aller Relais = GND (durchgehende blaue Brücke 11–20, gespeist von Bl-b).
 
 ## 6. Interne Brücken Klemme↔Relais (Funktionsfarbe)
 
-**Verdrahtet + verifiziert (03-06-2026).** Adern auf der oberen Reihe -O/-M, untere Reihe -U bleibt frei für die Tor-Adern.
+Adern auf der oberen Reihe -O/-M, untere Reihe -U bleibt frei für die Tor-Adern.
 
 | Von | Farbe | Quelle | Nach |
 |---|---|---|---|
@@ -109,7 +105,7 @@ A2 aller Relais = GND (durchgehende blaue Brücke 11–20, gespeist von Bl-b).
 
 ## 7. Versorgungs-Stiche (R-/Bl-Block → Relais)
 
-**Verdrahtet (03-06-2026).** `a` bleibt frei für die PSU-Zuleitung.
+`a` bleibt frei für die PSU-Zuleitung.
 
 | Von | Farbe | Nach | Zweck |
 |---|---|---|---|
@@ -182,10 +178,10 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 
 **A) ESP-Seite** (Waveshare in Reihe 1, PoE, VIN frei). Relais-Klemmen je Kanal **NO–COM–NC** (COM mittig, am Aufdruck verifiziert; NO = linke Klemme, NC frei). Kanäle CH1=r1 … CH6=r6 (final erst nach Flash testen).
 
-- [x] **Onboard-Relais-COMs CH1–CH6 ← +24 V (R-Block, rot)** — verdrahtet 10-06-2026: CH1←R-c · CH2←R-e · CH3←R-g · CH4←R-i · CH5←R-k · CH6←R-m
-- [x] **NO CH1–CH6 → A1 von R11–R16** — verdrahtet 10-06-2026. **Antriebsfarbe = Funktionsfarbe des Kanals** (durchgängig BFT→Waveshare; ersetzt frühere „schwarz"-Festlegung, da Schwarz = COM-Haupt): R11 **Grau** · R12 **Grün** · R13 **Weiß** · R14 **Gelb** · R15 **Rot** · R16 **Rot** (LEDs rot = +24-V-Antrieb ohne BFT-Funktionsfarbe).
-- [x] K14 von R17→DI1 (**rot**), R18→DI2 (**rosa**), R19→DI3 (**weiß-schwarz**) — verdrahtet 10-06-2026, Funktionsfarbe durchgezogen
-- [x] ESP DI-COM → GND — verdrahtet 10-06-2026: **Bl-c → COM** (Blau), **DGND frei** (isolierter Eingangs-COM auf 24-V-GND; DGND = Logik-Masse, bleibt unbeschaltet). Opto-Eingänge bidirektional → Polarität unkritisch.
+- [x] **Onboard-Relais-COMs CH1–CH6 ← +24 V (R-Block, rot):** CH1←R-c · CH2←R-e · CH3←R-g · CH4←R-i · CH5←R-k · CH6←R-m
+- [x] **NO CH1–CH6 → A1 von R11–R16.** **Antriebsfarbe = Funktionsfarbe des Kanals** (durchgängig BFT→Waveshare; Schwarz = COM-Haupt, daher NICHT Antrieb): R11 **Grau** · R12 **Grün** · R13 **Weiß** · R14 **Gelb** · R15 **Rot** · R16 **Rot** (LEDs rot = +24-V-Antrieb ohne BFT-Funktionsfarbe).
+- [x] K14 von R17→DI1 (**rot**), R18→DI2 (**rosa**), R19→DI3 (**weiß-schwarz**) — Funktionsfarbe durchgezogen
+- [x] ESP DI-COM → GND: **Bl-c → COM** (Blau), **DGND frei** (isolierter Eingangs-COM auf 24-V-GND; DGND = Logik-Masse, bleibt unbeschaltet). Opto-Eingänge bidirektional → Polarität unkritisch.
 - [ ] PoE-Cat-Kabel an ESP-RJ45 (VIN frei) — danach Flash + Kanal-/DI-Test
 
 ⚠️ **Freischalten:** siehe Sicherheitshinweis am Dokumentanfang — der Ausschalter trennt nur den 24-V-Kreis; **ESP (PoE) und BFT (eigene 230-V-Versorgung) bleiben unabhängig spannungsführend** (BFT speist die Klemmen 1–10).
@@ -202,10 +198,10 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 
 **D) 230 V + 24 V-Versorgung:**
 
-- [x] 230 V L/N/PE (Block B) einführen → **Hager SBN225** (2-pol., 25 A) → PSU-Eingang (10-06-2026)
-- [x] 24-V-Netzteil **Phoenix STEP POWER 1088495** (24 V/0,63 A) auf Hutschiene (Reihe 1) — ESP hängt per PoE NICHT am PSU — verbaut 10-06-2026
-- [x] **27-U → R-a** verdrahtet (Rot 0,5 mm²) · **PSU+ → 27-O** verdrahtet 10-06-2026. ⚠️ **Glassicherung 1 A T noch bestätigen, ob gesteckt** (Plan: erst bei Inbetriebnahme → +24-V-Kreis bleibt beim Aufbau spannungslos). Polarität egal — antiparallele LED in der HESILED.
-- [x] **PSU− → Bl-a** (GND, **ungesichert** — 0-V-Rückleiter nie absichern) — verdrahtet 10-06-2026
+- [x] 230 V L/N/PE (Block B) einführen → **Hager SBN225** (2-pol., 25 A) → PSU-Eingang
+- [x] 24-V-Netzteil **Phoenix STEP POWER 1088495** (24 V/0,63 A) auf Hutschiene (Reihe 1) — ESP hängt per PoE NICHT am PSU
+- [x] **27-U → R-a** (Rot 0,5 mm²) · **PSU+ → 27-O**. ⚠️ **Glassicherung 1 A T noch bestätigen, ob gesteckt** (Plan: erst bei Inbetriebnahme → +24-V-Kreis bleibt beim Aufbau spannungslos). Polarität egal — antiparallele LED in der HESILED.
+- [x] **PSU− → Bl-a** (GND, **ungesichert** — 0-V-Rückleiter nie absichern)
 - Sicherung 28 = **+24-V-Reserve** (leer)
 
 ---

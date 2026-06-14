@@ -1,10 +1,3 @@
-<!-- ───────────────────────────────────────────────────────────────
-     Hoftor – Kurzbeschreibung Web-Interface
-     Version: 1.0  |  Stand: 01-06-2026 20:05:24
-     Quelle: Hoftor_Dokumentation_v0.35.docx  ·  ESPHome hoftor.yaml v0.35
-     Aufruf: http://192.168.200.40  (Port 80)
-     ─────────────────────────────────────────────────────────────── -->
-
 # Hoftor – Bedienung Web-Interface
 
 Erreichbar im Browser unter **http://192.168.200.40**.

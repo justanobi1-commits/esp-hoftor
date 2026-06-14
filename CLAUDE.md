@@ -4,31 +4,25 @@
 **Stand:** 01-06-2026
 **Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` v0.35 — Server synchron, bereit zum Flashen** (**noch nicht geflasht**). Server `\\192.168.210.11\config\esphome\` = Repo: `hoftor.yaml` (v0.35) + `hoftor_lcars.css` (v0.8) + `hoftor_help.js` (Sync 01-06-2026 21:21, byte-identisch verifiziert). Alte Server-Stände gesichert in `archive\` (`hoftor_v0.33_2026-06-01.yaml`, `hoftor_lcars_v0.7_2026-06-01.css`). Hardware-Verbau im FIBOX läuft. **Stand 03-06-2026:** Klemmen 1–10 (mit TWIN an #1/#4) montiert, **10× RIF-0 (Pos. 11–20)** auf Hutschiene, A2 durchgehend blau gebrückt, Block C (LED+Taster, Klemmen 21–26) gesetzt, 2 Sicherungshalter (27–28), PTFIX-Verteilerblöcke (Bl-a…m / R-a…m) verbaut. Neue **durchgehende physische Nummerierung** + Belegungsplan siehe **§6a**. AHK-Adern noch nicht aufgelegt. **Stand 10-06-2026:** 230-V-/24-V-Versorgungsstrang verdrahtet (230V-Klemmen → **Hager SBN225** → **Phoenix STEP POWER 1088495** → Sicherung 27 → R-Block · PSU− → Bl-Block; Glassicherung-Element noch zu bestätigen). **ESP-Seite Gruppe 1–3 verdrahtet:** 6 Relais-COMs ← +24 V (R-c/e/g/i/k/m) + 6 Spulenantriebe NO→A1 (R11–R16) in **Funktionsfarbe** (grau/grün/weiß/gelb/rot/rot); DI-Signale R17/18/19-K14 → DI1/2/3 (rot/rosa/weiß-schwarz); DI-COM: Bl-c → COM (DGND frei). **Offen: nur noch PoE ans RJ45**, dann Flash + Kanal-/DI-Test.
 
-**Implementiert (v0.33–v0.35):**
-- **Bedien-Anleitung über dem Log (v0.35):** Anleitungs-Block in der RECHTEN Spalte (`#col_logs`, über dem Live-Log), per **`web_server: js_include: hoftor_help.js`** (DOM-Injektion, /0.js). **Warum JS:** `#col_logs` liegt im Shadow-DOM von `<esp-app>` — `css_include` durchdringt das nicht (nur CSS-Variablen/Farben), Entities können dort gar nicht hin (eigene Komponente `<esp-log>`). Beides am laufenden Gerät verifiziert (Browser-DOM-Test + `js_include` ergänzt das Frontend, ersetzt es nicht). Das Script wartet aufs Rendern (Polling) + Re-Inject via MutationObserver. **Verworfen:** v0.34-Ansatz (6 `text_sensor` in `grp_hilfe`, linke Spalte) — Florian wollte die Anleitung rechts über dem Log. Lange Variante weiter als `Hoftor_Kurzbeschreibung_Webinterface.md`.
-- **Audit-Korrekturen (v0.33):** Code-Audit YAML — A1: `on_boot`-Kommentar `priority -10`→`-100`. A2: `autoclose_ped` ohne `check_close_reaktion` dokumentiert (AUX16 bei Ped unklar, HT13). A3: `hold_close` — `pulse_close` vor `check_close_reaktion` (Lesereihenfolge). A4: `device_class: opening` aus `di2_tor_zu` entfernt (zeigte Tor-ZU fälschlich als „Open"). B1/B2: Asymmetrie `stoer_max_close_versuche` + fehlender DI1-Guard kommentiert. B3: 19 tote Info-Text-Sensoren (`i_*`, seit v0.26 `internal:true`) komplett entfernt. Doku-Korrekturen (C1–C9) in `Hoftor_Dokumentation_v0.33.docx`.
-
-**Implementiert (v0.32):**
-- **Log-/State-Spam-Fix (v0.32):** Die 3 Countdown-Sensoren (`autoclose_open_restzeit`, `autoclose_ped_restzeit`, `stoer_esk1_restzeit`) publizierten via `update_interval: 1s` jede Sekunde `NaN` wenn inaktiv → web_server-Stream + Log voll mit „nan s". Fix: `filter_out: nan` an allen dreien — NaN wird nicht mehr publiziert. Nebeneffekt: bei Inaktivität bleibt der letzte Zahlenwert stehen statt „unbekannt" (nach Boot „unbekannt" bis Script erstmals läuft). Akzeptiert.
-- **Close-Reaktions-Check (v0.30/v0.31):** Script `check_close_reaktion` (mode: restart) prüft ob das Tor nach einem Close-Befehl reagiert (DI1 fällt von 1 auf 0). Gestartet von `autoclose_open` und `hold_close` wenn DI1=1. Wartet `stoer_esk1_sek` — reagiert Tor nicht → Esk1 + erneut `pulse_close` + Selbst-Neustart. Nach `stoer_max_close_versuche`: Esk2. Benutzt dieselben Sensoren+Parameter wie Störungs-Interval, läuft vollständig unabhängig davon. Neues Global: `g_close_reaktion_versuche`. Quittierung: DI1 on_release / DI2 on_press / dauerauf+ped_halten turn_on → stop + counter=0. **Fix v0.31:** Störungs-Interval quittierte Esk1/Esk2 jede Sekunde während DI1=1 (Flackern). Guard `g_close_reaktion_versuche==0` verhindert das.
-- **Test-Simulation DI1/DI2/DI3 (v0.26):** Neue Gruppe `grp_test` im Web-Interface + HA. 2 Template-Schalter `test_di1`/`test_di2` simulieren Endschalter offen/zu (pausieren Störungs-Eskalation, triggern LED-Logik + Auto-Close wie physische DIs). Test-Button `test_di3` repliziert Taster-Logik (Toggle Dauerauf wenn DI1=1, sonst blink_rot_5x). DI1/DI2: GPIO-Sensoren intern (`di1_raw`/`di2_raw`, Entprellfilter 50/100 ms) + Template-Binary-Sensor mit `lambda: raw.state || test.state` (update_interval: 200 ms). Alle on_press/on_release-Actions + Störungs-Interval laufen auf Template-Sensoren — transparent für restliche Logik. 19 ℹ️-Info-Text-Sensoren: `internal: true` — nicht mehr in HA (web_server config entfernt).
-- **Bug-Fix Hold-Timer (v0.25):** `dauerauf.turn_on` stoppte `autoclose_ped` nicht; `ped_halten.turn_on` stoppte `autoclose_open` nicht → laufender Auto-Close-Timer konnte `pulse_close` senden trotz aktivem Hold. BFT blockiert Close bei angezogenem Open-Relais, aber Fix stellt sauberen Zustand + korrekten Countdown-Sensor-Wert sicher. Race Ch2/Ch3 + `hold_close` (1-s-Fenster): bewusst nicht gefixt (doppelter Close-Befehl harmlos, `pulse_close` mode:restart verlängert Impuls nur minimal), Kommentar im Code ergänzt.
-
-**Implementiert bis v0.24:**
-- **Countdown-Restzeit-Sensoren (v0.24):** 3 Template-Sensoren in Web-UI + HA — `autoclose_open_restzeit` (Öffnen, r1), `autoclose_ped_restzeit` (Fußgänger/Ped, r4), `stoer_esk1_restzeit`. Lesen Globals (`g_autoclose_open_ende_millis` / `g_autoclose_ped_ende_millis` / abgeleitet aus `g_letzter_endstatus_millis`), `update_interval: 1s`, NAN wenn inaktiv. Auto-Close-Marker werden an allen 4 Stop-Stellen (Dauerauf-Ein, Ped-Halten-Ein, Schließen-Impuls (r2), Schritt-Impuls (r3), Status Tor offen (DI1)-Release) sauber auf 0 gesetzt. Entscheidungen 31-05: CSS bewusst nicht verändert, `web_server`-Log bleibt drin (Latenz nur bei offener Browser-Seite — irrelevant).
-- **Tor-Störungs-Erkennung (v0.23):** 2 `number` (`stoer_esk1_sek` default 180 = 3 Min, `stoer_max_close_versuche` default 3) + 2 `binary_sensor` (`stoerung_esk1`/`stoerung_esk2`, `device_class: problem`). Interval 1 s: bei Status Tor offen (DI1)=0 AND Status Tor zu (DI2)=0 für > Schwelle → `pulse_close` (Schließen, r2) + counter++; bei counter ≥ max → Esk2. Pausiert bei `dauerauf=ON` oder `ped_halten=ON`. Quittierung automatisch sobald Status Tor offen (DI1)=1 oder Status Tor zu (DI2)=1. **LED-Fehler-Endlos-Blinken bewusst NICHT mehr** (`blink_fehler_start` + `g_fehler_aktiv` in v0.23 entfernt — Relais-Verschleiß, Nachbarn, ohne Reaktionsmöglichkeit nutzlos). Eskalation visuell/akustisch macht HA via Push/Alexa/Sonos.
-- Ethernet **W5500/PoE** + feste IP **`192.168.200.40`** (v0.20) + native API (Noise) + OTA; `reboot_timeout: 0s`.
-- **web_server v3** — Karten/Gruppen je Kanal, **LCARS-Farben** via `css_include: hoftor_lcars.css`, Live-Log.
+**Implementierte Logik (Stand v0.35) — maßgeblich für Verdrahtung/Betrieb:**
 - **PCA9554 @ 0x20** → 6 Relais = Öffnen (r1, BFT 65) / Schließen (r2, BFT 62) / Schritt (r3, BFT 64) / Fußgänger/Ped (r4, BFT 61) / **LED blau (r5, F7)** / **LED rot (r6, F8)**.
+- **8× DI an GPIO4-11** (INPUT_PULLUP, inverted): Status Tor offen (DI1, BFT 24 via Koppelrelais F3), Status Tor zu (DI2, BFT 26 via Koppelrelais F4), **externer Taster Dauerauf (DI3)** (mit Sicherheits-Sperre: öffnet nie selbst, toggelt Dauerauf nur wenn Status Tor offen (DI1)=1, sonst `blink_rot_5x`), DI4-DI8 Reserve.
+- Ethernet **W5500/PoE** + feste IP **`192.168.200.40`** + native API (Noise) + OTA; `reboot_timeout: 0s`.
+- **web_server v3** — Karten/Gruppen je Kanal, **LCARS-Farben** via `css_include: hoftor_lcars.css`, Live-Log.
 - Befehle als **Buttons** (fix **1 s** Impuls, pulse_*-Scripts).
-- **Dauerauf** (hält Öffnen (r1)) + **Fußgänger Dauerauf** (hält Fußgänger/Ped (r4)) — **AUS = nach 1 s Close** (`hold_close`-Puffer, abbrechbar). **Verriegelung = blockieren** (v0.14): aktiver Hold sperrt den anderen, bis bewusst aus → nie 2 Relais gleichzeitig. Holds `optimistic:false` + explizites publish. **Block-Revert sichtbar** (v0.15): gesperrter Hold lässt Web-Schalter zurückspringen.
-- **8× DI an GPIO4-11** (v0.16, INPUT_PULLUP, inverted): Status Tor offen (DI1, BFT 24 via Koppelrelais F3), Status Tor zu (DI2, BFT 26 via Koppelrelais F4), **externer Taster Dauerauf (DI3)** (v0.21, mit Sicherheits-Sperre: öffnet nie selbst, toggelt Dauerauf nur wenn Status Tor offen (DI1)=1, sonst `blink_rot_5x`), DI4-DI8 Reserve.
-- **Auto-Schließ-Zeit** je Öffnen (r1) / Fußgänger/Ped (r4) (0=aus). **Trigger ab v0.16 = Status Tor offen (DI1)** (statt Button) → funktioniert auch bei Funk-Öffnung.
+- **Dauerauf** (hält Öffnen (r1)) + **Fußgänger Dauerauf** (hält Fußgänger/Ped (r4)) — **AUS = nach 1 s Close** (`hold_close`-Puffer, abbrechbar). **Verriegelung = blockieren:** aktiver Hold sperrt den anderen, bis bewusst aus → nie 2 Relais gleichzeitig. Holds `optimistic:false` + explizites publish. **Block-Revert sichtbar:** gesperrter Hold lässt Web-Schalter zurückspringen.
+- **Auto-Schließ-Zeit** je Öffnen (r1) / Fußgänger/Ped (r4) (0=aus). **Trigger = Status Tor offen (DI1)** (statt Button) → funktioniert auch bei Funk-Öffnung.
 - **Button-Sperren** bei aktivem Halten (Öffnen bleibt bei Fußgänger Dauerauf aktiv = IC=6-Feature), je mit Log.
 - **Status-Punkt** je Kanal (🟢 angezogen / 🔴 aus, event-getrieben via Öffnen (r1) / Schließen (r2) / Schritt (r3) / Fußgänger/Ped (r4) on_turn_on/off, kein Poll).
-- **LED-Status-Logik** (v0.17): LED blau (r5) ON bei Status Tor offen (DI1)=1, LED rot (r6) ON bei dauerauf||ped_halten. **LED-Blink** (v0.18): `blink_rot_5x` (5×-Verweigerung 300 ms) + `blink_fehler_start` (Endlos 500 ms an/aus bei `g_fehler_aktiv=true`, terminiert wenn false). LED-Status-Refresh-Script. **LEDs extern schaltbar** (v0.19) — manuelles Toggle wird beim nächsten Status-Trigger automatisch überschrieben (gewollt).
+- **LED-Status-Logik:** LED blau (r5) ON bei Status Tor offen (DI1)=1, LED rot (r6) ON bei dauerauf||ped_halten. **LED-Blink:** `blink_rot_5x` (5×-Verweigerung 300 ms). LED-Status-Refresh-Script. **LEDs extern schaltbar** — manuelles Toggle wird beim nächsten Status-Trigger automatisch überschrieben (gewollt). **LED-Fehler-Endlos-Blinken bewusst NICHT** (`blink_fehler_start` + `g_fehler_aktiv` entfernt — Relais-Verschleiß, Nachbarn, ohne Reaktionsmöglichkeit nutzlos). Eskalation visuell/akustisch macht HA via Push/Alexa/Sonos.
+- **Tor-Störungs-Erkennung:** 2 `number` (`stoer_esk1_sek` default 180 = 3 Min, `stoer_max_close_versuche` default 3) + 2 `binary_sensor` (`stoerung_esk1`/`stoerung_esk2`, `device_class: problem`). Interval 1 s: bei Status Tor offen (DI1)=0 AND Status Tor zu (DI2)=0 für > Schwelle → `pulse_close` (Schließen, r2) + counter++; bei counter ≥ max → Esk2. Pausiert bei `dauerauf=ON` oder `ped_halten=ON`. Quittierung automatisch sobald Status Tor offen (DI1)=1 oder Status Tor zu (DI2)=1.
+- **Close-Reaktions-Check:** Script `check_close_reaktion` (mode: restart) prüft ob das Tor nach einem Close-Befehl reagiert (DI1 fällt von 1 auf 0). Gestartet von `autoclose_open` und `hold_close` wenn DI1=1. Wartet `stoer_esk1_sek` — reagiert Tor nicht → Esk1 + erneut `pulse_close` + Selbst-Neustart. Nach `stoer_max_close_versuche`: Esk2. Benutzt dieselben Sensoren+Parameter wie Störungs-Interval, läuft vollständig unabhängig davon. Global `g_close_reaktion_versuche`. Quittierung: DI1 on_release / DI2 on_press / dauerauf+ped_halten turn_on → stop + counter=0. Guard `g_close_reaktion_versuche==0` verhindert, dass das Störungs-Interval Esk1/Esk2 jede Sekunde während DI1=1 quittiert (Flackern). `autoclose_ped` läuft ohne `check_close_reaktion` (AUX16 bei Ped unklar, HT13).
+- **Countdown-Restzeit-Sensoren:** 3 Template-Sensoren in Web-UI + HA — `autoclose_open_restzeit` (Öffnen, r1), `autoclose_ped_restzeit` (Fußgänger/Ped, r4), `stoer_esk1_restzeit`. Lesen Globals (`g_autoclose_open_ende_millis` / `g_autoclose_ped_ende_millis` / abgeleitet aus `g_letzter_endstatus_millis`), `update_interval: 1s`, `filter_out: nan` (NaN wird nicht publiziert, sonst Log-/Stream-Spam „nan s"; bei Inaktivität bleibt letzter Zahlenwert stehen, nach Boot „unbekannt" bis Script erstmals läuft). Auto-Close-Marker werden an allen 4 Stop-Stellen (Dauerauf-Ein, Ped-Halten-Ein, Schließen-Impuls (r2), Schritt-Impuls (r3), Status Tor offen (DI1)-Release) sauber auf 0 gesetzt. CSS bewusst nicht verändert, `web_server`-Log bleibt drin (Latenz nur bei offener Browser-Seite — irrelevant).
+- **Hold-Timer-Stopp:** `dauerauf.turn_on` stoppt `autoclose_ped`, `ped_halten.turn_on` stoppt `autoclose_open` (sonst kann laufender Auto-Close-Timer `pulse_close` senden trotz aktivem Hold). BFT blockiert Close bei angezogenem Open-Relais; Stopp stellt zusätzlich sauberen Zustand + korrekten Countdown-Sensor-Wert sicher. Race Ch2/Ch3 + `hold_close` (1-s-Fenster): bewusst nicht gefixt (doppelter Close-Befehl harmlos, `pulse_close` mode:restart verlängert Impuls nur minimal).
+- **Test-Simulation DI1/DI2/DI3:** Gruppe `grp_test` im Web-Interface + HA. 2 Template-Schalter `test_di1`/`test_di2` simulieren Endschalter offen/zu (pausieren Störungs-Eskalation, triggern LED-Logik + Auto-Close wie physische DIs). Test-Button `test_di3` repliziert Taster-Logik (Toggle Dauerauf wenn DI1=1, sonst blink_rot_5x). DI1/DI2: GPIO-Sensoren intern (`di1_raw`/`di2_raw`, Entprellfilter 50/100 ms) + Template-Binary-Sensor mit `lambda: raw.state || test.state` (update_interval: 200 ms). Alle on_press/on_release-Actions + Störungs-Interval laufen auf Template-Sensoren — transparent für restliche Logik.
+- **Bedien-Anleitung über dem Log:** Anleitungs-Block in der RECHTEN Spalte (`#col_logs`, über dem Live-Log), per **`web_server: js_include: hoftor_help.js`** (DOM-Injektion, /0.js). **Warum JS:** `#col_logs` liegt im Shadow-DOM von `<esp-app>` — `css_include` durchdringt das nicht (nur CSS-Variablen/Farben), Entities können dort gar nicht hin (eigene Komponente `<esp-log>`). Beides am laufenden Gerät verifiziert. Das Script wartet aufs Rendern (Polling) + Re-Inject via MutationObserver. Lange Variante als `Hoftor_Kurzbeschreibung_Webinterface.md`.
 - **Diagnose:** Verbindung(API), Uptime, Chip-Temperatur, IP/MAC, ESPHome-Version.
-- **ℹ️ Info-Texte je Bedienelement** (direkt darunter, interleaved sorting_weight; beim Boot gesetzt). Diagnose = 1 Sammeltext.
+- **ℹ️ Info-Texte je Bedienelement** (direkt darunter, interleaved sorting_weight; beim Boot gesetzt). Diagnose = 1 Sammeltext. (19 alte `i_*`-Info-Text-Sensoren `internal:true` → komplett entfernt, nicht mehr in HA.) `device_class: opening` aus `di2_tor_zu` entfernt (zeigte Tor-ZU fälschlich als „Open").
 
 **Entscheidungen fix (28-05):** TCA **aus** (ESP schließt aktiv) · Ped-Kanal = **IC=6 Timer Ped** · ESP sieht **keine Funk-Befehle** → Zustand kommt aus DI · Dauer-Zu verworfen.
 
@@ -110,11 +104,6 @@ Hinweise:
 - 2. D-ST 2,5 aus Bestand: wandert als Endplatte zu Block C
 - Im Notfall können FBS-Brücker mit Seitenschneider gekürzt werden
 ```
-
-**Nicht zu bestellen** — bereits im Bestand:
-- 2× LED 24V (blau + rot) — aus laufender Shelly-Anlage übernommen
-- 1× Taster — aus laufender Shelly-Anlage
-- 8× Finder 34.51 — werden durch RIF-0 ersetzt (alte zu Reserve/Ausbau)
 
 **Nicht zu bestellen** — bereits im Bestand:
 - 2× LED 24V (blau + rot) — aus laufender Shelly-Anlage übernommen
@@ -617,25 +606,8 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
 
 ## 8. Open Points / Nächste Schritte
 
-### Bestellungen
-- [x] **automation24 #2026-3047210** — **angekommen 27-05-2026** (Phoenix-Komplettpaket + Verteiler)
-- [x] **Waveshare ESP32-S3-POE-ETH-8DI-8RO** — **angekommen 27-05-2026**
-- [ ] **Amazon 2× PT 2,5-TWIN** — unterwegs, Eintreffen 27.-28.5.
-- [ ] **ETUKER Anhängerkabel 13×0,5** (5 m, 24,46 €) — Eintreffen Freitag 29-05-2026
-- [ ] **FBS-Brücker für RIF-0** (FBS 10-6 BU + FBS 4-6 rot + 5× grau Reserve) — noch zu bestellen bei automation24
-
-### Aufbau (nach Wareneingang)
-- [ ] Hardware im FIBOX MCE65 36M nach Layout montieren
-- [ ] 24 V-Seite verdrahten (PSU → Sicherung → PTFIX → Verbraucher)
-- [ ] 8× Phoenix RIF-0 verdrahten nach Belegungsplan §6a
-- [ ] Reihenklemmen montieren (8× PT 2,5 + 2× PT 2,5-TWIN an Position #1 und #4)
-- [ ] FBS 2-5 Brücke zwischen Klemme 9 und 10 (GND)
-- [ ] Aderfarben-Zuordnung festlegen sobald Anhängerkabel da
-- [ ] Tor-Kabel im Leerrohr verlegen, Adern im Verteiler entmantelt zu RIF-0 führen
-
-### Test & Migration
-- [ ] **Parallel-Test**: Neues System aufbauen, mit temporärer 24V-Quelle testen, ohne Bestand zu stören
-- [ ] Migration: Bestand abklemmen, neues System einklemmen
+### Bestellungen / Aufbau / Test & Migration
+> Bestellstatus siehe Tabelle oben (§ „Bestellstatus"); Aufbau-/Verdrahtungsstand + offene Anschlüsse siehe **§6a** (Innenausbau fertig + verifiziert 03-/10-06-2026, offen: PoE ans RJ45, Geräteseite Block C, Tor-Adern auf -U). Test & Migration: Parallel-Test mit temporärer 24-V-Quelle (ohne Bestand zu stören), dann Bestand abklemmen → neues System einklemmen.
 
 ### Software
 

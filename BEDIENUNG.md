@@ -173,7 +173,7 @@ Für Bench-Test **ohne physisch angeschlossenes Tor** — simuliert Hardware-Sig
 
 ---
 
-## Close-Reaktions-Check (v0.30)
+## Close-Reaktions-Check
 
 Wenn der Auto-Close-Timer abläuft und das Tor den Close-Befehl bekommt, aber **nicht reagiert** (DI1 bleibt 1 — Tor verlässt Endlage "offen" nicht), greift eine eigene Routine:
 
@@ -213,10 +213,6 @@ Sensor `Ch1 — Auto-Close Restzeit` zeigt die verbleibenden Sekunden. Zeigt „
 
 **Funktioniert Auto-Close auch bei Funk-Öffnung (Fernbedienung direkt ans BFT)?**  
 Ja. Der Auto-Close-Trigger ist an DI1 (physischer Endschalter) geknüpft, nicht an den ESP-Button. Sobald das Tor die Endlage offen erreicht, startet der Timer — egal wie es geöffnet wurde.
-
-**Was bedeuten die grünen/roten Symbole im Interface?**  
-`🟢 angezogen` = Relais zieht gerade an (Schaltvorgang aktiv, Impuls läuft).  
-`🔴 aus` = Relais in Ruhestellung.
 
 **Was ist der Unterschied zwischen Ch1-Öffnen und Dauerauf?**  
 Ch1-Öffnen sendet einen 1-Sekunden-Impuls → BFT öffnet und hält sich selbst (eigene TCA-Logik oder schließt nach BFT-TCA). Dauerauf hält das Öffnen-Relais dauerhaft → Tor bleibt garantiert offen bis der ESP-Schalter ausgeschaltet wird, unabhängig von BFT-interner TCA.

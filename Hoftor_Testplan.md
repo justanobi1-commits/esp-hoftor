@@ -1,6 +1,6 @@
 # Hoftor — Test- & Inbetriebnahme-Checkliste
 
-**Stand:** 10-06-2026 · **Stufe 1: ohne 24 V** (ESP lebt über PoE, Rest spannungsfrei)
+**Stufe 1: ohne 24 V** (ESP lebt über PoE, Rest spannungsfrei)
 
 ## 0. Rahmen & Werkzeug
 

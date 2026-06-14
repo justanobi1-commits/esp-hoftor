@@ -1,20 +1,16 @@
 # Aderfarben-Belegung Hoftor
 
-**Version:** 1.3
-**Stand:** 03-06-2026
-**Status:** Adern vorhanden + dokumentiert. Reihenfolge Klemmen 1–10 + Farb-Mapping **bestätigt 03-06-2026**. Verdrahtung noch offen (AHK-Adern noch nicht aufgelegt).
-
 ## Konzept
 
 **Durchgehende Farbcodierung** vom BFT-Klemmenanschluss bis zur Phoenix RIF-0 Spule/Kontakt. Eine Farbe = eine Funktion. Der Außenmantel des 5 m Anhängerkabels wird nur im Leerrohr (< 1 m Tor↔Verteiler) genutzt — die restlichen ~4 m werden im Verteiler **entmantelt** und die Einzeladern bis zum Relais weitergeführt.
 
-## Tatsächlich vorhandene Adern (Stand 03-06-2026)
+## Tatsächlich vorhandene Adern
 
 **AHK-Kabel (Anhängerkabel) — 13 Adern, alle 0,5 mm²**, Strecke Tor ↔ Verteiler (Klemmen 1–10), 5 m lang. Mantel nur im Leerrohr, Rest entmantelt als Einzelader weiter:
 
 `Blau` · `Gelb` · `Grau` · `Weiß-Blau` · `Rot` · `Rosa` · `Weiß-Schwarz` · `Schwarz` · `Orange` · `Braun` · `Weiß-Rot` · `Grün` · `Weiß`
 
-(13 eindeutige Farben — „2. Rot" war Orange, korrigiert 03-06.)
+(13 eindeutige Farben — „2. Rot" war Orange.)
 
 **Einzeladern 20 AWG (≈0,5 mm²)** als Vorrat für Innenverdrahtung im Verteiler:
 
@@ -22,9 +18,9 @@
 
 → Das AHK-Kabel kann bei Bedarf zusätzlich entmantelt werden, um weitere Einzeladern zu gewinnen.
 
-## Zuordnungstabelle — bestätigt 03-06-2026
+## Zuordnungstabelle
 
-Reihenfolge Klemmen 1–10 + Farben bestätigt. „Geht zu" mit neuer physischer Relais-Nummerierung (11–20), F-Rolle in Klammern (= ESPHome-Bezug).
+„Geht zu" mit physischer Relais-Nummerierung (11–20), F-Rolle in Klammern (= ESPHome-Bezug).
 
 | PT-Klemme# | BFT-Klemme | Aderfarbe | Funktion | Geht im Verteiler zu |
 |---|---|---|---|---|
@@ -40,13 +36,13 @@ Reihenfolge Klemmen 1–10 + Farben bestätigt. „Geht zu" mit neuer physischer
 | 10 | 27 | **Weiß-Blau** | Status zu — Rückleiter (**+24V**) | R-Block via FBS 2-5 rot (Klemme 9↔10) |
 | 11–13 (Reserve) | – | Weiß-Schwarz · Weiß-Rot · Orange ⚠️ | (Reserve) | – |
 
-⚠️ **Orange meiden** (Florian 03-06-2026): ähnelt zu sehr der roten Einzelader → Verwechslungsgefahr. Orange bleibt möglichst unbenutzt; bei Reserve-Bedarf Weiß-Schwarz / Weiß-Rot bevorzugen.
+⚠️ **Orange meiden:** ähnelt zu sehr der roten Einzelader → Verwechslungsgefahr. Orange bleibt möglichst unbenutzt; bei Reserve-Bedarf Weiß-Schwarz / Weiß-Rot bevorzugen.
 
 **Begründung der Gruppierung:** COMs dunkel/neutral (Schwarz/Braun) · 4 Impuls-Befehle hell/auffällig (Gelb/Grün/Weiß/Grau) · 2 Status-Signale warm (Rot/Rosa) · 2 +24V-Rückleiter blau-Töne (Blau/Weiß-Blau, passen zusammen, da per FBS-Brücker verbunden).
 
-## ESP-Seite — Innenverdrahtung Waveshare (Stand 10-06-2026)
+## ESP-Seite — Innenverdrahtung Waveshare
 
-**Prinzip (Florian 10-06-2026): Funktionsfarbe durchgängig bis zum Waveshare.** Die Spulen-Antriebe (Onboard-Relais NO → RIF-0 A1) und die DI-Signale (RIF-0 K14 → ESP-DI) laufen in der **Funktionsfarbe des jeweiligen Kanals** weiter — *nicht* schwarz. So ist jeder Kanal von der BFT-Klemme bis zum ESP eine Farbe. Versorgung bleibt rot (+24 V) / blau (GND).
+**Prinzip: Funktionsfarbe durchgängig bis zum Waveshare.** Die Spulen-Antriebe (Onboard-Relais NO → RIF-0 A1) und die DI-Signale (RIF-0 K14 → ESP-DI) laufen in der **Funktionsfarbe des jeweiligen Kanals** weiter — *nicht* schwarz. So ist jeder Kanal von der BFT-Klemme bis zum ESP eine Farbe. Versorgung bleibt rot (+24 V) / blau (GND).
 
 | ESP-Verbindung | Farbe | Funktion |
 |---|---|---|
@@ -64,28 +60,6 @@ Reihenfolge Klemmen 1–10 + Farben bestätigt. „Geht zu" mit neuer physischer
 
 ⚠️ **Schwarz ist NICHT der Antrieb** (frühere Annahme verworfen): Schwarz = COM-Hauptplatine (BFT60, Kl. 1). Antriebe tragen die Kanal-Funktionsfarbe.
 
-## Bei Wareneingang ausfüllen
-
-1. **Foto aller 13 Adern** beim Auspacken
-2. **Liste der Aderfarben** vom Hersteller/Verpackung (oft beigelegt)
-3. **Farben zu Funktionen** zuordnen — Tipp: ähnliche Funktionen ähnliche Farb-Gruppen geben
-4. **Diese Datei aktualisieren** mit den eingetragenen Farben
-5. **CLAUDE.md ergänzen** mit fertiger Zuordnung
-
-## Empfehlung für die Zuordnungslogik
-
-Sinnvoll: Adern nach Funktion gruppieren (visuelle Diagnose):
-
-| Gruppe | Adern | Empfehlung Farb-Familie |
-|---|---|---|
-| COMs (1, 4) | 2× | dunkle/neutrale Farben (schwarz, braun) |
-| Befehle Impuls (2, 3, 5, 6) | 4× | helle/auffällige Farben (gelb, grün, weiß, orange) |
-| Status-Signale (7, 8) | 2× | warme Farben (rot, rosa) |
-| Status-GND (9, 10) | 2× | blau-Töne |
-| Reserve (11–13) | 3× | bleiben unbeschaltet, beliebige Farbe |
-
-→ Diese Zuordnung ist nur eine Empfehlung. Bei der Lieferung kann sich aus den tatsächlich vorhandenen Farben eine andere Logik ergeben.
-
 ## Beschriftung der Reihenklemmen
 
 Zusätzlich zum Phoenix ZB 5 Beschriftungsstreifen (Zahlen 1-10) kann man mit Filzstift unter jede Klemmennummer die **Aderfarbe** notieren:
@@ -101,13 +75,3 @@ Zusätzlich zum Phoenix ZB 5 Beschriftungsstreifen (Zahlen 1-10) kann man mit Fi
 ```
 
 Oder kleine **farbige Punkt-Sticker** auf den ZB-Streifen kleben.
-
-## Stand
-
-- [x] Kabel bestellt
-- [x] Kabel geliefert (AHK-Kabel vorhanden)
-- [x] Farben dokumentiert (03-06-2026)
-- [x] Tabelle oben ausgefüllt + bestätigt (03-06-2026)
-- [x] CLAUDE.md aktualisiert (Belegungsplan §6a, 03-06-2026)
-- [ ] AHK-Adern am Tor + an Klemmen 1–10 auflegen
-- [ ] Verteiler-Innenseite mit Aderfarben-Karte beklebt
