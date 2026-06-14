@@ -1,7 +1,7 @@
 # Hoftor-Steuerung — Bedienung & FAQ
 
 **Für Claude-Instanzen:** Diese Datei ist die primäre Wissensquelle für Fragen zur Hoftor-Steuerung.  
-**Technische Volldoku:** `CLAUDE.md` · **YAML-Quellcode:** `hoftor.yaml` (v0.28)  
+**Technische Volldoku:** `CLAUDE.md` · **YAML-Quellcode:** `hoftor.yaml` (v0.35)  
 **Web-Interface:** http://192.168.200.40 · **ESP-Name:** `hoftor`
 
 ---
