@@ -25,11 +25,11 @@
 | PT-Klemme# | BFT-Klemme | Aderfarbe | Funktion | Geht im Verteiler zu |
 |---|---|---|---|---|
 | 1 (TWIN) | 60 | **Schwarz** | COM Hauptplatine | Relais 12 (F2)-K14 + Relais 14 (F6)-K14 (via TWIN) |
-| 2 | 61 | **Gelb** | Open (Dauerauf) | Relais 14 (F6)-K11 |
+| 2 | 61 | **Gelb** | Ped / Fußgänger (Ch4) | Relais 14 (F6)-K11 |
 | 3 | 62 | **Grün** | Close | Relais 12 (F2)-K11 |
 | 4 (TWIN) | 63 | **Braun** | COM EBD | Relais 11 (F1)-K14 + Relais 13 (F5)-K14 (via TWIN) |
 | 5 | 64 | **Weiß** | Start E (Schritt) | Relais 13 (F5)-K11 |
-| 6 | 65 | **Grau** | Open (Impuls) | Relais 11 (F1)-K11 |
+| 6 | 65 | **Grau** | Öffnen (Ch1) | Relais 11 (F1)-K11 |
 | 7 | 24 | **Rot** | Status Tor offen — Signal | Relais 17 (F3)-A1 |
 | 8 | 26 | **Rosa** | Status Tor zu — Signal | Relais 18 (F4)-A1 |
 | 9 | 25 | **Blau** | Status offen — Rückleiter (**+24V**) | R-Block via FBS 2-5 rot (Klemme 9↔10) |

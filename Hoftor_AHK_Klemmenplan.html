@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Hoftor — AHK-Klemmenplan UV → BFT</title>
+<style>
+  @page { size: A4 portrait; margin: 14mm; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #1a1a1a; margin: 0; padding: 12px; }
+  h1 { font-size: 18pt; margin: 0 0 3px; }
+  .sub { font-size: 10pt; color: #555; margin: 0 0 16px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px 8px; border-bottom: 1px solid #ddd; }
+  th { font-size: 9pt; color: #555; font-weight: bold; border-bottom: 1.5px solid #999; }
+  td.chk { width: 30px; text-align: center; font-size: 15pt; color: #999; }
+  td.num { font-size: 15pt; font-weight: bold; text-align: center; width: 56px; }
+  td.bft { font-size: 14pt; font-weight: bold; text-align: center; width: 74px; }
+  .sw { display: inline-block; width: 32px; height: 18px; border: 1px solid #888; border-radius: 3px; vertical-align: middle; margin-right: 10px; }
+  .cname { font-weight: bold; font-size: 12pt; }
+  .func { color: #444; font-size: 10.5pt; }
+  tr.grp td { border-bottom: 1.6px solid #999; }
+  .notes { margin-top: 16px; font-size: 9.5pt; color: #555; line-height: 1.6; border-top: 1.6px solid #999; padding-top: 10px; }
+  .notes b { color: #1a1a1a; }
+</style>
+</head>
+<body>
+<h1>Hoftor — AHK-Kabel: UV-Klemme &rarr; BFT-Klemme</h1>
+<p class="sub">Steuerung (Unterverteilung) auf das Anhängerkabel auflegen — durchgehende Aderfarbe. Funktion gemäß hoftor.yaml v0.37: BFT 61 = Ped (Ch4), BFT 65 = Open (Ch1).</p>
+<table>
+<thead>
+<tr><th>&#9745;</th><th>UV-Kl.</th><th>Aderfarbe</th><th>&rarr; BFT</th><th>Funktion</th></tr>
+</thead>
+<tbody>
+<tr><td class="chk">&#9744;</td><td class="num">1</td><td><span class="sw" style="background:#1a1a1a"></span><span class="cname">Schwarz</span></td><td class="bft">60</td><td class="func">COM Hauptplatine (TWIN)</td></tr>
+<tr><td class="chk">&#9744;</td><td class="num">2</td><td><span class="sw" style="background:#F2C200"></span><span class="cname">Gelb</span></td><td class="bft">61</td><td class="func">Ped / Fußgänger (Ch4)</td></tr>
+<tr><td class="chk">&#9744;</td><td class="num">3</td><td><span class="sw" style="background:#2E9E3F"></span><span class="cname">Grün</span></td><td class="bft">62</td><td class="func">Schließen (Ch2)</td></tr>
+<tr><td class="chk">&#9744;</td><td class="num">4</td><td><span class="sw" style="background:#7A4A21"></span><span class="cname">Braun</span></td><td class="bft">63</td><td class="func">COM EBD (TWIN)</td></tr>
+<tr><td class="chk">&#9744;</td><td class="num">5</td><td><span class="sw" style="background:#FFFFFF"></span><span class="cname">Weiß</span></td><td class="bft">64</td><td class="func">Schritt / auf-stopp-zu (Ch3)</td></tr>
+<tr class="grp"><td class="chk">&#9744;</td><td class="num">6</td><td><span class="sw" style="background:#9AA0A6"></span><span class="cname">Grau</span></td><td class="bft">65</td><td class="func">Öffnen (Ch1)</td></tr>
+<tr><td class="chk">&#9744;</td><td class="num">7</td><td><span class="sw" style="background:#D62828"></span><span class="cname">Rot</span></td><td class="bft">24</td><td class="func">Status Tor offen — Signal</td></tr>
+<tr><td class="chk">&#9744;</td><td class="num">8</td><td><span class="sw" style="background:#F19CB6"></span><span class="cname">Rosa</span></td><td class="bft">26</td><td class="func">Status Tor zu — Signal</td></tr>
+<tr><td class="chk">&#9744;</td><td class="num">9</td><td><span class="sw" style="background:#1F6FD6"></span><span class="cname">Blau</span></td><td class="bft">25</td><td class="func">Status offen — Rückleiter +24 V</td></tr>
+<tr><td class="chk">&#9744;</td><td class="num">10</td><td><span class="sw" style="background:linear-gradient(#fff 0 34%, #1F6FD6 34% 66%, #fff 66% 100%)"></span><span class="cname">Weiß-Blau</span></td><td class="bft">27</td><td class="func">Status zu — Rückleiter +24 V</td></tr>
+</tbody>
+</table>
+<div class="notes">
+<p><b>BFT-Logik (hoftor.yaml v0.37):</b> 61 = Ped (IC 6 Timer Ped) &rarr; Ch4 · 65 = Open (IC 2) &rarr; Ch1. Gehalten: Ch1/65 = Dauerauf · Ch4/61 = Ped-Dauerauf. <b>61 und 65 nicht vertauschen.</b></p>
+<p><b>Reihenfolge 7–10 ist bewusst umsortiert:</b> 7&rarr;24 · 8&rarr;26 · 9&rarr;25 · 10&rarr;27 — die beiden +24-V-Rückleiter (9 + 10) müssen nebeneinander liegen (FBS-Brücke 9&harr;10).</p>
+<p><b>Klemme 9 = Blau, Klemme 10 = Weiß-Blau</b> — nicht verwechseln (beide sind +24-V-Status-Rückleiter).</p>
+<p><b>Klemmen 1 + 4 = TWIN</b> — außen (AHK) nur eine Ader auflegen; die zwei Abgänge zu den Relais sind innen schon verdrahtet.</p>
+<p><b>Sicherheit:</b> Vor dem Auflegen den 24-V-Kreis am Hager SBN225 ausschalten (Klemmen 9/10 führen sonst +24 V).</p>
+</div>
+</body>
+</html>

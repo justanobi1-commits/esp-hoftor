@@ -133,15 +133,15 @@ Gründe für Umbau:
 | BFT-Klemme | Logik | Funktion |
 |---|---|---|
 | 60 | – | COM IC Hauptplatine |
-| **61** | **IC1 = 2 (Open)** | Dauerauf (dauerhaft halten) |
+| **61** | **IC1 = 6 (Timer Ped)** | Fußgänger/Ped (ESP Ch4/r4); gehalten = Ped-Dauerauf |
 | **62** | **IC2 = 3 (Close)** | schließen (Impuls) |
 | 63 | – | COM IC EBD |
 | **64** | **IC3 = 0 (Start E)** | Schritt (auf/stopp/zu Impuls) |
-| **65** | **IC4 = 2 (Open)** | öffnen (Impuls) |
+| **65** | **IC4 = 2 (Open)** | öffnen (ESP Ch1/r1, Impuls); gehalten = Dauerauf |
 | **24/25** | AUX = ? (Zustand offenes Tor) | Status Tor offen (potentialfrei) |
 | **26/27** | AUX = ? (Status Tor geschlossen) | Status Tor zu (potentialfrei) |
 
-**Open-Redundanz**: IC1 und IC4 sind beide auf "Open" konfiguriert. **Bewusst gewählt** — visuelle Diagnose über LED am jeweiligen Koppelrelais zeigt, ob aktuell "öffnen Impuls" (F1) oder "Dauerauf" (F6) aktiv ist.
+**61 = Ped, 65 = Open (Festlegung, Stand 19-06-2026):** BFT 65 = **Öffnen** (ESP Ch1/r1, gehalten = Dauerauf), BFT 61 = **Fußgänger/Ped** (ESP Ch4/r4, gehalten = Ped-Dauerauf). Passt zu `hoftor.yaml` v0.37 + Innenverdrahtung (Gelb→61, Grau→65). ⚠️ Falls die BFT noch aus der früheren „beide IC=2 Open"-Redundanz kommt: **Klemme 61 am BFT-Display von IC=2 auf IC=6 (Timer Ped) umstellen** — sonst lösen „Öffnen" und „Fußgänger" vertauscht aus.
 
 ### AUX-Logik-Optionen Thalia BT A80 (für spätere Reference)
 
@@ -171,7 +171,7 @@ Quelle: Thalia-Handbuch S. 42/45/47/48. Jeder Steuereingang (Klemmen 61/62/64/65
 - **Parameter `ped TCA [s]`** (0–120, Default 0): eigene Auto-Schließzeit NUR nach Fußgänger-Manöver (0 = wie normales TCA).
 - **IC=6 „Timer Ped"**: Fußgängeröffnung; Eingang gehalten → Flügel bleibt offen; wenn gehalten UND Open/Start kommt → volles Manöver, danach zurück zur Fußgängeröffnung; schließt auch nach Stromausfall.
 
-**Geplante Umnutzung (Option):** Klemme 61 (aktuell Open=Dauerauf, der „doppelte Open") → auf **Ped (4)** umstellen = „nur ein Flügel / Fußgänger". **Dauerauf** dann nicht mehr per eigenem Relais, sondern per **gehaltenem Open auf K1 (Klemme 65)** in ESP/HA-Logik. Folge am ESP: Kanal 4 „Dauerauf" → „Fußgänger / ein Flügel" umbenennen (+ Icon), Dauerauf-Halte-Logik auf K1.
+**Umgesetzt (Festlegung):** Klemme 61 = **Ped** (IC=6 Timer Ped) = „nur ein Flügel / Fußgänger"; Klemme 65 bleibt **Open** (Vollöffnung, gehalten = Dauerauf). Firmware v0.37 entsprechend: Ch1/r1 = Öffnen (BFT65), Ch4/r4 = Fußgänger/Ped (BFT61). Dauerauf = gehaltenes Open auf Ch1; Ped-Dauerauf = gehaltenes Ped auf Ch4.
 
 **⚠️ STATUS-LOGIK-PROBLEM bei Ped (Florian 28-05):** Tor-Status ist binär — AUX16 „Tor offen" → Status Tor offen (DI1), AUX13 „Tor zu" → Status Tor zu (DI2). Ped (ein Flügel) ist ein 3. Zustand. **Frage = was meldet AUX16 bei Ped?** MESSEN beim Test: schließt AUX16 schon „nicht-zu" (dann liest ESP „offen", kein Problem) ODER erst bei voll-offen (dann bei Ped **beide DIs (DI1 + DI2) = 0** = derselbe Zustand wie „fährt/Störung" in HT11 → Fehlalarm/ungewollter Close). Handbuch unklar.
 - **Lösung A (keine HW):** ESP-State-Machine — ESP weiß, dass er Ped kommandiert hat → „beide 0" = „Fußgänger offen". Nur zuverlässig, wenn Ped NICHT auch per Funk-Handsender ausgelöst wird (ESP sieht Funk nicht).
