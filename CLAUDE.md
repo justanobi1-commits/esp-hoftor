@@ -396,7 +396,7 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 | **1–10** | Reihenklemmen (8× PT 2,5 + 2× TWIN an #1/#4) | Tor-Anbindung (AHK-Kabel von der BFT) |
 | **11–20** | 10× RIF-0 Koppelrelais | 9 belegt (inkl. **R19 = Taster**) + **Pos. 20 Reserve** |
 | **21–26** | 6 Klemmen (Block C) | LED blau/rot + Taster |
-| **27–28** | 2 Sicherungshalter (PT 4-HESILED 24) | 27 = **1 A T**: PSU+ auf **27-O**, **27-U** → R-a · 28 = **Funk-Empfänger-Zweig** (Hörmann HET/S 24, 19-06-2026 belegt, war Reserve): PSU+ → 28-O, **28-U → Wago 1 (+24 V)** |
+| **27–28** | 2 Sicherungshalter (PT 4-HESILED 24) | **beide aktuell 2× 0,5 A flink** (19-06-2026 gesteckt, **provisorisch** — 0,5 A träge nachrüsten). 27 = Hauptkreis: PSU+ → **27-O**, **27-U** → R-a · 28 = **Funk-Empfänger-Zweig** (Hörmann HET/S 24, war Reserve): PSU+ → 28-O, **28-U → Wago 1 (+24 V)** |
 | **Bl-a…m** | PTFIX blau | GND/0V-Verteilung · **a = Zuleitung** (vom PSU−) |
 | **R-a…m** | PTFIX rot | +24V-Verteilung · **a = Zuleitung** (von Sicherung 27) |
 | (L/N/PE) | 230V-Einführung + Hager SBN225 (Trenner) + Phoenix STEP POWER 1088495 (24 V/0,63 A) | **verkabelt 10-06-2026** (230V→Hager→PSU→Sicherung→R-/Bl-Block) |
@@ -524,7 +524,7 @@ Innenausbau (Befehle/Status/LED/Taster intern + Versorgungs-Stiche + R19) ist **
 - [x] 230V L/N/PE (Block B) einführen → Hager SBN225 → PSU-Eingang (10-06-2026)
 - [x] 24-V-Netzteil (**Phoenix STEP POWER 1088495**, 0,63 A) auf Hutschiene (Reihe 1) — ESP per PoE, NICHT am PSU — **verbaut 10-06-2026**
 - [x] **27-U → R-a** verdrahtet (Rot 0,5 mm²)
-- [x] **PSU+ → 27-O** verdrahtet (10-06-2026). Polarität egal (antiparallele LED). ⚠️ **Glassicherung 1 A T noch bestätigen, ob bereits gesteckt** — Plan war: erst bei Inbetriebnahme stecken, damit +24-V-Kreis beim Aufbau spannungslos bleibt.
+- [x] **PSU+ → 27-O** verdrahtet (10-06-2026). Polarität egal (antiparallele LED). **Sicherungen gesteckt 19-06-2026: 2× 0,5 A flink** (provisorisch, da keine träge da; bei Gelegenheit 0,5 A träge nachrüsten).
 - [x] **PSU− → Bl-a** (GND, **ungesichert** — 0-V-Rückleiter nie absichern) — verdrahtet 10-06-2026
 - [ ] Sicherung 28 = **+24-V-Reserve** (leer)
 
@@ -669,7 +669,7 @@ Klemmen #1 (BFT 60) und #4 (BFT 63) brauchen jeweils 2 Abgänge nach unten (zu 2
 User-Entscheidung: **eigenes Relais F6** behalten (statt nur in HA via "Open-Relais R1 dauerhaft halten"). Gründe: visuelle Diagnose, Klarheit, Trennung der Anwendungsfälle "öffnen Impuls" vs "Dauerauf gehalten".
 
 ### Absicherung 24V-Seite
-Trotz PSU mit Strombegrenzung wird eine **Glassicherung 1 A T** (träge) in der **Phoenix PT 4-HESILED 24 Sicherungsklemme** zwischen PSU+ (27-O) und R-Block (27-U → R-a) eingesetzt. **1 A** passt zum 0,63-A-PSU (LED zeigt echten Fehler, nicht nur PSU-Strombegrenzung). Vorteil der HESI-Klemme: **LED zeigt durchgebrannte Sicherung an** — via **antiparallele LEDs**, daher **Einspeiseseite/Polarität egal** (Schaltplan 3211903 bestätigt). Service-Trennpunkt + Schutz + Sofort-Diagnose. **GND (0 V) wird NICHT abgesichert** (Rückleiter muss als Referenz durchverbunden bleiben).
+Trotz PSU mit Strombegrenzung wird eine **Glassicherung** (aktuell **2× 0,5 A flink** provisorisch; Soll: 0,5 A träge) in der **Phoenix PT 4-HESILED 24 Sicherungsklemme** zwischen PSU+ (27-O) und R-Block (27-U → R-a) eingesetzt. **1 A** passt zum 0,63-A-PSU (LED zeigt echten Fehler, nicht nur PSU-Strombegrenzung). Vorteil der HESI-Klemme: **LED zeigt durchgebrannte Sicherung an** — via **antiparallele LEDs**, daher **Einspeiseseite/Polarität egal** (Schaltplan 3211903 bestätigt). Service-Trennpunkt + Schutz + Sofort-Diagnose. **GND (0 V) wird NICHT abgesichert** (Rückleiter muss als Referenz durchverbunden bleiben).
 
 ### Netzwerk: Ethernet XOR WiFi (verifiziert 28-05-2026)
 ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be used simultaneously, even if both are physically available"). Kein Fallback-Netz möglich. Für dieses Projekt ist **Ethernet/PoE die richtige Wahl** (Grund für den Umbau war der schlechte WLAN-Empfang am Tor). Konsequenz: Ein „nach Flash nicht mehr pingbar" ist i. d. R. ein korruptes/abgebrochenes Image (z. B. PoE-Wackler beim OTA), KEIN fehlender Netzweg — ein WiFi-Fallback würde das auch nicht retten. **Recovery = USB-C-Reflash** (Configs sicher). Beim OTA die Versorgung stabil halten; `safe_mode` fängt nur fehlerhafte App-Logik ab, nicht ein totes Image.
