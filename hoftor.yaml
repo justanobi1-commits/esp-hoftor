@@ -1,4 +1,5 @@
 # ── Versionen (Details: Git-Log) ─────────────────────────────────
+# v0.40 | 19-06-2026 | YAML-Bereinigung: i2c scan false; redundante name-Felder (internal) entfernt; DI4-6 Debounce (20ms/50ms); Boot-Glitch-Kommentar entfernt.
 # v0.39 | 19-06-2026 | Fix Boot-Close: dauerauf/ped_halten restore_mode DISABLED (Default ALWAYS_OFF rief turn_off_action beim Boot → hold_close → r2).
 # v0.38 | 19-06-2026 | r2 (Schließen) auf CH7/Pin 6 umgeklemmt (war Fehldiagnose HW-Glitch; harmlos, bleibt).
 # v0.37 | 19-06-2026 | Funk Hörmann HET/S 24 auf DI7/DI8 (statt DI4/DI5); DI4-6 Reserve.
@@ -109,7 +110,7 @@ i2c:
   sda: GPIO42
   scl: GPIO41
   frequency: 100kHz
-  scan: true
+  scan: false
 
 pca9554:
   - id: relay_hub
@@ -118,7 +119,6 @@ pca9554:
 # ── Interne Relais (PCA9554 Pin 0-3) — publishen Status bei Schaltvorgang ─
 switch:
   - platform: gpio
-    name: "relay_open"
     id: r1
     internal: true
     restore_mode: ALWAYS_OFF
@@ -128,18 +128,15 @@ switch:
     on_turn_off:
       - text_sensor.template.publish: { id: st_r1, state: "🔴 aus" }
   - platform: gpio
-    name: "relay_close"
     id: r2
     internal: true
     restore_mode: ALWAYS_OFF
-    # v0.38: von PCA-Pin 1 (Onboard-CH2) auf Pin 6 (CH7) umgeklemmt — CH2 hatte einen Boot-Glitch.
     pin: { pca9554: relay_hub, number: 6, mode: { output: true } }
     on_turn_on:
       - text_sensor.template.publish: { id: st_r2, state: "🟢 angezogen" }
     on_turn_off:
       - text_sensor.template.publish: { id: st_r2, state: "🔴 aus" }
   - platform: gpio
-    name: "relay_step"
     id: r3
     internal: true
     restore_mode: ALWAYS_OFF
@@ -149,7 +146,6 @@ switch:
     on_turn_off:
       - text_sensor.template.publish: { id: st_r3, state: "🔴 aus" }
   - platform: gpio
-    name: "relay_ped"
     id: r4
     internal: true
     restore_mode: ALWAYS_OFF
@@ -931,18 +927,27 @@ binary_sensor:
     name: "DI4"
     id: di4
     pin: { number: GPIO7, mode: INPUT_PULLUP, inverted: true }
+    filters:
+      - delayed_on: 20ms
+      - delayed_off: 50ms
     web_server: { sorting_group_id: grp_input, sorting_weight: 4 }
 
   - platform: gpio
     name: "DI5"
     id: di5
     pin: { number: GPIO8, mode: INPUT_PULLUP, inverted: true }
+    filters:
+      - delayed_on: 20ms
+      - delayed_off: 50ms
     web_server: { sorting_group_id: grp_input, sorting_weight: 5 }
 
   - platform: gpio
     name: "DI6"
     id: di6
     pin: { number: GPIO9, mode: INPUT_PULLUP, inverted: true }
+    filters:
+      - delayed_on: 20ms
+      - delayed_off: 50ms
     web_server: { sorting_group_id: grp_input, sorting_weight: 6 }
 
   # DI7/DI8 = Funk-Empfänger Hörmann HET/S 24 (Kanal 1/2) — real hier verkabelt (v0.37).

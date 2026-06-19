@@ -84,6 +84,7 @@ Das Interface unter http://192.168.200.40 ist in Gruppen gegliedert (Reihenfolge
 - Einstellbar: 0–600 Sekunden (`Ch4 — Auto-Schließ-Zeit`)
 - **Trigger:** sofort beim Drücken des Fußgänger-Buttons (nicht via DI)
 - **Gestoppt** bei: Fußgänger-Dauerauf EIN / Ch2 / Ch3
+- **Kein Close-Reaktions-Check:** Reagiert das Tor nach dem Ped-Close-Befehl nicht, greift nur das normale Störungs-Interval (nicht die schnellere check_close_reaktion-Routine wie bei Ch1). Grund: Verhalten des BFT AUX16 im Ped-Modus ungeklärt.
 
 ---
 
