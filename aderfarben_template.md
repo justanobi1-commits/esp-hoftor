@@ -46,9 +46,9 @@
 
 | ESP-Verbindung | Farbe | Funktion |
 |---|---|---|
-| R-Block → CH1–CH6 COM | **Rot** | +24-V-Einspeisung Relais-COMs (CH1←R-c · CH2←R-e · CH3←R-g · CH4←R-i · CH5←R-k · CH6←R-m) |
+| R-Block → Relais-COMs | **Rot** | +24-V-Einspeisung (CH1←R-c · CH3←R-g · CH4←R-i · CH5←R-k · CH6←R-m · **CH7←neu, Schließen seit v0.38**). CH2 unbenutzt (war R-e). |
 | CH1-NO → R11-A1 | **Grau** | Öffnen (= Kl. 6 / BFT65) |
-| CH2-NO → R12-A1 | **Grün** | Schließen (= Kl. 3 / BFT62) |
+| **CH7**-NO → R12-A1 | **Grün** | Schließen (= Kl. 3 / BFT62) — v0.38 von CH2 umgeklemmt (CH2-Boot-Glitch) |
 | CH3-NO → R13-A1 | **Weiß** | Schritt (= Kl. 5 / BFT64) |
 | CH4-NO → R14-A1 | **Gelb** | Dauerauf/Ped (= Kl. 2 / BFT61) |
 | CH5-NO → R15-A1 | **Rot** | LED blau (kein BFT-Kanal → +24-V-Antrieb = rot) |

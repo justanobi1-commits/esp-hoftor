@@ -1,4 +1,9 @@
 # ── Versionen ────────────────────────────────────────────────────
+# v0.38 |  2026-06-19        |  **r2 (Schließen) von Onboard-CH2 (PCA-Pin 1) auf CH7 (Pin 6) umgeklemmt.**
+#         PCA9554-Pin 1 (nur dieser) zieht beim Boot kurz an (HW-Power-On-Glitch) → sonst ungewollter
+#         Schließen-Impuls. Diagnose 19-06: beim Boot zuckt nur CH2-LED + R12, alle anderen Kanäle ruhig.
+#         HW-Fix: NO-Draht CH2→R12 (F2) auf CH7-NO umgeklemmt + CH7-COM auf +24 V; CH2 bleibt frei.
+#         YAML: r2 pin number 1 → 6 → der CH2-Boot-Glitch läuft jetzt ins Leere (kein Relais dran).
 # v0.37 |  2026-06-19        |  **Hörmann HET/S 24 real auf DI7/DI8 statt DI4/DI5 verkabelt → Rollen umgelegt.**
 #         Florian hat den Funkempfänger entgegen der v0.36-Planung an DI7 (K1, grün) + DI8 (K2, gelb)
 #         angeschlossen — eigener Mini-Verteiler (4× 3er-Wago), gespeist über die bisher leere
@@ -290,7 +295,8 @@ switch:
     id: r2
     internal: true
     restore_mode: ALWAYS_OFF
-    pin: { pca9554: relay_hub, number: 1, mode: { output: true } }
+    # v0.38: von PCA-Pin 1 (Onboard-CH2) auf Pin 6 (CH7) umgeklemmt — CH2 hatte einen Boot-Glitch.
+    pin: { pca9554: relay_hub, number: 6, mode: { output: true } }
     on_turn_on:
       - text_sensor.template.publish: { id: st_r2, state: "🟢 angezogen" }
     on_turn_off:
