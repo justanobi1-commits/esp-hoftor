@@ -183,7 +183,7 @@ Verdrahtung: Empfänger V+ ← +24 V (Wago, über Sicherung 28) · V− ← GND 
 - **Durchgehende Farbcodierung:** Funktionsfarbe von der BFT-Klemme bis zum Relais; Innenbrücken in derselben Farbe (Einzelader bevorzugt, sonst AHK-Rest).
 - **Verdrahtung mit Aderendhülsen:** Alle Adern feindrähtig → isolierte 0,5er Hülsen (~8 mm, trapez gecrimpt), eine Ader pro Öffnung.
 - **AHK-Orange meiden:** Die orange AHK-Ader ähnelt zu sehr der roten Einzelader → Verwechslungsgefahr; Orange bleibt unbenutzt in der Reserve.
-- **24-V-Absicherung nur im Plusleiter:** Sicherung 27 (1 A T) in der +24-V-Einspeisung (HESILED mit antiparalleler LED → Einspeiseseite/Polarität egal). **GND/0 V wird NICHT abgesichert** — der Rückleiter muss als Referenz immer durchverbunden bleiben.
+- **24-V-Absicherung nur im Plusleiter:** Sicherung 27 (aktuell **0,5 A flink** provisorisch; Soll 0,5 A träge) in der +24-V-Einspeisung (HESILED mit antiparalleler LED → Einspeiseseite/Polarität egal). **GND/0 V wird NICHT abgesichert** — der Rückleiter muss als Referenz immer durchverbunden bleiben.
 
 ## 13. Offene Anschluss-Checkliste (ESP / Tor / 230 V)
 

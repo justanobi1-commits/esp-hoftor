@@ -262,7 +262,7 @@ AUX1 (20-21) Default Blinkleuchte; AUX2 (26-27) konfigurierbar; AUX11 (24-25, nu
 | Ader / PT-Klemme# | BFT-Klemme | Funktion |
 |---|---|---|
 | 1 | 60 | COM Hauptplatine |
-| 2 | 61 | Open (Dauerauf-Eingang) |
+| 2 | 61 | Ped / Fußgänger (IC=6 Timer Ped) |
 | 3 | 62 | Close |
 | 4 | 63 | COM EBD |
 | 5 | 64 | Start E (Schritt) |
@@ -435,7 +435,7 @@ Die **-O/-U-Bezeichnung (obere/untere Öffnung) gilt im ganzen Schrank** — auc
 → **R19 (Taster)** = wie Status-Relais: A1 ← Taster-Signal (Kl. 26), A2 = GND, **K11 = +24V (eigener Stich, NICHT unter FBS — R19 liegt außerhalb 15–18)**, K14 → ESP DI3.
 → Alle A2 → GND (durchgehende blaue Brücke über 11–20, vom Bl-Block gespeist).
 
-**Designprinzip (Florian 03-06-2026): ALLE Feld-I/O laufen über Koppelrelais** — auch der Taster (DI3). Grund: alle Leitungen gehen in den **Außenbereich**, die Steuerung sitzt **innen** → jedes RIF-0 ist eine **galvanische Trennstelle**, die den ESP schützt, falls draußen ein Fehler auftritt (Kurzschluss/Überspannung/Feuchte/EMV) — unabhängig davon, ob technisch zwingend nötig. Konsequenz: Reserve = nur noch **R20** + DI4–DI8 + R7/R8.
+**Designprinzip (Florian 03-06-2026): ALLE Feld-I/O laufen über Koppelrelais** — auch der Taster (DI3). Grund: alle Leitungen gehen in den **Außenbereich**, die Steuerung sitzt **innen** → jedes RIF-0 ist eine **galvanische Trennstelle**, die den ESP schützt, falls draußen ein Fehler auftritt (Kurzschluss/Überspannung/Feuchte/EMV) — unabhängig davon, ob technisch zwingend nötig. Konsequenz: Reserve = nur noch **R20** + DI4–DI6 + R7/R8 (DI7/DI8 = Funk Hörmann).
 
 ### Interne Brücken Klemme↔Relais (Funktionsfarbe) — ✓ verdrahtet 03-06-2026
 

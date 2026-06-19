@@ -1,7 +1,7 @@
 # Hoftor-Steuerung — Bedienung & FAQ
 
 **Für Claude-Instanzen:** Diese Datei ist die primäre Wissensquelle für Fragen zur Hoftor-Steuerung.  
-**Technische Volldoku:** `CLAUDE.md` · **YAML-Quellcode:** `hoftor.yaml` (v0.35)  
+**Technische Volldoku:** `CLAUDE.md` · **YAML-Quellcode:** `hoftor.yaml` (v0.39)  
 **Web-Interface:** http://192.168.200.40 · **ESP-Name:** `hoftor`
 
 ---
@@ -111,7 +111,9 @@ Das Interface unter http://192.168.200.40 ist in Gruppen gegliedert (Reihenfolge
 | **DI1** | Endschalter „Tor offen" (BFT-Klemme 24/25 via Koppelrelais F3) |
 | **DI2** | Endschalter „Tor zu" (BFT-Klemme 26/27 via Koppelrelais F4) |
 | **DI3** | Externer Taster am Tor (von außen zugänglich) |
-| DI4–DI8 | Reserve, nicht belegt |
+| DI4–DI6 | Reserve, nicht belegt |
+| **DI7** | Funk Hörmann K1 (HET/S 24, GPIO10) — Handsender-Taste 1, Schalt-Logik in HA |
+| **DI8** | Funk Hörmann K2 (GPIO11) — Handsender-Taste 2, Schalt-Logik in HA |
 
 **Wichtig:** DI1 und DI2 sind als kombinierte Template-Sensoren implementiert — sie reagieren auf physisches Signal **oder** Test-Schalter aus grp_test.
 
@@ -234,7 +236,7 @@ OTA-Update oder physischer Reset. Nach Neustart: alle Relais AUS, Test-Schalter 
 | API | ESPHome Native API (verschlüsselt) |
 | Netzwerk | Ethernet (PoE), kein WLAN |
 | Relais r1 | BFT 65 — Öffnen (Impuls) |
-| Relais r2 | BFT 62 — Schließen (Impuls) |
+| Relais r2 | BFT 62 — Schließen (Impuls); PCA-Pin 6 / Onboard-CH7 (v0.38 umgeklemmt) |
 | Relais r3 | BFT 64 — Schritt auf/stopp/zu |
 | Relais r4 | BFT 61 — Fußgänger (IC=6) |
 | Relais r5 | F7 Koppelrelais — LED blau |
@@ -242,6 +244,8 @@ OTA-Update oder physischer Reset. Nach Neustart: alle Relais AUS, Test-Schalter 
 | DI1 | GPIO4 — Endschalter offen (BFT 24) |
 | DI2 | GPIO5 — Endschalter zu (BFT 26) |
 | DI3 | GPIO6 — Externer Taster |
+| DI7 | GPIO10 — Funk Hörmann K1 |
+| DI8 | GPIO11 — Funk Hörmann K2 |
 | Impuls-Dauer | 1 Sekunde (alle Kanäle) |
 | Auto-Close Default | 0 s (deaktiviert) |
 | Esk1-Schwelle Default | 180 s (3 Minuten) |
