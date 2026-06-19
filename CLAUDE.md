@@ -518,7 +518,7 @@ Innenausbau (Befehle/Status/LED/Taster intern + Versorgungs-Stiche + R19) ist **
 - [ ] Taster: Bein 1 **→ 25-U** (+24V) · Bein 2 **→ 26-U** (Signal)
 
 **C) Tor-Seite — AHK-Adern auf -U der Klemmen 1–10** (von unten):
-- [ ] 1-U Schwarz←BFT60 · 2-U Gelb←BFT61 · 3-U Grün←BFT62 · 4-U Braun←BFT63 · 5-U Weiß←BFT64 · 6-U Grau←BFT65 · 7-U Rot←BFT24 · 8-U Rosa←BFT26 · **9-U (Farbe offen)→BFT25** · 10-U Weiß-Blau→BFT27
+- [ ] 1-U Schwarz←BFT60 · 2-U Gelb←BFT61 · 3-U Grün←BFT62 · 4-U Braun←BFT63 · 5-U Weiß←BFT64 · 6-U Grau←BFT65 · 7-U Rot←BFT24 · 8-U Rosa←BFT26 · **9-U Blau→BFT25** · 10-U Weiß-Blau→BFT27
 
 **D) 230V + 24V-Versorgung:** (Strang verdrahtet 10-06-2026: 230V-Klemmen → Hager SBN225 → Phoenix STEP POWER 1088495 → Sicherung 27 → R-Block · PSU− ungesichert → Bl-Block)
 - [x] 230V L/N/PE (Block B) einführen → Hager SBN225 → PSU-Eingang (10-06-2026)
