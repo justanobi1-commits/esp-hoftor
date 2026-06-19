@@ -1,12 +1,12 @@
 # Hoftor-Steuerung — Umbau Shelly → ESP
 
-**Version:** 3.1
-**Stand:** 01-06-2026
-**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` v0.35 — Server synchron, bereit zum Flashen** (**noch nicht geflasht**). Server `\\192.168.210.11\config\esphome\` = Repo: `hoftor.yaml` (v0.35) + `hoftor_lcars.css` (v0.8) + `hoftor_help.js` (Sync 01-06-2026 21:21, byte-identisch verifiziert). Alte Server-Stände gesichert in `archive\` (`hoftor_v0.33_2026-06-01.yaml`, `hoftor_lcars_v0.7_2026-06-01.css`). Hardware-Verbau im FIBOX läuft. **Stand 03-06-2026:** Klemmen 1–10 (mit TWIN an #1/#4) montiert, **10× RIF-0 (Pos. 11–20)** auf Hutschiene, A2 durchgehend blau gebrückt, Block C (LED+Taster, Klemmen 21–26) gesetzt, 2 Sicherungshalter (27–28), PTFIX-Verteilerblöcke (Bl-a…m / R-a…m) verbaut. Neue **durchgehende physische Nummerierung** + Belegungsplan siehe **§6a**. AHK-Adern noch nicht aufgelegt. **Stand 10-06-2026:** 230-V-/24-V-Versorgungsstrang verdrahtet (230V-Klemmen → **Hager SBN225** → **Phoenix STEP POWER 1088495** → Sicherung 27 → R-Block · PSU− → Bl-Block; Glassicherung-Element noch zu bestätigen). **ESP-Seite Gruppe 1–3 verdrahtet:** 6 Relais-COMs ← +24 V (R-c/e/g/i/k/m) + 6 Spulenantriebe NO→A1 (R11–R16) in **Funktionsfarbe** (grau/grün/weiß/gelb/rot/rot); DI-Signale R17/18/19-K14 → DI1/2/3 (rot/rosa/weiß-schwarz); DI-COM: Bl-c → COM (DGND frei). **Offen: nur noch PoE ans RJ45**, dann Flash + Kanal-/DI-Test.
+**Version:** 3.2
+**Stand:** 19-06-2026
+**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` v0.37 — Server synchron, bereit zum Flashen** (**noch nicht geflasht**). Server `\\192.168.210.11\config\esphome\` = Repo: `hoftor.yaml` (v0.37) + `hoftor_lcars.css` (v0.8) + `hoftor_help.js` (byte-identisch SHA256-verifiziert). **NEU 19-06-2026:** Funk-Empfänger **Hörmann HET/S 24 (BiSecur)** verdrahtet — K1→DI7 (grün), K2→DI8 (gelb), gespeist über **Sicherung 28** (+24-V-Reserve) via 4× 3er-Wago; reine Melder, Schalt-Logik in HA (`binary_sensor.hoftor_funk_hormann_k1/_k2`). Details: `Hoftor_Hoermann_Funkempfaenger_Uebergabe.md`. Alte Server-Stände gesichert in `archive\` (`hoftor_v0.33_2026-06-01.yaml`, `hoftor_lcars_v0.7_2026-06-01.css`). Hardware-Verbau im FIBOX läuft. **Stand 03-06-2026:** Klemmen 1–10 (mit TWIN an #1/#4) montiert, **10× RIF-0 (Pos. 11–20)** auf Hutschiene, A2 durchgehend blau gebrückt, Block C (LED+Taster, Klemmen 21–26) gesetzt, 2 Sicherungshalter (27–28), PTFIX-Verteilerblöcke (Bl-a…m / R-a…m) verbaut. Neue **durchgehende physische Nummerierung** + Belegungsplan siehe **§6a**. AHK-Adern noch nicht aufgelegt. **Stand 10-06-2026:** 230-V-/24-V-Versorgungsstrang verdrahtet (230V-Klemmen → **Hager SBN225** → **Phoenix STEP POWER 1088495** → Sicherung 27 → R-Block · PSU− → Bl-Block; Glassicherung-Element noch zu bestätigen). **ESP-Seite Gruppe 1–3 verdrahtet:** 6 Relais-COMs ← +24 V (R-c/e/g/i/k/m) + 6 Spulenantriebe NO→A1 (R11–R16) in **Funktionsfarbe** (grau/grün/weiß/gelb/rot/rot); DI-Signale R17/18/19-K14 → DI1/2/3 (rot/rosa/weiß-schwarz); DI-COM: Bl-c → COM (DGND frei). **Offen: nur noch PoE ans RJ45**, dann Flash + Kanal-/DI-Test.
 
 **Implementierte Logik (Stand v0.35) — maßgeblich für Verdrahtung/Betrieb:**
 - **PCA9554 @ 0x20** → 6 Relais = Öffnen (r1, BFT 65) / Schließen (r2, BFT 62) / Schritt (r3, BFT 64) / Fußgänger/Ped (r4, BFT 61) / **LED blau (r5, F7)** / **LED rot (r6, F8)**.
-- **8× DI an GPIO4-11** (INPUT_PULLUP, inverted): Status Tor offen (DI1, BFT 24 via Koppelrelais F3), Status Tor zu (DI2, BFT 26 via Koppelrelais F4), **externer Taster Dauerauf (DI3)** (mit Sicherheits-Sperre: öffnet nie selbst, toggelt Dauerauf nur wenn Status Tor offen (DI1)=1, sonst `blink_rot_5x`), DI4-DI8 Reserve.
+- **8× DI an GPIO4-11** (INPUT_PULLUP, inverted): Status Tor offen (DI1, BFT 24 via Koppelrelais F3), Status Tor zu (DI2, BFT 26 via Koppelrelais F4), **externer Taster Dauerauf (DI3)** (mit Sicherheits-Sperre: öffnet nie selbst, toggelt Dauerauf nur wenn Status Tor offen (DI1)=1, sonst `blink_rot_5x`), **DI7 = Funk Hörmann K1 / DI8 = Funk Hörmann K2** (HET/S 24, reine Melder, Logik in HA), DI4-DI6 Reserve.
 - Ethernet **W5500/PoE** + feste IP **`192.168.200.40`** + native API (Noise) + OTA; `reboot_timeout: 0s`.
 - **web_server v3** — Karten/Gruppen je Kanal, **LCARS-Farben** via `css_include: hoftor_lcars.css`, Live-Log.
 - Befehle als **Buttons** (fix **1 s** Impuls, pulse_*-Scripts).
@@ -343,8 +343,10 @@ F4-K14 → ESP Status Tor zu (DI2)
 | Status Tor offen (DI1) | **F3** | Status Tor offen lesen (BFT 24) | F3 schaltet: K11=+24V (FBS 4-6) → K14=ESP Status Tor offen (DI1) wenn BFT 24-25 schließt |
 | Status Tor zu (DI2) | **F4** | Status Tor geschlossen lesen (BFT 26) | F4 schaltet: K11=+24V (FBS 4-6) → K14=ESP Status Tor zu (DI2) wenn BFT 26-27 schließt |
 | externer Taster Dauerauf (DI3) | **R19** | Taster Dauerauf-Auslöser | Taster → Kl. 26 → R19-A1; R19-K14 → DI3 (Koppelrelais, Feld-I/O-Trennung) |
+| Funk Hörmann K1 (DI7) | – | Hörmann HET/S 24 Kanal 1 → Hoftor öffnen (Logik in HA) | Empfänger-NO K1 → +24 V auf DI7 (GPIO10), grün; COM=+24 V via Sicherung 28/Wago |
+| Funk Hörmann K2 (DI8) | – | Hörmann HET/S 24 Kanal 2 → Hoflicht (Logik in HA) | Empfänger-NO K2 → +24 V auf DI8 (GPIO11), gelb |
 | R7, R8 | – | Reserve (Waveshare-Onboard-Relais) |
-| DI4–DI8 | – | Reserve |
+| DI4–DI6 | – | Reserve |
 
 ### Phoenix RIF-0 Anschluss-Übersicht (alle 8) — NEUE Topologie mit FBS-Brücker
 
@@ -394,7 +396,7 @@ PTFIX blau (GND) ──► Waveshare ESP DI-COM-Pin
 | **1–10** | Reihenklemmen (8× PT 2,5 + 2× TWIN an #1/#4) | Tor-Anbindung (AHK-Kabel von der BFT) |
 | **11–20** | 10× RIF-0 Koppelrelais | 9 belegt (inkl. **R19 = Taster**) + **Pos. 20 Reserve** |
 | **21–26** | 6 Klemmen (Block C) | LED blau/rot + Taster |
-| **27–28** | 2 Sicherungshalter (PT 4-HESILED 24) | 27 = **1 A T**: PSU+ auf **27-O**, **27-U** → R-a · 28 = **+24-V-Reserve** (leer) |
+| **27–28** | 2 Sicherungshalter (PT 4-HESILED 24) | 27 = **1 A T**: PSU+ auf **27-O**, **27-U** → R-a · 28 = **Funk-Empfänger-Zweig** (Hörmann HET/S 24, 19-06-2026 belegt, war Reserve): PSU+ → 28-O, **28-U → Wago 1 (+24 V)** |
 | **Bl-a…m** | PTFIX blau | GND/0V-Verteilung · **a = Zuleitung** (vom PSU−) |
 | **R-a…m** | PTFIX rot | +24V-Verteilung · **a = Zuleitung** (von Sicherung 27) |
 | (L/N/PE) | 230V-Einführung + Hager SBN225 (Trenner) + Phoenix STEP POWER 1088495 (24 V/0,63 A) | **verkabelt 10-06-2026** (230V→Hager→PSU→Sicherung→R-/Bl-Block) |
@@ -684,6 +686,7 @@ ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be us
 | Web-UI LCARS-Theme (CSS) | `S:\Projekte\hw-hoftor\hoftor_lcars.css` |
 | Aderfarben-Template | `S:\Projekte\hw-hoftor\aderfarben_template.md` |
 | **Test-/Inbetriebnahme-Checkliste** | `S:\Projekte\hw-hoftor\Hoftor_Testplan.md` — Stufe 1 (ohne 24 V) + Stufe-2-Vorschau |
+| **Funk-Empfänger Hörmann (Übergabe)** | `S:\Projekte\hw-hoftor\Hoftor_Hoermann_Funkempfaenger_Uebergabe.md` — HET/S 24, DI7/DI8, Verdrahtung + HA-Plan |
 | BFT Thalia Handbuch (im Repo) | `S:\Projekte\hw-hoftor\THALIA_DUO_BT_A80_A160.pdf` |
 
 ### Shops/Bezugsquellen

@@ -1,12 +1,4 @@
 # ── Versionen ────────────────────────────────────────────────────
-# v0.37 |  2026-06-19        |  **Hörmann HET/S 24 real auf DI7/DI8 statt DI4/DI5 verkabelt → Rollen umgelegt.**
-#         Florian hat den Funkempfänger entgegen der v0.36-Planung an DI7 (K1, grün) + DI8 (K2, gelb)
-#         angeschlossen — eigener Mini-Verteiler (4× 3er-Wago), gespeist über die bisher leere
-#         Sicherung 28 (+24-V-Reserve); COM beider Kanäle = +24 V (rotweiß), NO → DI-Klemme. Daher:
-#         - di7 (GPIO10) = "Funk Hörmann K1", di8 (GPIO11) = "Funk Hörmann K2" (je Entprellung 20/50 ms).
-#         - di4 (GPIO7) + di5 (GPIO8) zurück auf generische Reserve (kein Filter).
-#         HA-Entity-Namen unverändert (funk_hormann_k1/_k2) → geplante HA-Automationen passen weiter.
-#         Weiterhin BEWUSST ohne on_press (Schalt-Logik in HA). v0.36 war nie auf Server/geflasht.
 # v0.36 |  2026-06-19        |  **DI4/DI5 → Funk-Empfänger Hörmann HET/S 24 (Kanal 1/2), reine Melder.**
 #         DI4/DI5 von "Reserve" auf "Funk Hörmann K1/K2" umbenannt. HET/S 24 (BiSecur-Externempfänger)
 #         im FIBOX, aus 24 V versorgt; potenzialfreier Relaiskontakt schaltet +24 V auf den DI —
@@ -961,9 +953,9 @@ interval:
 # DI1 = Status Tor offen   (BFT 24 via Phoenix RIF-0 F3) → Auto-Close-Trigger
 # DI2 = Status Tor zu      (BFT 26 via Phoenix RIF-0 F4)
 # DI3 = Taster Dauerauf    (externer Taster) — Logik in Phase 2
-# DI4/DI5/DI6 = Reserve
-# DI7 = Funk Hörmann K1    (HET/S 24 Kanal 1, 0,5-s-Impuls → +24V auf DI; grün) — Schalt-Logik in HA
-# DI8 = Funk Hörmann K2    (HET/S 24 Kanal 2; gelb) — Schalt-Logik in HA
+# DI4 = Funk Hörmann K1    (HET/S 24 Kanal 1, 0,5-s-Impuls → +24V auf DI) — Schalt-Logik in HA
+# DI5 = Funk Hörmann K2    (HET/S 24 Kanal 2) — Schalt-Logik in HA
+# DI6-DI8 = Reserve
 binary_sensor:
   # ── DI1/DI2: physische GPIO-Sensoren (intern) + Template-Overlay ─────────────
   # v0.26/v0.27: GPIO-Sensoren intern (di1_raw/di2_raw). Template-Sensoren
@@ -1079,17 +1071,24 @@ binary_sensor:
                   format: "DI3 (Taster) VERWEIGERT — Tor nicht offen (Sicherheit: kein Öffnen via Taster)"
               - script.execute: blink_rot_5x
 
-  # DI4/DI5/DI6 = Reserve (Funk Hörmann liegt seit v0.37 auf DI7/DI8 — real so verkabelt).
+  # DI4/DI5 = Funk-Empfänger Hörmann HET/S 24 (Kanal 1/2). Reine Melder — Schalt-Logik in HA.
+  # Empfänger im FIBOX, 24 V; potenzialfreier Kontakt: COM=+24V (R-Block), NO=DI-Klemme.
   - platform: gpio
-    name: "DI4"
+    name: "Funk Hörmann K1"
     id: di4
     pin: { number: GPIO7, mode: INPUT_PULLUP, inverted: true }
+    filters:
+      - delayed_on: 20ms
+      - delayed_off: 50ms
     web_server: { sorting_group_id: grp_input, sorting_weight: 4 }
 
   - platform: gpio
-    name: "DI5"
+    name: "Funk Hörmann K2"
     id: di5
     pin: { number: GPIO8, mode: INPUT_PULLUP, inverted: true }
+    filters:
+      - delayed_on: 20ms
+      - delayed_off: 50ms
     web_server: { sorting_group_id: grp_input, sorting_weight: 5 }
 
   - platform: gpio
@@ -1098,25 +1097,16 @@ binary_sensor:
     pin: { number: GPIO9, mode: INPUT_PULLUP, inverted: true }
     web_server: { sorting_group_id: grp_input, sorting_weight: 6 }
 
-  # DI7/DI8 = Funk-Empfänger Hörmann HET/S 24 (Kanal 1/2) — real hier verkabelt (v0.37).
-  # Empfänger im FIBOX, 24 V (eigene Sicherung 28); potenzialfreier Kontakt: COM=+24V (rotweiß), NO=DI-Klemme.
-  # Reine Melder — bewusst kein on_press, Schalt-Logik liegt in HA.
   - platform: gpio
-    name: "Funk Hörmann K1"
+    name: "DI7"
     id: di7
     pin: { number: GPIO10, mode: INPUT_PULLUP, inverted: true }
-    filters:
-      - delayed_on: 20ms
-      - delayed_off: 50ms
     web_server: { sorting_group_id: grp_input, sorting_weight: 7 }
 
   - platform: gpio
-    name: "Funk Hörmann K2"
+    name: "DI8"
     id: di8
     pin: { number: GPIO11, mode: INPUT_PULLUP, inverted: true }
-    filters:
-      - delayed_on: 20ms
-      - delayed_off: 50ms
     web_server: { sorting_group_id: grp_input, sorting_weight: 8 }
 
   # ── Tor-Störungs-Erkennung (v0.23) ────────────────────────────
