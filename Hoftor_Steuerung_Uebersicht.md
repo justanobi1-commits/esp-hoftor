@@ -49,7 +49,7 @@ Jedes Feld-I/O läuft über ein RIF-0 (galvanische Trennung innen↔außen). Kle
 - **web_server v3** (LCARS-CSS, Live-Log, Bedien-Anleitung via `js_include`). ⚠️ Offener Browser-Tab streamt dauernd → bremst OTA/erhöht Latenz.
 
 ## Hörmann-Funk (reine Melder)
-**HET/S 24 BiSecur**, 24 V (über Sicherung 28), 2 potenzialfreie Relais → +24 V auf **DI7 (K1)/DI8 (K2)**. Bewusst **ohne `on_press`** — die Schalt-Logik liegt in HA: `binary_sensor.hoftor_funk_hormann_k1` → Hoftor öffnen, `_k2` → Hoflicht (Shelly). So ohne Re-Flash umlegbar.
+**HET/S 24 BiSecur**, 24 V (über Sicherung 28), 2 potenzialfreie Relais → +24 V auf **DI7 (K1)/DI8 (K2)**. Bewusst **ohne `on_press`** — der ESP meldet nur (`binary_sensor.hoftor_funk_hormann_k1` / `_k2`); **was die Kanäle auslösen, wird frei in HA festgelegt** und ist ohne Re-Flash änderbar.
 
 ## HA-Anbindung
 - **Master = Keller-HA** (`home-assistant-keller`, deckt Keller/Hof). ESP dort adoptiert.
@@ -81,8 +81,8 @@ Das Tor lässt sich auf **vier Wegen** bedienen: Web-Seite, Home Assistant, Funk
 Im **Keller-HA** erscheinen die Tor-Funktionen als Schalter/Buttons (später als `cover.hoftor`). Von dort auch per Sprachassistent/Automationen bedienbar.
 
 ## 3. Funk-Handsender (Hörmann BiSecur)
-- **Taste K1 → Hoftor öffnen.**
-- **Taste K2 → Hoflicht** (geplant).
+- Jede Handsender-Taste meldet sich als Eingang am ESP: **K1 → DI7**, **K2 → DI8**.
+- **Was die Tasten auslösen, wird in Home Assistant festgelegt** (frei änderbar, ohne den ESP neu zu flashen).
 *(Der Handsender spricht den Funk-Empfänger an, der meldet's an den ESP/HA.)*
 
 ## 4. Taster vor Ort

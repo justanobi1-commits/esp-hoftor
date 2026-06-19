@@ -73,8 +73,8 @@ automatisch wieder korrekt gesetzt (der reale Zustand hat Vorrang).
 | **DI2 — Tor zu** | Tor hat Endlage „zu" erreicht. |
 | **DI3 — Taster** | Externer Taster am Tor (schaltet *Dauerauf* nur, wenn Tor bereits offen ist). |
 | **DI4 – DI6** | Reserve. |
-| **Funk Hörmann K1** (DI7) | Funk-Handsender Taste 1 gedrückt → in HA als „Hoftor öffnen" verarbeitet. |
-| **Funk Hörmann K2** (DI8) | Funk-Handsender Taste 2 → in HA (z. B. Hoflicht). |
+| **Funk Hörmann K1** (DI7) | Kanal 1 des Hörmann-Funkempfängers (HET/S 24). Reine Meldung — was sie auslöst, wird in HA festgelegt. |
+| **Funk Hörmann K2** (DI8) | Kanal 2 des Hörmann-Funkempfängers. Reine Meldung — Aktion in HA festgelegt. |
 
 ---
 

@@ -343,8 +343,8 @@ F4-K14 → ESP Status Tor zu (DI2)
 | Status Tor offen (DI1) | **F3** | Status Tor offen lesen (BFT 24) | F3 schaltet: K11=+24V (FBS 4-6) → K14=ESP Status Tor offen (DI1) wenn BFT 24-25 schließt |
 | Status Tor zu (DI2) | **F4** | Status Tor geschlossen lesen (BFT 26) | F4 schaltet: K11=+24V (FBS 4-6) → K14=ESP Status Tor zu (DI2) wenn BFT 26-27 schließt |
 | externer Taster Dauerauf (DI3) | **R19** | Taster Dauerauf-Auslöser | Taster → Kl. 26 → R19-A1; R19-K14 → DI3 (Koppelrelais, Feld-I/O-Trennung) |
-| Funk Hörmann K1 (DI7) | – | Hörmann HET/S 24 Kanal 1 → Hoftor öffnen (Logik in HA) | Empfänger-NO K1 → +24 V auf DI7 (GPIO10), grün; COM=+24 V via Sicherung 28/Wago |
-| Funk Hörmann K2 (DI8) | – | Hörmann HET/S 24 Kanal 2 → Hoflicht (Logik in HA) | Empfänger-NO K2 → +24 V auf DI8 (GPIO11), gelb |
+| Funk Hörmann K1 (DI7) | – | Hörmann HET/S 24 Kanal 1 (reine Meldung; Aktion frei in HA) | Empfänger-NO K1 → +24 V auf DI7 (GPIO10), grün; COM=+24 V via Sicherung 28/Wago |
+| Funk Hörmann K2 (DI8) | – | Hörmann HET/S 24 Kanal 2 (reine Meldung; Aktion frei in HA) | Empfänger-NO K2 → +24 V auf DI8 (GPIO11), gelb |
 | R7, R8 | – | Reserve (Waveshare-Onboard-Relais) |
 | DI4–DI6 | – | Reserve |
 

@@ -170,10 +170,10 @@ AHK-Adern auf der UV-Seite (-U) **aufgelegt 19-06** (Farben bestätigt); die **B
 
 BiSecur-Handsender → 2-Kanal-Relais-Empfänger im FIBOX, 24 V über **Sicherung 28** (eigener 4×-Wago-Verteiler). Potenzialfreier Kontakt schaltet +24 V auf einen freien DI — elektrisch identisch zum F3/F4-Status-Schema.
 
-| Hörmann | Ader | → ESP-DI | Funktion (Logik in HA) |
+| Hörmann | Ader | → ESP-DI | HA-Sensor (Aktion frei in HA) |
 |---|---|---|---|
-| K1 | Grün | **DI7** (GPIO10) | `binary_sensor.hoftor_funk_hormann_k1` → Hoftor öffnen |
-| K2 | Gelb | **DI8** (GPIO11) | `binary_sensor.hoftor_funk_hormann_k2` → Hoflicht (Shelly) |
+| K1 | Grün | **DI7** (GPIO10) | `binary_sensor.hoftor_funk_hormann_k1` |
+| K2 | Gelb | **DI8** (GPIO11) | `binary_sensor.hoftor_funk_hormann_k2` |
 
 Verdrahtung: Empfänger V+ ← +24 V (Wago, über Sicherung 28) · V− ← GND · beide Relais-COMs ← +24 V (Wago) · NO K1 → DI7 · NO K2 → DI8. Reine Melder (kein `on_press` in der Firmware), Schalt-Logik in HA. Details: `Hoftor_Hoermann_Funkempfaenger_Uebergabe.md`.
 
