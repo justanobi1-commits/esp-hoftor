@@ -78,7 +78,7 @@ Das Interface unter http://192.168.200.40 ist in Gruppen gegliedert (Reihenfolge
 - **Trigger:** DI1 wechselt 0→1 (Tor erreicht Endlage offen) — läuft also auch bei Funk-Öffnung
 - **Nicht gestartet** wenn Dauerauf oder Fußgänger-Dauerauf aktiv
 - **Gestoppt** bei: DI1 verlässt Endlage / Dauerauf EIN / Fußgänger-Dauerauf EIN / Ch2 Schließen / Ch3 Schritt
-- **Countdown-Sensor** „Ch1 — Auto-Close Restzeit" zeigt verbleibende Sekunden (leer/unbekannt = kein Timer aktiv)
+- **Countdown-Sensor** „Ch1 — Auto-Schließ-Restzeit" zeigt verbleibende Sekunden (leer/unbekannt = kein Timer aktiv)
 
 ### Ch4 Auto-Close (Fußgänger)
 - Einstellbar: 0–600 Sekunden (`Ch4 — Auto-Schließ-Zeit`)
@@ -211,7 +211,7 @@ Der externe Taster (DI3) wurde gedrückt, aber das Tor war nicht in Endlage offe
 Nach der Esk1-Schwelle (Standard 3 Min) sendet der ESP automatisch einen Close-Befehl. Nach max. Versuchen (Standard 3) erscheint `Störung Eskalation 2` und HA sollte eine Benachrichtigung senden.
 
 **Wie lange dauert der Auto-Close-Timer noch?**  
-Sensor `Ch1 — Auto-Close Restzeit` zeigt die verbleibenden Sekunden. Zeigt „unbekannt" wenn kein Timer aktiv.
+Sensor `Ch1 — Auto-Schließ-Restzeit` zeigt die verbleibenden Sekunden. Zeigt „unbekannt" wenn kein Timer aktiv.
 
 **Funktioniert Auto-Close auch bei Funk-Öffnung (Fernbedienung direkt ans BFT)?**  
 Ja. Der Auto-Close-Trigger ist an DI1 (physischer Endschalter) geknüpft, nicht an den ESP-Button. Sobald das Tor die Endlage offen erreicht, startet der Timer — egal wie es geöffnet wurde.

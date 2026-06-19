@@ -27,8 +27,7 @@
 **Entscheidungen fix (28-05):** TCA **aus** (ESP schließt aktiv) · Ped-Kanal = **IC=6 Timer Ped** · ESP sieht **keine Funk-Befehle** → Zustand kommt aus DI · Dauer-Zu verworfen.
 
 **Offen am ESP (Code, PC):**
-- ✅ Server-Sync erledigt 01-06-2026 (Server = Repo v0.35, alte Stände in `archive\`). **Bereit zum OTA-Flash aus ESPHome Builder.**
-- v0.35 flashen + live testen (Störungs-Eskalation, Close-Reaktions-Check, **Bedien-Anleitung über dem Log** — DOM-Injektion am echten Frontend gegengeprüft, sollte passen)
+- ✅ Server-Sync erledigt 01-06-2026; ✅ v0.39 geflasht 19-06-2026 + Bench-Test. **Live-Test offen** (BFT-/Tor-Seite AHK + Block-C noch nicht aufgelegt).
 - BFT-Ped-SCA-Frage (HT13): nach AUX16-Messung Lösung A (State-Machine) oder B (3. Statussignal SCA via freien EBD-AUX 22/23 + Koppelrelais + DI)
 - Optional später: Auto-Schließ-Trigger Ch4 (Ped) auf passenden DI umstellen (wenn SCA verkabelt)
 

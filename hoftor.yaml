@@ -1125,9 +1125,8 @@ text_sensor:
 #            (3 Template-Sensoren, NAN wenn inaktiv, via Globals + interval)
 #            CSS bewusst nicht angepasst (Florian-Entscheidung); web_server-Log bleibt drin.
 #
-#  TODO nächste Schritte:
-#   - cover.hoftor als Cover-Entity in HA (HT9 — Keller-Master, Florian adoptiert)
+#  TODO nächste Schritte (Details + Hardware → CLAUDE.md §8):
+#   - cover.hoftor als Cover-Entity in HA (HT9 — Keller-Master, Florian; Claude nur lesend)
 #   - BFT-Ped-SCA-Konzept entscheiden nach AUX16-Messung (HT13)
-#   - Optional: Auto-Schließ-Trigger Ch4 (Ped) auf passenden DI umstellen
-#  Mapping siehe CLAUDE.md §5.
+#   - Optional: Auto-Schließ-Trigger Ch4 (Ped) auf passenden DI umstellen (nach SCA-Klärung)
 # ─────────────────────────────────────────────────────────────────
