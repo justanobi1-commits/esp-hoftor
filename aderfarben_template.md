@@ -46,16 +46,16 @@
 
 | ESP-Verbindung | Farbe | Funktion |
 |---|---|---|
-| R-Block → Relais-COMs | **Rot** | +24-V-Einspeisung (CH1←R-c · CH3←R-g · CH4←R-i · CH5←R-k · CH6←R-m · **CH7←neu, Schließen seit v0.38**). CH2 unbenutzt (war R-e). |
+| R-Block → Relais-COMs | **Rot** | +24-V-Einspeisung (CH1←R-c · **CH7←R-e** (Schließen, v0.38 von CH2 umgezogen) · CH3←R-g · CH4←R-i · CH5←R-k · CH6←R-m). **CH2 unbenutzt.** |
 | CH1-NO → R11-A1 | **Grau** | Öffnen (= Kl. 6 / BFT65) |
 | **CH7**-NO → R12-A1 | **Grün** | Schließen (= Kl. 3 / BFT62) — v0.38 von CH2 umgeklemmt (CH2-Boot-Glitch) |
 | CH3-NO → R13-A1 | **Weiß** | Schritt (= Kl. 5 / BFT64) |
 | CH4-NO → R14-A1 | **Gelb** | Dauerauf/Ped (= Kl. 2 / BFT61) |
 | CH5-NO → R15-A1 | **Rot** | LED blau (kein BFT-Kanal → +24-V-Antrieb = rot) |
 | CH6-NO → R16-A1 | **Rot** | LED rot (kein BFT-Kanal → +24-V-Antrieb = rot) |
-| R17-K14 → DI1 | **Rot** | Status Tor offen (= Kl. 7 / BFT24) — *offen, noch zu verdrahten* |
-| R18-K14 → DI2 | **Rosa** | Status Tor zu (= Kl. 8 / BFT26) — *offen* |
-| R19-K14 → DI3 | **Weiß-Schwarz** | Taster (= Kl. 26) — *offen* |
+| R17-K14 → DI1 | **Rot** | Status Tor offen (= Kl. 7 / BFT24) — verdrahtet 10-06-2026 |
+| R18-K14 → DI2 | **Rosa** | Status Tor zu (= Kl. 8 / BFT26) — verdrahtet 10-06-2026 |
+| R19-K14 → DI3 | **Weiß-Schwarz** | Taster (= Kl. 26) — verdrahtet 10-06-2026 |
 | Bl-Block → DI-COM | **Blau** | GND-Referenz der DIs |
 | Funk-Empf. K1 → DI7 | **Grün** | Hörmann HET/S 24 Kanal 1 (über Wago/Sicherung 28, **nicht** über RIF-0) |
 | Funk-Empf. K2 → DI8 | **Gelb** | Hörmann HET/S 24 Kanal 2 |

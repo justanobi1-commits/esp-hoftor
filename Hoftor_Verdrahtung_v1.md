@@ -65,7 +65,7 @@ Relais behalten die Phoenix-Bezeichnung A1, A2, 11, 14. Eindeutige Referenz: `Kl
 | 9 | +24 V Rückleiter offen | Rot → von R-d (Einspeisung) | — | AHK **Blau** → BFT 25 |
 | 10 | +24 V Rückleiter zu | leer (FBS-Brücke von 9-O) | — | AHK Weiß-Blau → BFT 27 |
 
-Hinweis: Klemme 10 erhält +24 V über die FBS 2-5 rot (brückt 9↔10). Die Farbe der +24 V-Rückleiter-Adern (9-U/10-U) ist noch in Prüfung (Blau-Zuordnung kollidiert mit der GND-Konvention).
+Hinweis: Klemme 10 erhält +24 V über die FBS 2-5 rot (brückt 9↔10). Aderfarben bestätigt: Klemme 9-U = **Blau** (BFT 25), Klemme 10-U = **Weiß-Blau** (BFT 27) — beide +24 V-Rückleiter, Farbe entspricht AHK-Kabel-Farbe (nicht GND-Konvention).
 
 ## 5. Koppelrelais 11–20 — Belegung
 
@@ -79,9 +79,9 @@ A2 aller Relais = GND (durchgehende blaue Brücke 11–20, gespeist von Bl-b).
 | 14 | F6 | r4 | Dauerauf/Ped (BFT 61) | ← CH4-NO **Gelb** | Kl. 2 | Kl. 1 TWIN (COM Haupt) |
 | 15 | F7 | r5 | LED blau (Tor offen) | ← CH5-NO **Rot** | +24 V (FBS 4-6 rot) | LED blau → Kl. 21 |
 | 16 | F8 | r6 | LED rot (Dauerauf) | ← CH6-NO **Rot** | +24 V (FBS 4-6 rot) | LED rot → Kl. 22 |
-| 17 | F3 | →DI1 | Status Tor offen (BFT 24) | Kl. 7 (Signal) | +24 V (FBS 4-6 rot) | ESP DI1 (später) |
-| 18 | F4 | →DI2 | Status Tor zu (BFT 26) | Kl. 8 (Signal) | +24 V (FBS 4-6 rot) | ESP DI2 (später) |
-| 19 | – | →DI3 | Taster Dauerauf (Koppelrelais) | Kl. 26 (Weiß-Schwarz) | +24 V (R-h) | ESP DI3 (später) |
+| 17 | F3 | →DI1 | Status Tor offen (BFT 24) | Kl. 7 (Signal) | +24 V (FBS 4-6 rot) | ESP DI1 ✓ verdrahtet 10-06 |
+| 18 | F4 | →DI2 | Status Tor zu (BFT 26) | Kl. 8 (Signal) | +24 V (FBS 4-6 rot) | ESP DI2 ✓ verdrahtet 10-06 |
+| 19 | – | →DI3 | Taster Dauerauf (Koppelrelais) | Kl. 26 (Weiß-Schwarz) | +24 V (R-h) | ESP DI3 ✓ verdrahtet 10-06 |
 | 20 | – | – | Reserve (frei) | – | – | – |
 
 ## 6. Interne Brücken Klemme↔Relais (Funktionsfarbe)

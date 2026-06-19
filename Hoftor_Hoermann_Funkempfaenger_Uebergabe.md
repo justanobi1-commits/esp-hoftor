@@ -73,8 +73,8 @@ Kanal 2:  +24V            ──▶ Relais COM
 
 ## Offene Punkte
 1. ~~HET/S 24 bestellen + verdrahten~~ ✅ **verdrahtet 19-06-2026** (COM=+24 V über Sicherung 28, NO=DI7/DI8)
-2. **ESP v0.37 OTA flashen** + DI7/DI8 (Funk K1/K2) testen — Florian
-3. **CLAUDE.md auf v0.37 nachziehen** (DI-Tabellen §5/§6a + Sicherung 28 belegt + Status)
+2. ~~**ESP v0.37 OTA flashen**~~ ✅ **v0.39 geflasht 19-06-2026** (DI7/DI8 Funk K1/K2 aktiv)
+3. ~~**CLAUDE.md auf v0.37 nachziehen**~~ ✅ **CLAUDE.md auf v0.39 + DI7/DI8 + Sicherung 28 nachgezogen**
 4. **HA-Automationen** K1 (Hoftor öffnen) + K2 (Hoflicht) — Florian
 5. **Hoflicht-Shelly-Entity-ID** ermitteln (für K2)
 
