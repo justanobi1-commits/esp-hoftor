@@ -37,7 +37,7 @@ Jedes Feld-I/O läuft über ein RIF-0 (galvanische Trennung innen↔außen). Kle
 3. **Boot-Close-Bug (v0.39 gefixt):** `dauerauf`/`ped_halten` sind template-Switches mit Default `restore_mode: ALWAYS_OFF`, der beim Boot `turn_off_action` → `hold_close` → `pulse_close` (r2) auslöste. Fix: **`restore_mode: DISABLED`** an beiden. Lehre: template-Switch mit gefährlicher `turn_off_action` braucht `DISABLED`.
 4. **Störungs-Erkennung:** Wenn DI1=DI2=0 (kein Endschalter) für >180 s → ESP sendet `pulse_close` (bis 3×, dann Esk2-Alarm). Bei nicht angeschlossener BFT ein Fehlalarm → im Bench-Test `Test: DI2 Tor zu` setzen.
 5. **Repo `esp-hoftor` ist PUBLIC** → niemals Secrets (OTA-PW, api_key) in die YAML committen. Secrets liegen in der `secrets.yaml` der ESPHome-Instanz.
-6. **Server-Sync:** ESPHome baut aus `\\192.168.210.11\config\esphome\hoftor.yaml`, **nicht** aus dem Repo. Bei YAML-Änderung: Repo editieren **+** auf Server kopieren + SHA256 gegenprüfen.
+6. **Kein Server-Sync:** Das Hoftor gehört zur **Keller-HA** (nicht DG). Die YAML lebt **nur im Repo** `S:\Projekte\hw-hoftor\`; **nicht** auf den DG-Share `\\192.168.210.11\config\esphome\` laden. Geflasht wird manuell / von der Keller-Instanz.
 7. **Keller-HA = read-only für Claude** — HA-Automationen/Entities macht Florian selbst (Claude liefert nur Configs).
 
 ## Firmware-Logik (Kurzform)

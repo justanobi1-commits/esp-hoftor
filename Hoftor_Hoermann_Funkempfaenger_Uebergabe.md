@@ -5,7 +5,7 @@
 > Dieses Dokument ergänzt **nur den Hörmann-Funkempfänger-Teil**, der in der CLAUDE.md noch nicht steht.
 >
 > **🔄 UPDATE 19-06-2026:** Empfänger **real an DI7/DI8** verkabelt (nicht DI4/DI5 wie unten ursprünglich geplant) →
-> `hoftor.yaml` **v0.37**, Repo + Server (`\\192.168.210.11\config\esphome\`) synchron (SHA256-verifiziert), **noch nicht geflasht**.
+> `hoftor.yaml` **v0.39** im Repo (kein Server-Sync — Hoftor gehört zur Keller-HA, nicht DG), geflasht 19-06.
 > Abschnitte „Verdrahtung", „Bereits erledigt" und „Offene Punkte" sind unten entsprechend aktualisiert.
 
 ## Ziel
