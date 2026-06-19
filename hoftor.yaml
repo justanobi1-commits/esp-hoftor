@@ -77,8 +77,8 @@ web_server:
   version: 3
   log: true
   auth:
-    username: !secret hoftor_web_user
-    password: !secret hoftor_web_password
+    username: !secret web_username
+    password: !secret web_password
   css_include: hoftor_lcars.css
   js_include: hoftor_help.js     # v0.35: Bedien-Anleitung über dem Log (DOM-Injektion, /0.js)
   sorting_groups:
