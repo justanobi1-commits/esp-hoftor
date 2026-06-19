@@ -54,8 +54,13 @@
 
   // Re-Inject, falls esp-app sein Shadow-DOM neu rendert (z.B. Layout-Toggle).
   // Log-Updates triggern das NICHT (eigener Shadow-Tree in <esp-log>).
-  var app = document.querySelector('esp-app');
-  if (app && app.shadowRoot) {
-    new MutationObserver(inject).observe(app.shadowRoot, { childList: true, subtree: true });
-  }
+  // Retry bis App im DOM ist (läuft parallel zum inject-Polling, unabhängig davon).
+  (function setupObserver() {
+    var app = document.querySelector('esp-app');
+    if (app && app.shadowRoot) {
+      new MutationObserver(inject).observe(app.shadowRoot, { childList: true, subtree: true });
+    } else {
+      setTimeout(setupObserver, 500);
+    }
+  })();
 })();

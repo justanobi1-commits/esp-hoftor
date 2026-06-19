@@ -90,7 +90,6 @@ pre,
    ─────────────────────────────────────────────────────────────── */
 canvas {
   display: none !important;
-  height: 0 !important;
 }
 
 /* SVG-Sparklines (z.B. Chip-Temperatur Mini-Linie) */

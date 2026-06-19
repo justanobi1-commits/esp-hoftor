@@ -677,8 +677,13 @@ ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be us
 | Datei | Speicherort |
 |---|---|
 | Diese Doku | `S:\Projekte\hw-hoftor\CLAUDE.md` |
-| Technische Doku Firmware (Word) | `S:\Projekte\hw-hoftor\Hoftor_Dokumentation_v0.39.docx` — **Software/ESPHome-Logik** |
-| **Verdrahtungs-Doku (Word)** | `S:\Projekte\hw-hoftor\Hoftor_Verdrahtung_v1.docx` — **Hardware/Belegungsplan** (Quelle: `Hoftor_Verdrahtung_v1.md`). Querverweis ↔ Firmware-Doku. |
+| **Firmware (ESPHome YAML)** | `S:\Projekte\hw-hoftor\hoftor.yaml` — Haupt-YAML, v0.40 |
+| **Bedienungsanleitung** | `S:\Projekte\hw-hoftor\BEDIENUNG.md` — für Endbenutzer |
+| Technische Doku Firmware (MD) | `S:\Projekte\hw-hoftor\Hoftor_Steuerung_Uebersicht.md` — Software/ESPHome-Logik |
+| Technische Doku Firmware (Word) | `S:\Projekte\hw-hoftor\Hoftor_Dokumentation_v0.39.docx` — menschenlesbare Kopie der .md |
+| **Verdrahtungs-Doku (MD)** | `S:\Projekte\hw-hoftor\Hoftor_Verdrahtung_v1.md` — Hardware/Belegungsplan (SSoT) |
+| **Verdrahtungs-Doku (Word)** | `S:\Projekte\hw-hoftor\Hoftor_Verdrahtung_v1.docx` — menschenlesbare Kopie der .md |
+| **AHK-Klemmenplan (Druckvorlage)** | `S:\Projekte\hw-hoftor\Hoftor_AHK_Klemmenplan.html` — UV↔BFT Aderfarben, druckbar |
 | Kurzbeschreibung Web-Interface | `S:\Projekte\hw-hoftor\Hoftor_Kurzbeschreibung_Webinterface.md` |
 | Web-UI Bedien-Anleitung (JS-Inject) | `S:\Projekte\hw-hoftor\hoftor_help.js` |
 | Web-UI LCARS-Theme (CSS) | `S:\Projekte\hw-hoftor\hoftor_lcars.css` |
