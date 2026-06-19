@@ -56,7 +56,9 @@
 | R17-K14 → DI1 | **Rot** | Status Tor offen (= Kl. 7 / BFT24) — *offen, noch zu verdrahten* |
 | R18-K14 → DI2 | **Rosa** | Status Tor zu (= Kl. 8 / BFT26) — *offen* |
 | R19-K14 → DI3 | **Weiß-Schwarz** | Taster (= Kl. 26) — *offen* |
-| Bl-Block → DI-COM | **Blau** | GND-Referenz der DIs — *offen; COM vs. DGND am Header noch klären* |
+| Bl-Block → DI-COM | **Blau** | GND-Referenz der DIs |
+| Funk-Empf. K1 → DI7 | **Grün** | Hörmann HET/S 24 Kanal 1 (über Wago/Sicherung 28, **nicht** über RIF-0) |
+| Funk-Empf. K2 → DI8 | **Gelb** | Hörmann HET/S 24 Kanal 2 |
 
 ⚠️ **Schwarz ist NICHT der Antrieb** (frühere Annahme verworfen): Schwarz = COM-Hauptplatine (BFT60, Kl. 1). Antriebe tragen die Kanal-Funktionsfarbe.
 

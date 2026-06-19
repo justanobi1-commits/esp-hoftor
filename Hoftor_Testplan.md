@@ -29,8 +29,8 @@
 - [ ] **B3** GND-Schiene: **Bl-a ↔ Bl-b / -c / -d** je Durchgang.
 - [ ] **B4** RIF-0 **A2-Brücke**: Bl-Block ↔ **A2 von R11 … R20** je Durchgang (durchgehende blaue Brücke).
 - [ ] **B5** RIF-0 **Spulen** A1↔A2 je Relais **11–19**: plausibler Spulenwiderstand (nicht ∞ = unterbrochen, nicht 0 = Schluss; baugleiche ≈ gleich).
-- [ ] **B6** **Spulen-Antriebe (Position + Farbe):** CH1-NO↔R11-A1 (grau) · CH2↔R12 (grün) · CH3↔R13 (weiß) · CH4↔R14 (gelb) · CH5↔R15 (rot) · CH6↔R16 (rot) — je Durchgang.
-- [ ] **B7** **COM-Einspeisung:** R-c↔CH1-COM · R-e↔CH2 · R-g↔CH3 · R-i↔CH4 · R-k↔CH5 · R-m↔CH6 — je Durchgang.
+- [ ] **B6** **Spulen-Antriebe (Position + Farbe):** CH1-NO↔R11-A1 (grau) · **CH7↔R12 (grün, r2 v0.38 von CH2 umgeklemmt)** · CH3↔R13 (weiß) · CH4↔R14 (gelb) · CH5↔R15 (rot) · CH6↔R16 (rot) — je Durchgang.
+- [ ] **B7** **COM-Einspeisung:** R-c↔CH1-COM · R-g↔CH3 · R-i↔CH4 · R-k↔CH5 · R-m↔CH6 · **CH7-COM↔+24 V (r2 Schließen)** — je Durchgang. (CH2 unbenutzt.)
 - [ ] **B8** **DI-Signaladern:** DI1↔R17-K14 (rot) · DI2↔R18-K14 (rosa) · DI3↔R19-K14 (weiß-schwarz) — je Durchgang.
 - [ ] **B9** **DI-Quercheck:** DI1/DI2/DI3 untereinander **KEIN** Durchgang (nicht verbrückt).
 - [ ] **B10** **DI-COM:** Bl-Block ↔ **COM** Durchgang · **COM ↔ DGND KEIN Durchgang** (Isolation bestätigt).
@@ -39,7 +39,7 @@
 
 - [ ] **C1** PWR-LED am ESP an, PoE ok.
 - [ ] **C2** Erreichbar? `ping 192.168.200.40` / Web öffnet. Falls **nicht** erreichbar → **USB-C-Flash** nötig (Image evtl. leer/alt).
-- [ ] **C3** **v0.35 flashen** (OTA aus ESPHome-Builder; sonst USB-C). Nach Reboot wieder erreichbar.
+- [ ] **C3** **v0.39 flashen** (OTA aus ESPHome-Builder; sonst USB-C). Nach Reboot wieder erreichbar.
 - [ ] **C4** Diagnose-Karte: Verbindung (API) ✓ · Uptime läuft · Chip-Temp plausibel · IP `192.168.200.40` · MAC · ESPHome-Version.
 
 ## D. Relais-Kanal-Mapping (Web schalten + Multimeter; 24 V aus)
@@ -52,7 +52,7 @@ Pro Kanal im Web schalten → am Onboard-Relais **CHx COM↔NO Durchgang** prüf
 - [ ] **D2** „Ch4 — Fußgänger Dauerauf" **EIN** (hält r4) → `Ch4 — Relais` 🟢 + **CH4** schließt. *(r4 = CH4 = R14)*
 - [ ] **D3** „LED blau" **EIN** (r5) → `LED blau` 🔵 + **CH5** schließt. *(r5 = CH5 = R15)*
 - [ ] **D4** „LED rot" **EIN** (r6) → `LED rot` 🔴 + **CH6** schließt. *(r6 = CH6 = R16)*
-- [ ] **D5** „Ch2 — Schließen" **drücken** (1 s Puls) → kurzer Durchgangs-Piep an **CH2** + `Ch2 — Relais` kurz 🟢. *(r2 = CH2 = R12)*
+- [ ] **D5** „Ch2 — Schließen" **drücken** (1 s Puls) → kurzer Durchgangs-Piep an **CH7** + `Ch2 — Relais` kurz 🟢. *(r2 = CH7 = R12, v0.38 umgeklemmt)*
 - [ ] **D6** „Ch3 — auf-stopp-zu" **drücken** (1 s Puls) → Piep **CH3** + `Ch3 — Relais`. *(r3 = CH3 = R13)*
 
 > ⚠️ Schließt beim Schalten ein **falscher** Kanal → CH↔r-Reihenfolge stimmt nicht → vor 24 V klären.
@@ -74,6 +74,7 @@ Das Board hat **onboard isolierte Versorgung** für die DI-Seite („no extra po
 - [ ] **E2.2** Brücke **DI2 ↔ COM** → `DI2 — Tor zu` = ON; weg → OFF.
 - [ ] **E2.3** Brücke **DI3 ↔ COM** → `DI3 — Taster` = ON; Taster-Logik (bei DI1=ON Dauerauf toggelt, sonst LED rot 5×); weg → OFF.
 - [ ] **E2.4** *(volle Kette)* Statt am Header an **R17-K14 ↔ COM / R18-K14 ↔ COM / R19-K14 ↔ COM** brücken → prüft zusätzlich die DI-Signalader bis zum RIF-0.
+- [ ] **E2.5** **Funk Hörmann:** Brücke **DI7 ↔ COM** → `Funk Hörmann K1` = ON; **DI8 ↔ COM** → `Funk Hörmann K2` = ON; weg → OFF. (DI7/DI8 kommen vom Funk-Empfänger HET/S 24 über die Wagos/Sicherung 28, **nicht** über RIF-0.) Echt-Test mit Handsender erst in Stufe 2.
 - Reagiert ein DI **nicht** auf die COM-Brücke → braucht echtes 24-V-Signal → Stufe 2.
 
 > Damit ist die DI-Kette **Terminal → ESP → Web** schon in Stufe 1 verifiziert. In Stufe 2 bleibt nur der Weg über **RIF-0 + echtes 24-V-Signal** (BFT-Status/Taster) zu bestätigen.
@@ -94,5 +95,6 @@ Das Board hat **onboard isolierte Versorgung** für die DI-Seite („no extra po
 3. LEDs anklemmen (Block C -U) → leuchten bei r5/r6.
 4. **DI über RIF-0 + echtes 24-V-Signal** bestätigen (BFT-Status / Taster) — die DI-Kette selbst ist in Stufe 1 (E2) schon per Brücke verifiziert; hier nur noch der Weg über den Koppelrelais-Kontakt.
 5. BFT + Tor-Adern (-U Klemmen 1–10) anklemmen, BFT-Parametrierung, Parallel-/Live-Test.
+6. **Funk-Test:** Hörmann-Handsender → `Funk Hörmann K1`/`K2` (DI7/DI8) reagieren (Sicherung 28 muss stecken).
 
 > ⚠️ **Vollständiges Freischalten** = Ausschalter (Hager) AUS **+** ESP-Netzwerkkabel ziehen **+** BFT separat spannungsfrei (BFT speist die Klemmen 1–10 unabhängig). Siehe Sicherheitshinweis in `Hoftor_Verdrahtung_v1.md`.
