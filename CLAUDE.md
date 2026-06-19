@@ -2,7 +2,7 @@
 
 **Version:** 3.3
 **Stand:** 19-06-2026
-**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` v0.39 — geflasht 19-06**, lebt **nur im Repo** `S:\Projekte\hw-hoftor\` (+ `hoftor_lcars.css` v0.8 + `hoftor_help.js`). ⚠️ **Hoftor gehört zur KELLER-HA (nicht DG)** → **kein Server-Sync**; NICHT auf den DG-Share `\\192.168.210.11\config\esphome\` laden (Florian flasht manuell / von der Keller-Instanz). **NEU 19-06-2026:** Funk-Empfänger **Hörmann HET/S 24 (BiSecur)** verdrahtet — K1→DI7 (grün), K2→DI8 (gelb), gespeist über **Sicherung 28** (+24-V-Reserve) via 4× 3er-Wago; reine Melder, Schalt-Logik in HA (`binary_sensor.hoftor_funk_hormann_k1/_k2`). Details: `Hoftor_Hoermann_Funkempfaenger_Uebergabe.md`. **Inbetriebnahme 19-06-2026:** ESP eingebaut + angeschlossen (PoE), AHK-Adern auf **UV-Klemmen 1–10 (-U)** aufgelegt (Farben bestätigt), 230-V-/24-V-Kette in Betrieb (Sicherungen **provisorisch 2× 0,5 A flink** statt träge), v0.39 geflasht + im Bench-Test. r2 (Schließen) auf **CH7/Pin 6** umgeklemmt (war Fehldiagnose HW-Glitch); **Boot-Close-Bug gefixt** — `restore_mode: DISABLED` an dauerauf/ped_halten (Default ALWAYS_OFF rief turn_off_action beim Boot → hold_close → r2/Close). ⚠️ **Noch offen:** BFT-/Tor-Seite der AHK-Adern auflegen (freie Enden in Berührungsschutz-WAGOs), Block-C-Geräteseite (LED/Taster -U), Live-Test, BFT-Parametrierung (61=IC6 Ped / 65=IC2 Open), HA-Automationen, Migration. Belegung §6a; Auflegeplan `Hoftor_AHK_Klemmenplan.html`.
+**Status:** ESP online + produktiv auf **`192.168.200.40`** (Ethernet). **ESPHome `hoftor.yaml` v0.41 — geflasht 19-06**, lebt **nur im Repo** `S:\Projekte\hw-hoftor\` (+ `hoftor_lcars.css` v0.8 + `hoftor_help.js`). ⚠️ **Hoftor gehört zur KELLER-HA (nicht DG)** → **kein Server-Sync**; NICHT auf den DG-Share `\\192.168.210.11\config\esphome\` laden (Florian flasht manuell / von der Keller-Instanz). **NEU 19-06-2026:** Funk-Empfänger **Hörmann HET/S 24 (BiSecur)** verdrahtet — K1→DI7 (grün), K2→DI8 (gelb), gespeist über **Sicherung 28** (+24-V-Reserve) via 4× 3er-Wago; reine Melder, Schalt-Logik in HA (`binary_sensor.hoftor_funk_hormann_k1/_k2`). Details: `Hoftor_Hoermann_Funkempfaenger_Uebergabe.md`. **Inbetriebnahme 19-06-2026:** ESP eingebaut + angeschlossen (PoE), AHK-Adern auf **UV-Klemmen 1–10 (-U)** aufgelegt (Farben bestätigt), 230-V-/24-V-Kette in Betrieb (Sicherungen **provisorisch 2× 0,5 A flink** statt träge), v0.39 geflasht + im Bench-Test. r2 (Schließen) auf **CH7/Pin 6** umgeklemmt (war Fehldiagnose HW-Glitch); **Boot-Close-Bug gefixt** — `restore_mode: DISABLED` an dauerauf/ped_halten (Default ALWAYS_OFF rief turn_off_action beim Boot → hold_close → r2/Close). ⚠️ **Noch offen:** BFT-/Tor-Seite der AHK-Adern auflegen (freie Enden in Berührungsschutz-WAGOs), Block-C-Geräteseite (LED/Taster -U), Live-Test, BFT-Parametrierung (61=IC6 Ped / 65=IC2 Open), HA-Automationen, Migration. Belegung §6a; Auflegeplan `Hoftor_AHK_Klemmenplan.html`.
 
 **Implementierte Logik (Stand v0.35) — maßgeblich für Verdrahtung/Betrieb:**
 - **PCA9554 @ 0x20** → 6 Relais = Öffnen (r1, BFT 65) / Schließen (r2, BFT 62) / Schritt (r3, BFT 64) / Fußgänger/Ped (r4, BFT 61) / **LED blau (r5, F7)** / **LED rot (r6, F8)**.
@@ -27,7 +27,7 @@
 **Entscheidungen fix (28-05):** TCA **aus** (ESP schließt aktiv) · Ped-Kanal = **IC=6 Timer Ped** · ESP sieht **keine Funk-Befehle** → Zustand kommt aus DI · Dauer-Zu verworfen.
 
 **Offen am ESP (Code, PC):**
-- ✅ Server-Sync erledigt 01-06-2026; ✅ v0.39 geflasht 19-06-2026 + Bench-Test. **Live-Test offen** (BFT-/Tor-Seite AHK + Block-C noch nicht aufgelegt).
+- ✅ Server-Sync erledigt 01-06-2026; ✅ v0.41 geflasht 19-06-2026. Secrets via ESPHome Builder auf Keller-HA.
 - BFT-Ped-SCA-Frage (HT13): nach AUX16-Messung Lösung A (State-Machine) oder B (3. Statussignal SCA via freien EBD-AUX 22/23 + Koppelrelais + DI)
 - Optional später: Auto-Schließ-Trigger Ch4 (Ped) auf passenden DI umstellen (wenn SCA verkabelt)
 
@@ -677,7 +677,7 @@ ESPHome erlaubt `ethernet:` und `wifi:` **nicht gleichzeitig** („may not be us
 | Datei | Speicherort |
 |---|---|
 | Diese Doku | `S:\Projekte\hw-hoftor\CLAUDE.md` |
-| **Firmware (ESPHome YAML)** | `S:\Projekte\hw-hoftor\hoftor.yaml` — Haupt-YAML, v0.40 |
+| **Firmware (ESPHome YAML)** | `S:\Projekte\hw-hoftor\hoftor.yaml` — Haupt-YAML, v0.41 |
 | **Bedienungsanleitung** | `S:\Projekte\hw-hoftor\BEDIENUNG.md` — für Endbenutzer |
 | Technische Doku Firmware (MD) | `S:\Projekte\hw-hoftor\Hoftor_Steuerung_Uebersicht.md` — Software/ESPHome-Logik |
 | Technische Doku Firmware (Word) | `S:\Projekte\hw-hoftor\Hoftor_Dokumentation_v0.39.docx` — menschenlesbare Kopie der .md |
