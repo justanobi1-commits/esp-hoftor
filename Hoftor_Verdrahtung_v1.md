@@ -4,7 +4,7 @@ Verteiler-Innenausbau · FIBOX MCE65 36M (3×12 TE) · BFT Thalia BT A80/A160 + 
 
 **Querverweise:**
 
-- **Firmware-/Software-Logik (ESPHome):** siehe `Hoftor_Dokumentation_v0.35.docx` (Steuerkanäle, Scripts, Auto-Close, Störungserkennung, DI/Relais-Logik).
+- **Firmware-/Software-Logik (ESPHome):** siehe `Hoftor_Dokumentation_v0.39.docx` (Steuerkanäle, Scripts, Auto-Close, Störungserkennung, DI/Relais-Logik).
 - **Live-Arbeitsdoku (vollständig, versioniert):** `CLAUDE.md` im Projektordner `hw-hoftor` (Abschnitt §6a = Belegungsplan).
 
 ---
@@ -20,7 +20,7 @@ Der lokale Ausschalter (**Hager SBN225**, 2-pol., 25 A) trennt **NUR den 24-V-Kr
 
 ## 1. Zweck dieses Dokuments
 
-Dieses Dokument beschreibt den **physischen Aufbau und die Verdrahtung** im Verteiler (Reihenklemmen, Koppelrelais, Potentialverteilung, Brücken, Aderfarben). Die **Steuerungs-/Firmware-Logik** ist bewusst NICHT hier, sondern in der Firmware-Doku (`Hoftor_Dokumentation_v0.35.docx`) beschrieben.
+Dieses Dokument beschreibt den **physischen Aufbau und die Verdrahtung** im Verteiler (Reihenklemmen, Koppelrelais, Potentialverteilung, Brücken, Aderfarben). Die **Steuerungs-/Firmware-Logik** ist bewusst NICHT hier, sondern in der Firmware-Doku (`Hoftor_Dokumentation_v0.39.docx`) beschrieben.
 
 ## 2. Durchgehende Nummerierung
 
@@ -29,7 +29,7 @@ Dieses Dokument beschreibt den **physischen Aufbau und die Verdrahtung** im Vert
 | **1–10** | Reihenklemmen (8× PT 2,5 + 2× TWIN an #1/#4) | Tor-Anbindung (AHK-Kabel von der BFT) |
 | **11–20** | 10× RIF-0 Koppelrelais | 9 belegt + Pos. 20 Reserve |
 | **21–26** | 6 Klemmen (Block C) | LED blau/rot + Taster |
-| **27–28** | 2 Sicherungshalter (PT 4-HESILED 24) | 27 = **1 A T**: PSU+ auf **27-O**, **27-U** → R-a · 28 = **+24-V-Reserve** (leer) |
+| **27–28** | 2 Sicherungshalter (PT 4-HESILED 24) | beide **2× 0,5 A flink** (provisorisch, träge nachrüsten). 27 = Hauptkreis: PSU+ → **27-O**, **27-U** → R-a · 28 = **Funk-Empfänger-Zweig** (Hörmann HET/S 24): PSU+ → 28-O, 28-U → Wago (+24 V) |
 | **Bl-a…m** | PTFIX blau | GND/0 V-Verteilung · a = Zuleitung (PSU−) |
 | **R-a…m** | PTFIX rot | +24 V-Verteilung · a = Zuleitung (Sicherung 27) |
 
@@ -50,19 +50,19 @@ Relais behalten die Phoenix-Bezeichnung A1, A2, 11, 14. Eindeutige Referenz: `Kl
 
 ## 4. Reihenklemmen Block A (1–10) — Belegung
 
-`-O`/`-M` sind verdrahtet, `-U` (Tor-Seite) ist noch frei.
+`-O`/`-M` (innen) sind verdrahtet; `-U` (Tor-Seite) ist **AHK-seitig aufgelegt (19-06, Farben bestätigt)**, aber die **BFT-Enden der Adern sind noch offen** (Berührungsschutz-WAGOs).
 
 | Klemme | Funktion | -O (innen) | -M (TWIN) | -U (Tor, später) |
 |---|---|---|---|---|
 | 1 TWIN | COM Hauptplatine | Schwarz → R12-K14 | Schwarz → R14-K14 | AHK Schwarz ← BFT 60 |
-| 2 | Open / Dauerauf | Gelb → R14-K11 | — | AHK Gelb ← BFT 61 |
+| 2 | Ped / Fußgänger (Ch4) | Gelb → R14-K11 | — | AHK Gelb ← BFT 61 |
 | 3 | Close | Grün → R12-K11 | — | AHK Grün ← BFT 62 |
 | 4 TWIN | COM EBD | Braun → R11-K14 | Braun → R13-K14 | AHK Braun ← BFT 63 |
 | 5 | Schritt / Start E | Weiß → R13-K11 | — | AHK Weiß ← BFT 64 |
-| 6 | Open (Impuls) | Grau → R11-K11 | — | AHK Grau ← BFT 65 |
+| 6 | Öffnen (Ch1) | Grau → R11-K11 | — | AHK Grau ← BFT 65 |
 | 7 | Status Tor offen (Signal) | Rot → R17-A1 | — | AHK Rot ← BFT 24 |
 | 8 | Status Tor zu (Signal) | Rosa → R18-A1 | — | AHK Rosa ← BFT 26 |
-| 9 | +24 V Rückleiter offen | Rot → von R-d (Einspeisung) | — | AHK (Farbe offen) → BFT 25 |
+| 9 | +24 V Rückleiter offen | Rot → von R-d (Einspeisung) | — | AHK **Blau** → BFT 25 |
 | 10 | +24 V Rückleiter zu | leer (FBS-Brücke von 9-O) | — | AHK Weiß-Blau → BFT 27 |
 
 Hinweis: Klemme 10 erhält +24 V über die FBS 2-5 rot (brückt 9↔10). Die Farbe der +24 V-Rückleiter-Adern (9-U/10-U) ist noch in Prüfung (Blau-Zuordnung kollidiert mit der GND-Konvention).
@@ -74,7 +74,7 @@ A2 aller Relais = GND (durchgehende blaue Brücke 11–20, gespeist von Bl-b).
 | Pos | F-Rolle | ESP | Funktion | A1 (Spule +) | K11 | K14 |
 |---|---|---|---|---|---|---|
 | 11 | F1 | r1 | Öffnen (BFT 65) | ← CH1-NO **Grau** | Kl. 6 | Kl. 4 TWIN (COM EBD) |
-| 12 | F2 | r2 | Schließen (BFT 62) | ← CH2-NO **Grün** | Kl. 3 | Kl. 1 TWIN (COM Haupt) |
+| 12 | F2 | r2 | Schließen (BFT 62) | ← **CH7**-NO **Grün** (v0.38 von CH2 umgeklemmt) | Kl. 3 | Kl. 1 TWIN (COM Haupt) |
 | 13 | F5 | r3 | Schritt (BFT 64) | ← CH3-NO **Weiß** | Kl. 5 | Kl. 4 TWIN (COM EBD) |
 | 14 | F6 | r4 | Dauerauf/Ped (BFT 61) | ← CH4-NO **Gelb** | Kl. 2 | Kl. 1 TWIN (COM Haupt) |
 | 15 | F7 | r5 | LED blau (Tor offen) | ← CH5-NO **Rot** | +24 V (FBS 4-6 rot) | LED blau → Kl. 21 |
@@ -153,18 +153,29 @@ Durchgehende Farbcodierung: eine Farbe = eine Funktion, von der BFT-Klemme bis z
 | PT-Klemme | BFT | Aderfarbe | Funktion |
 |---|---|---|---|
 | 1 (TWIN) | 60 | Schwarz | COM Hauptplatine |
-| 2 | 61 | Gelb | Open (Dauerauf) |
+| 2 | 61 | Gelb | Ped / Fußgänger (Ch4) |
 | 3 | 62 | Grün | Close |
 | 4 (TWIN) | 63 | Braun | COM EBD |
 | 5 | 64 | Weiß | Start E (Schritt) |
-| 6 | 65 | Grau | Open (Impuls) |
+| 6 | 65 | Grau | Öffnen (Ch1) |
 | 7 | 24 | Rot | Status Tor offen — Signal |
 | 8 | 26 | Rosa | Status Tor zu — Signal |
-| 9 | 25 | (Farbe offen) | Status offen — +24 V Rückleiter |
+| 9 | 25 | Blau | Status offen — +24 V Rückleiter |
 | 10 | 27 | Weiß-Blau | Status zu — +24 V Rückleiter |
 | 11–13 | – | Weiß-Schwarz · Weiß-Rot · Orange ⚠️ | Reserve |
 
-AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist intern für das Taster-Signal verwendet (Kl. 26 → R19-A1).
+AHK-Adern auf der UV-Seite (-U) **aufgelegt 19-06** (Farben bestätigt); die **BFT-/Tor-Seite der Adern ist noch offen** (freie Enden in Berührungsschutz-WAGOs). Weiß-Schwarz ist intern für das Taster-Signal verwendet (Kl. 26 → R19-A1).
+
+## 11a. Funk-Empfänger Hörmann HET/S 24 (NEU 19-06-2026)
+
+BiSecur-Handsender → 2-Kanal-Relais-Empfänger im FIBOX, 24 V über **Sicherung 28** (eigener 4×-Wago-Verteiler). Potenzialfreier Kontakt schaltet +24 V auf einen freien DI — elektrisch identisch zum F3/F4-Status-Schema.
+
+| Hörmann | Ader | → ESP-DI | Funktion (Logik in HA) |
+|---|---|---|---|
+| K1 | Grün | **DI7** (GPIO10) | `binary_sensor.hoftor_funk_hormann_k1` → Hoftor öffnen |
+| K2 | Gelb | **DI8** (GPIO11) | `binary_sensor.hoftor_funk_hormann_k2` → Hoflicht (Shelly) |
+
+Verdrahtung: Empfänger V+ ← +24 V (Wago, über Sicherung 28) · V− ← GND · beide Relais-COMs ← +24 V (Wago) · NO K1 → DI7 · NO K2 → DI8. Reine Melder (kein `on_press` in der Firmware), Schalt-Logik in HA. Details: `Hoftor_Hoermann_Funkempfaenger_Uebergabe.md`.
 
 ## 12. Designprinzipien
 
@@ -200,14 +211,14 @@ AHK-Adern vorhanden, aber noch nicht aufgelegt (Tor-Seite -U). Weiß-Schwarz ist
 
 - [x] 230 V L/N/PE (Block B) einführen → **Hager SBN225** (2-pol., 25 A) → PSU-Eingang
 - [x] 24-V-Netzteil **Phoenix STEP POWER 1088495** (24 V/0,63 A) auf Hutschiene (Reihe 1) — ESP hängt per PoE NICHT am PSU
-- [x] **27-U → R-a** (Rot 0,5 mm²) · **PSU+ → 27-O**. ⚠️ **Glassicherung 1 A T noch bestätigen, ob gesteckt** (Plan: erst bei Inbetriebnahme → +24-V-Kreis bleibt beim Aufbau spannungslos). Polarität egal — antiparallele LED in der HESILED.
+- [x] **27-U → R-a** (Rot 0,5 mm²) · **PSU+ → 27-O**. **Sicherungen gesteckt 19-06: 2× 0,5 A flink** (provisorisch, träge nachrüsten). Polarität egal — antiparallele LED in der HESILED.
 - [x] **PSU− → Bl-a** (GND, **ungesichert** — 0-V-Rückleiter nie absichern)
-- Sicherung 28 = **+24-V-Reserve** (leer)
+- [x] Sicherung 28 = **Funk-Empfänger-Zweig** (Hörmann HET/S 24): PSU+ → 28-O, 28-U → Wago (+24 V)
 
 ---
 
 ## 14. Querverweise
 
-- **Firmware-/Software-Logik (ESPHome):** `Hoftor_Dokumentation_v0.35.docx`
+- **Firmware-/Software-Logik (ESPHome):** `Hoftor_Dokumentation_v0.39.docx`
 - **Live-Arbeitsdoku / vollständiger Stand:** `CLAUDE.md` (`hw-hoftor`, Abschnitt §6a)
 - **BFT-Handbuch:** `THALIA_DUO_BT_A80_A160.pdf` (im Repo)
