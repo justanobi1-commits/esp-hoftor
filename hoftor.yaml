@@ -1,4 +1,5 @@
 # ── Versionen (Details: Git-Log) ─────────────────────────────────
+# v0.42 | 23-06-2026 | LED blau leuchtet auch bei Dauerauf (nicht nur bei DI1=1).
 # v0.41 | 19-06-2026 | web_server auth eingebaut (!secret hoftor_web_user/password). B-Block-Fixes: archive v0.37/v0.38, §10 Dateiliste, JS/CSS-Kleinigkeiten.
 # v0.40 | 19-06-2026 | YAML-Bereinigung: i2c scan false; redundante name-Felder (internal) entfernt; DI4-6 Debounce (20ms/50ms); Boot-Glitch-Kommentar entfernt.
 # v0.39 | 19-06-2026 | Fix Boot-Close: dauerauf/ped_halten restore_mode DISABLED (Default ALWAYS_OFF rief turn_off_action beim Boot → hold_close → r2).
@@ -161,7 +162,7 @@ switch:
 
   # ── LED-Relais r5 (blau, F7) + r6 (rot, F8) ─────────────────────
   # Werden automatisch über Status-Logik gesteuert:
-  #   blau: ON wenn DI1=1 (Tor offen)
+  #   blau: ON wenn DI1=1 (Tor offen) ODER dauerauf aktiv
   #   rot:  ON wenn dauerauf ODER ped_halten aktiv
   # PLUS extern schaltbar in HA + Web-UI (für Diagnose/Override).
   # Manuelles Toggle wird beim nächsten Status-Trigger automatisch überschrieben.
@@ -223,10 +224,17 @@ switch:
                 level: INFO
                 format: "Dauerauf EIN → Tor offen halten (r1 dauerhaft)"
             - switch.turn_on: r1
+            - switch.turn_on: r5_led_blau    # LED blau AN (Dauerauf = offen gehalten)
             - switch.turn_on: r6_led_rot     # LED rot AN
             - switch.template.publish: { id: dauerauf, state: true }
     turn_off_action:
       - switch.turn_off: r1
+      # LED blau nur AUS wenn DI1 auch nicht aktiv
+      - if:
+          condition:
+            binary_sensor.is_off: di1_tor_offen
+          then:
+            - switch.turn_off: r5_led_blau
       # LED rot nur AUS wenn auch ped_halten AUS
       - if:
           condition:
@@ -865,7 +873,12 @@ binary_sensor:
         - logger.log:
             level: INFO
             format: "DI1: Tor verlässt Endlage offen → autoclose_open gestoppt"
-        - switch.turn_off: r5_led_blau
+        # LED blau nur AUS wenn dauerauf auch inaktiv
+        - if:
+            condition:
+              switch.is_off: dauerauf
+            then:
+              - switch.turn_off: r5_led_blau
         - script.stop: autoclose_open
         - lambda: 'id(g_autoclose_open_ende_millis) = 0;'
         - script.stop: check_close_reaktion          # v0.30: Tor bewegt sich → Check beendet
