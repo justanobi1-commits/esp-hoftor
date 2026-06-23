@@ -92,7 +92,7 @@ Das Interface unter http://192.168.200.40 ist in Gruppen gegliedert (Reihenfolge
 
 | LED | Physisch | Wann aktiv |
 |---|---|---|
-| **Blau (F7)** | Blaue Signalleuchte am Tor | Tor in Endlage „offen" (DI1=1) **oder** Dauerauf aktiv |
+| **Blau (F7)** | Blaue Signalleuchte am Tor | Tor in Endlage „offen" (DI1=1) |
 | **Rot (F8)** | Rote Signalleuchte am Tor | Dauerauf **oder** Fußgänger-Dauerauf aktiv |
 
 - LEDs können auch manuell in HA/Web-UI überschrieben werden — werden beim nächsten automatischen Status-Trigger wieder korrekt gesetzt
