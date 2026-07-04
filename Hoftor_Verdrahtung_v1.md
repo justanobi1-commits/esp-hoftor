@@ -4,7 +4,7 @@ Verteiler-Innenausbau · FIBOX MCE65 36M (3×12 TE) · BFT Thalia BT A80/A160 + 
 
 **Querverweise:**
 
-- **Firmware-/Software-Logik (ESPHome):** siehe `Hoftor_Dokumentation_v0.39.docx` (Steuerkanäle, Scripts, Auto-Close, Störungserkennung, DI/Relais-Logik).
+- **Firmware-/Software-Logik (ESPHome):** siehe `Hoftor_Dokumentation_v0.39.docx` (Steuerkanäle, Scripts, Auto-Close, Störungserkennung, DI/Relais-Logik). **Aktuell: v0.42** (g_ped_aktiv, BFT 61=IC=4).
 - **Live-Arbeitsdoku (vollständig, versioniert):** `CLAUDE.md` im Projektordner `hw-hoftor` (Abschnitt §6a = Belegungsplan).
 
 ---

@@ -1,7 +1,7 @@
 # Hoftor-Steuerung — Gesamtübersicht
 
 > **Zweck dieser Datei:** (A) Ein anderer Claude versteht damit die Steuerung ohne die ganze Projekthistorie. (B) Sie erklärt einem Menschen, wie das Tor bedient wird.
-> **Stand:** 19-06-2026 · Firmware `hoftor.yaml` **v0.39** · ESP `192.168.200.40` (Ethernet/PoE)
+> **Stand:** 04-07-2026 · Firmware `hoftor.yaml` **v0.42** · ESP `192.168.200.40` (Ethernet/PoE)
 > **Tiefe Details:** `CLAUDE.md` (Volldoku) · `aderfarben_template.md` (Verdrahtung) · `Hoftor_AHK_Klemmenplan.html` (Auflegeplan) · `Hoftor_Hoermann_Funkempfaenger_Uebergabe.md` (Funk)
 
 ---
@@ -23,7 +23,7 @@ Jedes Feld-I/O läuft über ein RIF-0 (galvanische Trennung innen↔außen). Kle
 | r1 | Pin 0 / CH1 | **Öffnen** (Impuls), gehalten = Dauerauf | 65 (Open, IC=2) | |
 | r2 | **Pin 6 / CH7** | **Schließen** (Impuls) | 62 (Close, IC=3) | v0.38 von CH2 umgeklemmt |
 | r3 | Pin 2 / CH3 | **Schritt** (auf-stopp-zu) | 64 (Start E, IC=0) | |
-| r4 | Pin 3 / CH4 | **Fußgänger/Ped**, gehalten = Ped-Dauerauf | 61 (Timer Ped, **IC=6**) | |
+| r4 | Pin 3 / CH4 | **Fußgänger/Ped**, gehalten = Ped-Dauerauf | 61 (**Ped, IC=4**) | IC=4: kein Timer, bleibt offen bis Close-Befehl |
 | r5 | Pin 4 / CH5 | LED blau (Tor offen) | — | |
 | r6 | Pin 5 / CH6 | LED rot (Halten aktiv) | — | |
 
@@ -32,7 +32,7 @@ Jedes Feld-I/O läuft über ein RIF-0 (galvanische Trennung innen↔außen). Kle
 - **DI7** = Funk Hörmann K1 · **DI8** = Funk Hörmann K2 · DI4–DI6 = Reserve
 
 ## ⚠️ Fallen, die ein Claude kennen muss
-1. **61 = Ped (IC=6), 65 = Open (IC=2)** — *nicht* vertauschen. Bei falscher BFT-Parametrierung lösen „Öffnen" (Ch1→65) und „Fußgänger" (Ch4→61) vertauscht aus (auch Funk K1). → ToDo **HT-BFT**.
+1. **61 = Ped (IC=4), 65 = Open (IC=2)** — *nicht* vertauschen. IC=4 (Ped, kein Timer): ein Flügel öffnet und bleibt offen bis Close-Befehl — kein automatisches Schließen durch BFT. ✅ BFT parametriert 04-07-2026.
 2. **r2 sitzt auf CH7/Pin 6** (umgeklemmt). War eine Fehldiagnose („HW-Boot-Glitch"); echte Ursache war Software (siehe Punkt 3). Umklemmung bleibt, schadet nicht.
 3. **Boot-Close-Bug (v0.39 gefixt):** `dauerauf`/`ped_halten` sind template-Switches mit Default `restore_mode: ALWAYS_OFF`, der beim Boot `turn_off_action` → `hold_close` → `pulse_close` (r2) auslöste. Fix: **`restore_mode: DISABLED`** an beiden. Lehre: template-Switch mit gefährlicher `turn_off_action` braucht `DISABLED`.
 4. **Störungs-Erkennung:** Wenn DI1=DI2=0 (kein Endschalter) für >180 s → ESP sendet `pulse_close` (bis 3×, dann Esk2-Alarm). Bei nicht angeschlossener BFT ein Fehlalarm → im Bench-Test `Test: DI2 Tor zu` setzen.
@@ -44,7 +44,8 @@ Jedes Feld-I/O läuft über ein RIF-0 (galvanische Trennung innen↔außen). Kle
 - **Buttons** = fixer 1-s-Impuls (`pulse_open/close/step/ped`).
 - **Dauerauf** (hält r1) / **Fußgänger-Dauerauf** (hält r4): gegenseitig verriegelt; AUS → nach 1 s Close (`hold_close`).
 - **Auto-Close** je Ch1/Ch4 (0 = aus), Trigger = DI1 (funktioniert auch bei Funk-Öffnung).
-- **Störungs-Erkennung** + **Close-Reaktions-Check** (Esk1/Esk2, `device_class: problem` für HA-Push).
+- **Störungs-Erkennung** + **Close-Reaktions-Check** (Esk1/Esk2, `device_class: problem` für HA-Push). Pausiert bei `dauerauf`, `ped_halten` **oder `g_ped_aktiv`** (v0.42: Flag wird beim Ped-Impuls-Button gesetzt, Reset bei DI1=1 oder DI2=1).
+- **Ped-Zustand** (live verifiziert 04-07-2026): DI1=0/DI2=0 = Ped offen · DI1=1/DI2=0 = Voll offen · DI1=0/DI2=1 = Tor zu.
 - **LEDs:** blau = DI1 (Tor offen); rot = Dauerauf||Ped-Halten. `blink_rot_5x` bei Taster-Verweigerung.
 - **web_server v3** (LCARS-CSS, Live-Log, Bedien-Anleitung via `js_include`). ⚠️ Offener Browser-Tab streamt dauernd → bremst OTA/erhöht Latenz.
 
@@ -55,10 +56,12 @@ Jedes Feld-I/O läuft über ein RIF-0 (galvanische Trennung innen↔außen). Kle
 - **Master = Keller-HA** (`home-assistant-keller`, deckt Keller/Hof). ESP dort adoptiert.
 - Geplant: `cover.hoftor`, Dauerauf-/LED-Automationen, Funk-K1/K2-Automationen. **Macht Florian** (Claude read-only).
 
-## Aktueller Stand (19-06-2026)
-- ✅ Verteiler/ESP-Seite fertig + im **Bench-Test** (Relais/DI ohne Tor). v0.39 geflasht, Repo↔Server synchron.
-- ✅ AHK-Adern auf **UV-Klemmen 1–10 (-U)** aufgelegt (Farben bestätigt). Hörmann verdrahtet.
-- ⏳ **Offen:** BFT-/Tor-Seite der AHK-Adern auflegen (Enden in Berührungsschutz-WAGOs) · Block-C-Geräteseite · BFT-Parametrierung · Live-Test (inkl. **Ped-Verhalten: was sendet Open/Close bei aktivem Fußgänger-Modus?**) · HA-Automationen · Migration (3× Shelly raus) · Sicherungen 0,5 A **träge** + Endkappe `D-ST 4`.
+## Aktueller Stand (04-07-2026)
+- ✅ Verteiler/ESP-Seite fertig + im **Live-Betrieb**. v0.42 geflasht.
+- ✅ AHK-Adern auf UV-Klemmen 1–10 (-U) aufgelegt. Hörmann verdrahtet.
+- ✅ **BFT parametriert:** 61=IC=4 (Ped), 65=IC=2 (Open). Ped-Verhalten live verifiziert (04-07-2026).
+- ✅ **Ped-Störungsschutz (v0.42):** `g_ped_aktiv`-Flag verhindert Fehlalarm bei Impuls-Ped.
+- ⏳ **Offen:** Block-C-Geräteseite (LED/Taster -U) · HA-Automationen (cover.hoftor, Funk K1/K2) · Migration (3× Shelly raus) · Sicherungen 0,5 A **träge** + Endkappe `D-ST 4`.
 
 ---
 
