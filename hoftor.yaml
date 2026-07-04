@@ -1,4 +1,5 @@
 # ── Versionen (Details: Git-Log) ─────────────────────────────────
+# v0.42 | 04-07-2026 | g_ped_aktiv: Impuls-Ped pausiert Störungs-Erkennung (wie ped_halten). Reset bei DI1/DI2.
 # v0.41 | 19-06-2026 | web_server auth eingebaut (!secret hoftor_web_user/password). B-Block-Fixes: archive v0.37/v0.38, §10 Dateiliste, JS/CSS-Kleinigkeiten.
 # v0.40 | 19-06-2026 | YAML-Bereinigung: i2c scan false; redundante name-Felder (internal) entfernt; DI4-6 Debounce (20ms/50ms); Boot-Glitch-Kommentar entfernt.
 # v0.39 | 19-06-2026 | Fix Boot-Close: dauerauf/ped_halten restore_mode DISABLED (Default ALWAYS_OFF rief turn_off_action beim Boot → hold_close → r2).
@@ -15,7 +16,7 @@
 #
 #  Hoftor-Steuerung — Waveshare ESP32-S3-POE-ETH-8DI-8RO
 #  BFT Thalia BT A80/A160 + EBD.  Doku: hw-hoftor/CLAUDE.md
-#  Relais: r1=Open(BFT65) r2=Close(BFT62) r3=Schritt(BFT64) r4=Ped(BFT61, IC=6 Timer Ped)
+#  Relais: r1=Open(BFT65) r2=Close(BFT62) r3=Schritt(BFT64) r4=Ped(BFT61, IC=4 Ped)
 #  TCA aus → ESP schließt aktiv.  ⚠️ Erst-Flash USB-C, danach OTA.  Ethernet XOR WiFi.
 
 esphome:
@@ -470,6 +471,7 @@ button:
             - logger.log:
                 level: INFO
                 format: "Ch4 (Ped): Fußgänger-Impuls"
+            - lambda: 'id(g_ped_aktiv) = true;'
             - script.execute: pulse_ped
             - if:
                 condition:
@@ -553,6 +555,12 @@ globals:
     type: uint32_t
     restore_value: no
     initial_value: '0'
+  # ── Ped-Status (v0.42) ──
+  # true = Ped-Impuls wurde ausgelöst, Flügel offen. Reset bei DI1=1 (Voll-Offen) oder DI2=1 (Tor zu).
+  - id: g_ped_aktiv
+    type: bool
+    restore_value: no
+    initial_value: 'false'
 
 # ── Scripts: feste 1 s Impulse + Auto-Schließen + Halten-Puffer ──
 script:
@@ -738,7 +746,7 @@ interval:
       - lambda: |-
           uint32_t now = millis();
           bool endschalter = id(di1_tor_offen).state || id(di2_tor_zu).state;
-          bool halten = id(dauerauf).state || id(ped_halten).state;
+          bool halten = id(dauerauf).state || id(ped_halten).state || id(g_ped_aktiv);
           if (endschalter) {
             id(g_letzter_endstatus_millis) = now;
             id(g_close_versuche) = 0;
@@ -771,7 +779,7 @@ interval:
           condition:
             lambda: |-
               if (id(di1_tor_offen).state || id(di2_tor_zu).state) return false;
-              if (id(dauerauf).state || id(ped_halten).state) return false;
+              if (id(dauerauf).state || id(ped_halten).state || id(g_ped_aktiv)) return false;
               uint32_t elapsed = (millis() - id(g_letzter_endstatus_millis)) / 1000;
               return elapsed >= (uint32_t) id(stoer_esk1_sek).state;
           then:
@@ -840,6 +848,7 @@ binary_sensor:
         - logger.log:
             level: INFO
             format: "DI1: Tor erreicht Endlage offen"
+        - lambda: 'id(g_ped_aktiv) = false;'
         - switch.turn_on: r5_led_blau
         - if:
             condition:
@@ -893,6 +902,7 @@ binary_sensor:
         - logger.log:
             level: INFO
             format: "DI2: Tor erreicht Endlage zu"
+        - lambda: 'id(g_ped_aktiv) = false;'
         - script.stop: check_close_reaktion          # v0.30: Tor geschlossen → Check beendet
         - lambda: 'id(g_close_reaktion_versuche) = 0;'
 
