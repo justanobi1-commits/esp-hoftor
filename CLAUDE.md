@@ -650,6 +650,13 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
 
 ## 9. Wichtige Entscheidungen & Erkenntnisse
 
+### 🚫 ESPHome-API NICHT von zwei HA-Instanzen gleichzeitig (empirisch verworfen)
+Der ESP reagiert auf zwei parallele native-API-Clients mit **Neustarts**. Von Florian getestet und verworfen.
+
+⚠️ **Die ESPHome-Doku sagt das Gegenteil** — `max_connections` steht auf ESP32 per Default auf 5 (bis 20 konfigurierbar), Mehrfachverbindungen sind offiziell vorgesehen. **Hier gilt der Praxisbefund, nicht die Doku.**
+
+Konsequenz für „Hoftor im DG spiegeln": nur Wege **ohne** zweite native API-Verbindung in Frage ziehen — MQTT (`api:` + `mqtt:` in der Firmware), `remote_homeassistant`, HomeKit-Bridge o. ä. Am 16-08-2026 wurde der Zwei-Client-Weg aus der Doku heraus erneut vorgeschlagen und zurückgewiesen; deshalb hier festgehalten.
+
 ### 6V-Messung an F3/F4 (geklärt)
 Im **inaktiven Zustand** der BFT-Statusklemme (Tor in anderem Zustand) fließt durch die Spule eine **Streu-/Leckspannung von ~6V** (Multimeter-Anzeige). Im **aktiven Zustand** (Statuskontakt geschlossen) liegen die vollen 24V vom PSU an. **Kein Problem für Phoenix RIF-0** (Pickup ~17V, gleiche Charakteristik wie bestehende Finder 34.51).
 
