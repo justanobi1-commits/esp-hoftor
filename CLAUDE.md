@@ -658,7 +658,7 @@ RIF-0 Push-in: 0,5 mm² mit Aderendhülse einschiebbar.
 
 ⚠️ **Die ESPHome-Doku sagt das Gegenteil** — `max_connections` steht auf ESP32 per Default auf 5 (bis 20 konfigurierbar), Mehrfachverbindungen sind offiziell vorgesehen. **Hier gilt der Praxisbefund, nicht die Doku.**
 
-💡 Genau diese Garagen-ESPs laufen heute über **MQTT** (busgarage + martins-garage erscheinen im Keller als esphome *und* mqtt, Fordgarage-tor nur mqtt) — MQTT ist im Bestand also bereits der beschrittene Ausweg aus demselben Problem.
+⚠️ **Nicht aus dem Konfigurationszustand auf Absicht schließen.** Am 16-08-2026 wurde gefolgert, die MQTT-Anbindung der Garagen-ESPs sei der bewusste Ausweg aus dem Neustart-Problem — **das stimmt nicht**. MQTT ist dort ein **Überbleibsel** und bleibt vorerst bestehen, weil der **Nachbar es vermutlich zusätzlich nutzt**. `Fordgarage-tor` erscheint nur als mqtt, weil das Gerät **zum DG gehört**.
 
 Konsequenz für „Hoftor im DG spiegeln": nur Wege **ohne** zweite native API-Verbindung — MQTT (`api:` + `mqtt:` in der Firmware), `remote_homeassistant`, HomeKit-Bridge. Am 16-08-2026 wurde der Zwei-Client-Weg aus der Doku heraus erneut vorgeschlagen und zurückgewiesen; deshalb hier festgehalten.
 
